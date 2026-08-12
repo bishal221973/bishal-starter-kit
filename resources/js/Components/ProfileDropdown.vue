@@ -1,19 +1,22 @@
 <script setup>
-import { ref } from 'vue'
-import { Link, usePage } from '@inertiajs/vue3'
+import { ref } from "vue";
+import { Link, usePage } from "@inertiajs/vue3";
+import { useTheme } from "@/composables/useTheme";
 
-const showDropdown = ref(false)
+const showDropdown = ref(false);
 
-const page = usePage()
-const auth = page.props.auth
+const page = usePage();
+const auth = page.props.auth;
+
+const { theme } = useTheme();
 
 const toggleDropdown = () => {
-    showDropdown.value = !showDropdown.value
-}
+    showDropdown.value = !showDropdown.value;
+};
 
 const closeDropdown = () => {
-    showDropdown.value = false
-}
+    showDropdown.value = false;
+};
 </script>
 
 <template>
@@ -23,21 +26,19 @@ const closeDropdown = () => {
             @click="toggleDropdown"
             class="flex items-center gap-3 rounded-full bg-white px-2 py-1 shadow-sm transition-all duration-300 hover:shadow-lg"
         >
-            <span
-                class="hidden sm:block text-sm font-semibold text-slate-700"
-            >
-                {{ auth?.user?.name || 'Guest User' }}
+            <span class="hidden sm:block text-sm font-semibold text-slate-700">
+                {{ auth?.user?.name || "Guest User" }}
             </span>
 
             <img
                 :src="auth?.user?.profile_photo_url || '/images/user.png'"
                 alt="User"
-                class="h-[35px] w-[35px] rounded-full object-cover ring-2"
-                style="--tw-ring-color:#3d98aa"
+                class="h-9 w-9 rounded-full object-cover ring-2"
+                :style="{ '--tw-ring-color': theme.primary }"
             />
         </button>
 
-        <!-- Backdrop -->
+        <!-- Overlay -->
         <div
             v-if="showDropdown"
             class="fixed inset-0 z-40"
@@ -47,12 +48,14 @@ const closeDropdown = () => {
         <!-- Dropdown -->
         <div
             v-if="showDropdown"
-            class="absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl bg-white shadow-2xl border border-slate-100 z-50"
+            class="absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-2xl z-50"
         >
             <!-- Header -->
             <div
                 class="p-5 text-white"
-                style="background:linear-gradient(135deg,#3d98aa,#2f7f8f)"
+                :style="{
+                    background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
+                }"
             >
                 <div class="flex items-center gap-3">
                     <img
@@ -63,7 +66,7 @@ const closeDropdown = () => {
 
                     <div>
                         <h4 class="font-semibold">
-                            {{ auth?.user?.name || 'Guest User' }}
+                            {{ auth?.user?.name || "Guest User" }}
                         </h4>
 
                         <p
@@ -83,40 +86,35 @@ const closeDropdown = () => {
                 </div>
             </div>
 
-            <!-- Logged In -->
+            <!-- Authenticated -->
             <template v-if="auth?.user">
                 <div class="py-2">
-
                     <Link
                         href="/profile"
-                        class="flex items-center gap-3 px-5 py-3 text-slate-700 transition hover:bg-[#3d98aa]/10 hover:text-[#3d98aa]"
+                        class="dropdown-item"
                     >
-                        <span>👤</span>
-                        <span>My Profile</span>
+                        👤 <span>Profile</span>
                     </Link>
 
                     <Link
                         href="/dashboard"
-                        class="flex items-center gap-3 px-5 py-3 text-slate-700 transition hover:bg-[#3d98aa]/10 hover:text-[#3d98aa]"
+                        class="dropdown-item"
                     >
-                        <span>📊</span>
-                        <span>Dashboard</span>
+                        📊 <span>Dashboard</span>
                     </Link>
 
                     <Link
                         href="/orders"
-                        class="flex items-center gap-3 px-5 py-3 text-slate-700 transition hover:bg-[#3d98aa]/10 hover:text-[#3d98aa]"
+                        class="dropdown-item"
                     >
-                        <span>📦</span>
-                        <span>My Orders</span>
+                        📦 <span>My Orders</span>
                     </Link>
 
                     <Link
                         href="/settings"
-                        class="flex items-center gap-3 px-5 py-3 text-slate-700 transition hover:bg-[#3d98aa]/10 hover:text-[#3d98aa]"
+                        class="dropdown-item"
                     >
-                        <span>⚙️</span>
-                        <span>Settings</span>
+                        ⚙️ <span>Settings</span>
                     </Link>
 
                     <div class="my-2 border-t border-slate-100"></div>
@@ -125,40 +123,52 @@ const closeDropdown = () => {
                         href="/logout"
                         method="post"
                         as="button"
-                        class="flex w-full items-center gap-3 px-5 py-3 text-red-500 transition hover:bg-red-50"
+                        class="flex w-full items-center gap-3 px-5 py-3 text-red-500 hover:bg-red-50 transition"
                     >
-                        <span>🚪</span>
-                        <span>Logout</span>
+                        🚪 <span>Logout</span>
                     </Link>
                 </div>
             </template>
 
             <!-- Guest -->
             <template v-else>
-                <div class="p-5">
-                    <p class="mb-4 text-sm text-slate-500">
-                        Login or create an account to continue.
-                    </p>
+                <div class="p-5 space-y-3">
+                    <Link
+                        href="/login"
+                        class="block w-full rounded-xl py-3 text-center font-medium text-white transition"
+                        :style="{ backgroundColor: theme.primary }"
+                    >
+                        Login
+                    </Link>
 
-                    <div class="space-y-3">
-                        <Link
-                            href="/login"
-                            class="block rounded-xl py-3 text-center font-medium text-white transition hover:opacity-90"
-                            style="background-color:#3d98aa"
-                        >
-                            Login
-                        </Link>
-
-                        <Link
-                            href="/register"
-                            class="block rounded-xl border py-3 text-center font-medium transition"
-                            style="border-color:#3d98aa;color:#3d98aa"
-                        >
-                            Create Account
-                        </Link>
-                    </div>
+                    <Link
+                        href="/register"
+                        class="block w-full rounded-xl border py-3 text-center font-medium transition"
+                        :style="{
+                            borderColor: theme.primary,
+                            color: theme.primary,
+                        }"
+                    >
+                        Create Account
+                    </Link>
                 </div>
             </template>
         </div>
     </div>
 </template>
+
+<style scoped>
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: #334155;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: rgba(61, 152, 170, 0.08);
+    color: #3d98aa;
+}
+</style>

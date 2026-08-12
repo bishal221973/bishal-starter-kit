@@ -35,8 +35,18 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $setting = \App\Models\Setting::first();
+
         return [
             ...parent::share($request),
+
+            'theme' => [
+                'primary'   => $setting?->primary_color,
+                'secondary' => $setting?->secondary_color,
+                'accent'    => $setting?->accent_color,
+                'text'      => $setting?->text_color,
+                'background' => $setting?->background_color,
+            ],
             //
         ];
     }
