@@ -40,14 +40,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
 
-            'theme' => [
-                'primary'   => $setting?->primary_color,
-                'secondary' => $setting?->secondary_color,
-                'success' => $setting?->success_color,
-                'accent'    => $setting?->accent_color,
-                'text'      => $setting?->text_color,
-                'background' => $setting?->background_color,
-            ],
+            'theme' => $setting ? $setting->toArray() : [],
             //
         ];
     }

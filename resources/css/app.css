@@ -5,3 +5,44 @@
 [x-cloak] {
     display: none;
 }
+
+:root {
+    /* Theme color */
+    --primary: #348797;
+    --secondary: #286a76;
+    --accent: #4fb6c8;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #06b6d4;
+    --background: #ffffff;
+    --text-color: #1e293b;
+    --border-color: #e2e8f0;
+
+    /* Sidebar */
+    --sidebar-position:"left",
+    --sidebar-width:"280",
+    --sidebar: #0f172a;
+    --sidebar-text: #ffffff;
+    --sidebar-hover-color: #1e293b;
+    --sidebar-active-color: #3d98aa;
+    --sidebar-icon-color: #cbd5e1;
+
+    /* Navbar */
+    --navbar: #ffffff;
+    --navbar-text: #1e293b;
+    --navbar-border: #e2e8f0;
+    --navbar-height: "70";
+
+    /* Card */
+    --card-border-radius:"16";
+    
+    /* Button */
+    --button-border-radius:"16";
+
+    /* Font */
+    --font-family:"Inter";
+    --font-size:"14";
+
+
+}
