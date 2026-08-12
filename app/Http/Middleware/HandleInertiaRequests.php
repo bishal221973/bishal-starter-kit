@@ -43,6 +43,7 @@ class HandleInertiaRequests extends Middleware
             'theme' => [
                 'primary'   => $setting?->primary_color,
                 'secondary' => $setting?->secondary_color,
+                'success' => $setting?->success_color,
                 'accent'    => $setting?->accent_color,
                 'text'      => $setting?->text_color,
                 'background' => $setting?->background_color,
