@@ -2,10 +2,10 @@
 import { ref, reactive, nextTick } from 'vue';
 import DialogModal from './DialogModal.vue';
 import InputError from './InputError.vue';
-import PrimaryButton from './Elements/Button.vue/index.js';
 import SecondaryButton from './SecondaryButton.vue';
-import TextInput from './TextInput.vue';
-
+// import TextInput from './TextInput.vue';
+import TextInput from './Elements/TextInput.vue';
+import Button from './Elements/Button.vue';
 const emit = defineEmits(['confirmed']);
 
 defineProps({
@@ -104,14 +104,14 @@ const closeModal = () => {
                     Cancel
                 </SecondaryButton>
 
-                <PrimaryButton
+                <Button
                     class="ms-3"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                     @click="confirmPassword"
                 >
                     {{ button }}
-                </PrimaryButton>
+                </Button>
             </template>
         </DialogModal>
     </span>

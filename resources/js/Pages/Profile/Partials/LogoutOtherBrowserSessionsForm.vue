@@ -5,10 +5,11 @@ import ActionMessage from '@/Components/ActionMessage.vue';
 import ActionSection from '@/Components/ActionSection.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import InputError from '@/Components/InputError.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+// import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-
+// import TextInput from '@/Components/TextInput.vue';
+import TextInput from '@/Components/Elements/TextInput.vue';
+import Button from '@/Components/Elements/Button.vue';
 defineProps({
     sessions: Array,
 });
@@ -88,9 +89,9 @@ const closeModal = () => {
             </div>
 
             <div class="flex items-center mt-5">
-                <PrimaryButton @click="confirmLogout">
+                <Button @click="confirmLogout">
                     Log Out Other Browser Sessions
-                </PrimaryButton>
+                </Button>
 
                 <ActionMessage :on="form.recentlySuccessful" class="ms-3">
                     Done.
@@ -126,14 +127,14 @@ const closeModal = () => {
                         Cancel
                     </SecondaryButton>
 
-                    <PrimaryButton
+                    <Button
                         class="ms-3"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                         @click="logoutOtherBrowserSessions"
                     >
                         Log Out Other Browser Sessions
-                    </PrimaryButton>
+                    </Button>
                 </template>
             </DialogModal>
         </template>

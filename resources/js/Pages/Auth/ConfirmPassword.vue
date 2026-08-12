@@ -5,9 +5,10 @@ import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-
+// import PrimaryButton from '@/Components/PrimaryButton.vue';
+// import TextInput from '@/Components/TextInput.vue';
+import Button from '@/Components/Elements/Button.vue';
+import TextInput from '@/Components/Elements/TextInput.vue';
 const form = useForm({
     password: '',
 });
@@ -54,9 +55,9 @@ const submit = () => {
             </div>
 
             <div class="flex justify-end mt-4">
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <Button class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Confirm
-                </PrimaryButton>
+                </Button>
             </div>
         </form>
     </AuthenticationCard>
