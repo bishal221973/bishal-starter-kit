@@ -10,30 +10,118 @@ import { useTheme } from '@/composables/useTheme'
 const { theme } = useTheme()
 
 watchEffect(() => {
+    // Theme Color
     document.documentElement.style.setProperty(
         '--primary',
         theme.value.primary
     )
-
     document.documentElement.style.setProperty(
         '--secondary',
         theme.value.secondary
     )
-
     document.documentElement.style.setProperty(
         '--accent',
         theme.value.accent
     )
-
+    document.documentElement.style.setProperty(
+        '--success',
+        theme.value.success
+    )
+    document.documentElement.style.setProperty(
+        '--warning',
+        theme.value.warning
+    )
+    document.documentElement.style.setProperty(
+        '--danger',
+        theme.value.danger
+    )
+    document.documentElement.style.setProperty(
+        '--info',
+        theme.value.info
+    )
     document.documentElement.style.setProperty(
         '--background',
         theme.value.background
     )
-
     document.documentElement.style.setProperty(
-        '--text',
-        theme.value.text
+        '--text_color',
+        theme.value.text_color
     )
+    document.documentElement.style.setProperty(
+        '--border_color',
+        theme.value.border_color
+    )
+
+    // Sidebar
+    document.documentElement.style.setProperty(
+        '--sidebar_position',
+        theme.value.sidebar_position
+    )
+    document.documentElement.style.setProperty(
+        '--sidebar_width',
+        theme.value.sidebar_width
+    )
+    document.documentElement.style.setProperty(
+        '--sidebar',
+        theme.value.sidebar
+    )
+    document.documentElement.style.setProperty(
+        '--sidebar_text',
+        theme.value.sidebar_text
+    )
+    document.documentElement.style.setProperty(
+        '--sidebar_hover_color',
+        theme.value.sidebar_hover_color
+    )
+    document.documentElement.style.setProperty(
+        '--sidebar_active_color',
+        theme.value.sidebar_active_color
+    )
+    document.documentElement.style.setProperty(
+        '--sidebar_icon_color',
+        theme.value.sidebar_icon_color
+    )
+
+    // Navbar
+    document.documentElement.style.setProperty(
+        '--navbar',
+        theme.value.navbar
+    )
+    document.documentElement.style.setProperty(
+        '--navbar_text',
+        theme.value.navbar_text
+    )
+    document.documentElement.style.setProperty(
+        '--navbar_border',
+        theme.value.navbar_border
+    )
+    document.documentElement.style.setProperty(
+        '--navbar_height',
+        theme.value.navbar_height
+    )
+
+    // Card
+    document.documentElement.style.setProperty(
+        '--card_border_radius',
+        theme.value.card_border_radius
+    )
+
+    // Button
+    document.documentElement.style.setProperty(
+        '--button_border_radius',
+        theme.value.button_border_radius
+    )
+
+    // Font
+    document.documentElement.style.setProperty(
+        '--font_family',
+        theme.value.font_family
+    )
+    document.documentElement.style.setProperty(
+        '--font_size',
+        theme.value.font_size
+    )
+
 })
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';

@@ -16,11 +16,41 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                Inter:['Inter']
+            },
+             font_size: {
+                base: 'var(--font_size)',
             },
             colors: {
                 primary: 'var(--primary)',
                 secondary: 'var(--secondary)',
                 accent: 'var(--accent)',
+                success: 'var(--success)',
+                warning: 'var(--warning)',
+                danger: 'var(--danger)',
+                info: 'var(--info)',
+                background: 'var(--background)',
+                text_color: 'var(--text_color)',
+                border_color: 'var(--border_color)',
+                sidebar: 'var(--sidebar)',
+                sidebar_text: 'var(--sidebar_text)',
+                sidebar_hover_color: 'var(--sidebar_hover_color)',
+                sidebar_active_color: 'var(--sidebar_active_color)',
+                sidebar_icon_color: 'var(--sidebar_icon_color)',
+                navbar: 'var(--navbar)',
+                navbar_text: 'var(--navbar_text)',
+                navbar_border: 'var(--navbar_border)',
+            },
+            width: {
+                sidebar_width: 'var(--sidebar_width)',
+            },
+            height: {
+                navbar_height: 'var(--navbar_height)',
+            },
+
+            borderRadius: {
+                card_border_radius: 'var(--card_border_radius)',
+                button_border_radius: 'var(--button_border_radius)',
             },
         },
     },
