@@ -73,7 +73,7 @@ const buttonClass = computed(() => {
   position: relative;
   overflow: hidden;
   color: white;
-  padding: 12px 24px;
+  padding: 12px 30px;
   border: none;
   border-radius: 12px;
   font-weight: 600;

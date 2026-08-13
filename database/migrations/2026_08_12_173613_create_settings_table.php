@@ -88,6 +88,9 @@ return new class extends Migration
     */
                         $table->integer('card_border_radius')->default(16);
                         $table->boolean('card_shadow')->default(true);
+                        $table->string('card_header_color')->default('#f2f2f2');
+                        $table->string('card_footer_color')->default('#f2f2f2');
+                        $table->string('card_bg_color')->default('#fff');
 
                         /*
     |--------------------------------------------------------------------------

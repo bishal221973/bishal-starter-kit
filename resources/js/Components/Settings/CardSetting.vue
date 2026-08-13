@@ -10,10 +10,11 @@ const props = defineProps({
 });
 
 const form = useForm({
-  navbar_bg_color: props?.setting?.navbar_bg_color ?? "#ffffff",
-  navbar_text_color: props?.setting?.navbar_text_color ?? "#1e293b",
-  navbar_border_color: props?.setting?.navbar_border_color ?? "#1e293b",
-  navbar_height: props?.setting?.navbar_height ?? "70",
+  card_border_radius: props?.setting?.card_border_radius ?? 16,
+  card_shadow: props?.setting?.card_shadow ?? true,
+  card_header_color: props?.setting?.card_header_color ?? "#f2f2f2",
+  card_footer_color: props?.setting?.card_footer_color ?? "#f2f2f2",
+  card_bg_color: props?.setting?.card_bg_color ?? "#fff",
 });
 
 const save = () => {
@@ -23,51 +24,47 @@ const save = () => {
 <template>
   <Card>
     <template #header>
-      <Label class="font-bold mb-4 text-[19px]">Navbar Settings</Label>
+      <Label class="font-bold mb-4 text-[19px]">Card Settings</Label>
     </template>
     <form @submit.prevent="save">
-      <div>
+      <div class="bg-white rounded-2xl shadow-sm border p-6">
         <div class="grid grid-cols-4 gap-3">
           <div>
             <ColorPicker
-              v-model="form.navbar_bg_color"
+              v-model="form.card_bg_color"
               type="color"
-              text="Navbar Background"
-              placeholder="Enter Navbar Background"
+              text="Card Background"
+              placeholder="Enter Card Background"
               required
-              autofocus
             />
           </div>
           <div>
             <ColorPicker
-              v-model="form.navbar_border_color"
+              v-model="form.card_header_color"
               type="color"
-              text="Navbar Border Color"
-              placeholder="Enter Navbar Border Color"
+              text="Card Header Color"
+              placeholder="Enter Card Header Color"
               required
-              autofocus
             />
           </div>
 
           <div>
             <ColorPicker
-              v-model="form.navbar_text_color"
+              v-model="form.card_footer_color"
               type="color"
-              text="Navbar Text Color"
-              placeholder="Enter Navbar Text Color"
+              text="Card Footer Color"
+              placeholder="Enter Card Footer Color"
               required
-              autofocus
             />
           </div>
 
           <div>
             <TextInput
-              v-model="form.navbar_height"
+              v-model="form.card_border_radius"
               type="number"
-              text="Height"
-              placeholder="Enter Height"
+              text="Card Border Radius"
+              placeholder="Enter Card Border Radius"
               required
-              autofocus
             />
           </div>
         </div>

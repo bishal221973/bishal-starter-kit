@@ -41,6 +41,9 @@ export default {
                 navbar: 'var(--navbar)',
                 navbar_text: 'var(--navbar_text)',
                 navbar_border: 'var(--navbar_border)',
+                card_bg_color: 'var(--card_bg_color)',
+                card_header_color: 'var(--card_header_color)',
+                card_footer_color: 'var(--card_footer_color)',
             },
             width: {
                 sidebar_width: 'var(--sidebar_width)',

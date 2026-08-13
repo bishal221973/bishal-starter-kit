@@ -51,6 +51,9 @@ class SettingController extends Controller
 
             'card_border_radius' => ['nullable', 'integer'],
             'card_shadow' => ['boolean'],
+            'card_header_color' => ['nullable'],
+            'card_footer_color' => ['nullable'],
+            'card_bg_color' => ['nullable'],
 
             'button_border_radius' => ['nullable', 'integer'],
 

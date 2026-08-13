@@ -14,7 +14,7 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         Setting::create([
-            'sidebar_bg_color'=>'0f172a'
+            'sidebar_bg_color'=>'#3d98aa'
         ]);
     }
 }

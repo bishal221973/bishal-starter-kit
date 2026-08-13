@@ -109,6 +109,18 @@ watchEffect(() => {
         '--card_border_radius',
         theme.value.card_border_radius
     )
+     document.documentElement.style.setProperty(
+        '--card_bg_color',
+        theme.value.card_bg_color
+    )
+    document.documentElement.style.setProperty(
+        '--card_header_color',
+        theme.value.card_header_color
+    )
+    document.documentElement.style.setProperty(
+        '--card_footer_color',
+        theme.value.card_footer_color
+    )
 
     // Button
     document.documentElement.style.setProperty(

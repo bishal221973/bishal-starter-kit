@@ -5,6 +5,7 @@ import Label from "@/Components/Label.vue";
 import ThemeColor from "@/Components/Settings/ThemeColor.vue";
 import SidebarSetting from "@/Components/Settings/SidebarSetting.vue";
 import NavbarSetting from "@/Components/Settings/NavbarSetting.vue";
+import CardSetting from "@/Components/Settings/CardSetting.vue";
 const props = defineProps({
   setting: Object,
 });
@@ -63,7 +64,7 @@ const save = () => {
         >
       </div>
 
-      <form @submit.prevent="save">
+      <!-- <form @submit.prevent="save"> -->
         <div class="grid grid-cols-12 gap-6">
           <!-- Theme Colors -->
 
@@ -80,55 +81,12 @@ const save = () => {
             <NavbarSetting :setting="setting" />
           </div>
 
-          <!-- Typography -->
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <Label class="font-semibold mb-4">Typography</Label>
-
-            <div class="space-y-4">
-              <input
-                v-model="form.font_family"
-                placeholder="Font Family"
-                class="w-full border rounded-xl px-4 py-2"
-              />
-
-              <input
-                type="number"
-                v-model="form.font_size"
-                placeholder="Font Size"
-                class="w-full border rounded-xl px-4 py-2"
-              />
-            </div>
+          <div class="col-span-12">
+            <CardSetting :setting="setting" />
           </div>
 
-          <!-- Features -->
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <Label class="font-semibold mb-4">Features</Label>
-
-            <div class="space-y-4">
-              <label class="flex items-center gap-3">
-                <input type="checkbox" v-model="form.enable_animations" />
-                Enable Animations
-              </label>
-
-              <label class="flex items-center gap-3">
-                <input type="checkbox" v-model="form.enable_breadcrumbs" />
-                Enable Breadcrumbs
-              </label>
-
-              <label class="flex items-center gap-3">
-                <input type="checkbox" v-model="form.enable_notifications" />
-                Enable Notifications
-              </label>
-            </div>
-          </div>
+          
         </div>
-
-        <div class="mt-6">
-          <button type="submit" class="px-6 py-3 rounded-xl bg-primary text-white">
-            Save Settings
-          </button>
-        </div>
-      </form>
     </div>
   </AppLayout>
 </template>
