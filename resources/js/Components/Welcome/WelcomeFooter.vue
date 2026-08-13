@@ -5,7 +5,7 @@ const { theme } = useTheme();
 </script>
 
 <template>
-    <footer class="mt-12 border-t border-slate-200 pt-8">
+    <footer class="mt-12 pt-8">
         <!-- <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
         >
@@ -89,7 +89,7 @@ const { theme } = useTheme();
 
         <!-- Bottom Footer -->
         <div
-            class="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3"
+            class="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 max-w-4xl mx-auto pb-[20px]"
         >
             <p class="text-sm text-slate-500">
                 © {{ new Date().getFullYear() }}

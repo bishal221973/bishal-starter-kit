@@ -63,7 +63,7 @@ const submit = () => {
               type="email"
               text="Email Address"
               placeholder="Enter your email"
-              autocomplete="username"
+              autocomplete="off"
               required
               autofocus
             />
@@ -79,7 +79,7 @@ const submit = () => {
               :type="showPassword ? 'text' : 'password'"
               text="Password"
               placeholder="Enter your password"
-              autocomplete="current-password"
+              autocomplete="off"
               required
             />
 
@@ -105,8 +105,9 @@ const submit = () => {
 
           <!-- Submit -->
           <Button
+            :submit="true"
             type="success"
-            class="login-btn p-2 rounded-md text-white"
+            class="login-btn"
             :disabled="form.processing"
             :class="{
               'opacity-50 cursor-not-allowed': form.processing,
@@ -217,10 +218,10 @@ const submit = () => {
   text-decoration: underline;
 }
 
-.login-btn {
+/* .login-btn {
   width: 100%;
   margin-top: 10px;
-}
+} */
 
 .cover-section {
   flex: 1;
