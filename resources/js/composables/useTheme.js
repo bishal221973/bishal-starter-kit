@@ -12,7 +12,6 @@ const defaultTheme = {
     background: '#ffffff',
     text_color: '#ffffff',
     border_color: '#ffffff',
-    sidebar_position: '#ffffff',
     sidebar_width: '#ffffff',
     sidebar: '#000',
     sidebar_text: '#ffffff',
@@ -28,6 +27,7 @@ const defaultTheme = {
     button_border_radius: '#ffffff',
     font_family: '#ffffff',
     font_size: '#ffffff',
+    sidebar_position: 'left',
 }
 
 export function useTheme() {

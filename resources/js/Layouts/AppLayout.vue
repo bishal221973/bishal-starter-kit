@@ -55,7 +55,7 @@ const toggleSidebar = () => {
 
     <!-- Sidebar layout fix: Transition padding wrapper instead of content margins -->
     <div class="flex h-[100vh] overflow-hidden">
-      <Sidebar :sidebarOpen="sidebarOpen" :pt="`${theme?.navbar_height+25}px`"/>
+      <Sidebar v-if="theme?.sidebar_position =='left'" :sidebarOpen="sidebarOpen" :pt="`${theme?.navbar_height+25}px`"/>
 
       <!-- Main Content Area: Padding based control eliminates layout jump glitches completely -->
       <main :style="{paddingTop:theme?.navbar_height+'px'}" :class="['min-h-screen transition-all w-full duration-300 overflow-y-auto']">
@@ -64,6 +64,7 @@ const toggleSidebar = () => {
           <slot />
         </div>
       </main>
+      <Sidebar v-if="theme?.sidebar_position =='right'" :sidebarOpen="sidebarOpen" :pt="`${theme?.navbar_height+25}px`"/>
     </div>
   </div>
 </template>

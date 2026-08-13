@@ -7,8 +7,6 @@ const props=defineProps({
 })
 
 const form = useForm({
-    site_name: '',
-    site_description: '',
 
     primary_color: props.setting?.primary_color ?? '#3d98aa',
     secondary_color: props?.setting?.secondary_color ?? '#2f7f8f',
@@ -23,6 +21,7 @@ const form = useForm({
     sidebar_hover_text_color:props?.setting?.sidebar_hover_text_color ?? '#1e293b',
     sidebar_active_color:props?.setting?.sidebar_active_color ?? '#3d98aa',
     sidebar_width:props?.setting?.sidebar_width ?? '280',
+    sidebar_position:props?.setting?.sidebar_position ?? 'left',
 
     navbar_bg_color:props?.setting?.navbar_bg_color ?? '#ffffff',
     navbar_text_color:props?.setting?.navbar_text_color ?? '#1e293b',
@@ -64,37 +63,7 @@ const save = () => {
             <form @submit.prevent="save">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                    <!-- Brand Settings -->
-                    <div class="bg-white rounded-2xl shadow-sm border p-6">
-                        <h2 class="font-semibold mb-4">
-                            Brand Settings
-                        </h2>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block mb-2">
-                                    Site Name
-                                </label>
-
-                                <input
-                                    v-model="form.site_name"
-                                    class="w-full border rounded-xl px-4 py-2"
-                                >
-                            </div>
-
-                            <div>
-                                <label class="block mb-2">
-                                    Site Description
-                                </label>
-
-                                <textarea
-                                    v-model="form.site_description"
-                                    class="w-full border rounded-xl px-4 py-2"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
+                   
                     <!-- Theme Colors -->
                     <div class="bg-white rounded-2xl shadow-sm border p-6">
                         <h2 class="font-semibold mb-4">
@@ -186,6 +155,15 @@ const save = () => {
                                     v-model="form.sidebar_hover_text_color"
                                     class="w-full h-12"
                                 >
+                            </div>
+                            <div>
+                                <label>Hover Text Color</label>
+
+                                <select name="" id="" class="w-full h-12" v-model="form.sidebar_position">
+                                    <option value="left">Left</option>
+                                    <option value="right">Right</option>
+                                    <option value="top">Top</option>
+                                </select>
                             </div>
 
                             <div>

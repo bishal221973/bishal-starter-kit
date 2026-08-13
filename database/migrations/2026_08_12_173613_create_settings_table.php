@@ -38,7 +38,8 @@ return new class extends Migration
     */
                         $table->enum('sidebar_position', [
                                 'left',
-                                'right'
+                                'right',
+                                'top'
                         ])->default('left');
 
                         $table->integer('sidebar_width')->default(280);
