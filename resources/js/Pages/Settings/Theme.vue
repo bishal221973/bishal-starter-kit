@@ -3,7 +3,7 @@ import { useForm } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import Label from "@/Components/Label.vue";
 import TextInput from "@/Components/Elements/TextInput.vue";
-
+import ThemeColor from "@/Components/Settings/ThemeColor.vue";
 const props = defineProps({
   setting: Object,
 });
@@ -54,7 +54,7 @@ const save = () => {
 
 <template>
   <AppLayout>
-    <div class="max-w-7xl mx-auto p-6">
+    <div class=" mx-auto">
       <div class="mb-6">
         <Label class="text-2xl font-bold">Theme Settings</Label>
         <Label class="text-slate-500 block" opacity="80"
@@ -65,105 +65,59 @@ const save = () => {
       <form @submit.prevent="save">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Theme Colors -->
+          
+            <ThemeColor :setting="setting"/>
+          <!-- Sidebar -->
           <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <Label class="font-semibold mb-4">Theme Colors</Label>
+            <Label class="font-semibold mb-4">Sidebar</Label>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-4 grid grid-cols-2 gap-4">
               <div>
-                <label>Primary</label>
-                <input type="color" v-model="form.primary_color" class="w-full h-12" />
                 <TextInput
                   id="email"
-                  v-model="form.primary_color"
-                  type="email"
-                  text="Email Address"
-                  placeholder="Enter your email"
-                  autocomplete="off"
+                  v-model="form.sidebar_bg_color"
+                  type="color"
+                  text="Background Color"
+                  placeholder="Enter Background Color"
                   required
                   autofocus
                 />
               </div>
 
               <div>
-                <label>Secondary</label>
-                <input type="color" v-model="form.secondary_color" class="w-full h-12" />
-              </div>
-
-              <div>
-                <label>Accent</label>
-                <input type="color" v-model="form.accent_color" class="w-full h-12" />
-              </div>
-
-              <div>
-                <label>Success</label>
-                <input type="color" v-model="form.success_color" class="w-full h-12" />
-              </div>
-
-              <div>
-                <label>Warning</label>
-                <input type="color" v-model="form.warning_color" class="w-full h-12" />
-              </div>
-
-              <div>
-                <label>Danger</label>
-                <input type="color" v-model="form.danger_color" class="w-full h-12" />
-              </div>
-
-              <div>
-                <label>Info</label>
-                <input type="color" v-model="form.info_color" class="w-full h-12" />
-              </div>
-
-              <div>
-                <label>Background</label>
-                <input type="color" v-model="form.background_color" class="w-full h-12" />
-              </div>
-              <div>
-                <label>Text Color</label>
-                <input type="color" v-model="form.text_color" class="w-full h-12" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Sidebar -->
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <Label class="font-semibold mb-4">Sidebar</Label>
-
-            <div class="space-y-4">
-              <div>
-                <label>Background Color</label>
-
-                <input type="color" v-model="form.sidebar_bg_color" class="w-full h-12" />
-              </div>
-
-              <div>
-                <label>Text Color</label>
-
-                <input
-                  type="color"
+                <TextInput
+                  id="email"
                   v-model="form.sidebar_text_color"
-                  class="w-full h-12"
+                  type="color"
+                  text="Text Color"
+                  placeholder="Enter Text Color"
+                  required
+                  autofocus
                 />
               </div>
               <div>
-                <label>Hover Background Color</label>
-
-                <input
-                  type="color"
+                <TextInput
+                  id="email"
                   v-model="form.sidebar_hover_color"
-                  class="w-full h-12"
-                />
-              </div>
-              <div>
-                <label>Hover Text Color</label>
-
-                <input
                   type="color"
-                  v-model="form.sidebar_hover_text_color"
-                  class="w-full h-12"
+                  text="Hover Background Color"
+                  placeholder="Enter Hover Background Color"
+                  required
+                  autofocus
                 />
               </div>
               <div>
+                <TextInput
+                  id="email"
+                  v-model="form.sidebar_hover_text_color"
+                  type="color"
+                  text="Hover Text Color"
+                  placeholder="Enter Hover Text Color"
+                  required
+                  autofocus
+                />
+              </div>
+              <div class="col-span-2">
                 <label>Hover Text Color</label>
 
                 <select name="" id="" class="w-full h-12" v-model="form.sidebar_position">
@@ -173,13 +127,15 @@ const save = () => {
                 </select>
               </div>
 
-              <div>
-                <label>Width</label>
-
-                <input
-                  type="number"
+              <div class="col-span-2">
+                <TextInput
+                  id="email"
                   v-model="form.sidebar_width"
-                  class="w-full border rounded-xl px-4 py-2"
+                  type="number"
+                  text="Width"
+                  placeholder="Enter Width"
+                  required
+                  autofocus
                 />
               </div>
             </div>
@@ -191,37 +147,50 @@ const save = () => {
 
             <div class="space-y-4">
               <div>
-                <label>Navbar Background</label>
-
-                <input type="color" v-model="form.navbar_bg_color" class="w-full h-12" />
+                <TextInput
+                  id="email"
+                  v-model="form.navbar_bg_color"
+                  type="color"
+                  text="Navbar Background"
+                  placeholder="Enter Navbar Background"
+                  required
+                  autofocus
+                />
               </div>
               <div>
-                <label>Navbar Border Color</label>
-
-                <input
-                  type="color"
+                <TextInput
+                  id="email"
                   v-model="form.navbar_border_color"
-                  class="w-full h-12"
-                />
-              </div>
-
-              <div>
-                <label>Navbar Text</label>
-
-                <input
                   type="color"
-                  v-model="form.navbar_text_color"
-                  class="w-full h-12"
+                  text="Navbar Border Color"
+                  placeholder="Enter Navbar Border Color"
+                  required
+                  autofocus
                 />
               </div>
 
               <div>
-                <label>Width</label>
+                
+                <TextInput
+                  id="email"
+                  v-model="form.navbar_text_color"
+                  type="color"
+                  text="Navbar Text Color"
+                  placeholder="Enter Navbar Text Color"
+                  required
+                  autofocus
+                />
+              </div>
 
-                <input
-                  type="number"
+              <div>
+                <TextInput
+                  id="email"
                   v-model="form.navbar_height"
-                  class="w-full border rounded-xl px-4 py-2"
+                  type="number"
+                  text="Height"
+                  placeholder="Enter Height"
+                  required
+                  autofocus
                 />
               </div>
             </div>
