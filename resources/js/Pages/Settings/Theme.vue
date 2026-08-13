@@ -2,8 +2,9 @@
 import { useForm } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import Label from "@/Components/Label.vue";
-import TextInput from "@/Components/Elements/TextInput.vue";
 import ThemeColor from "@/Components/Settings/ThemeColor.vue";
+import SidebarSetting from "@/Components/Settings/SidebarSetting.vue";
+import NavbarSetting from "@/Components/Settings/NavbarSetting.vue";
 const props = defineProps({
   setting: Object,
 });
@@ -54,7 +55,7 @@ const save = () => {
 
 <template>
   <AppLayout>
-    <div class=" mx-auto">
+    <div class="mx-auto">
       <div class="mb-6">
         <Label class="text-2xl font-bold">Theme Settings</Label>
         <Label class="text-slate-500 block" opacity="80"
@@ -63,137 +64,20 @@ const save = () => {
       </div>
 
       <form @submit.prevent="save">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-12 gap-6">
           <!-- Theme Colors -->
-          
-            <ThemeColor :setting="setting"/>
-          <!-- Sidebar -->
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <Label class="font-semibold mb-4">Sidebar</Label>
 
-            <div class="space-y-4 grid grid-cols-2 gap-4">
-              <div>
-                <TextInput
-                  id="email"
-                  v-model="form.sidebar_bg_color"
-                  type="color"
-                  text="Background Color"
-                  placeholder="Enter Background Color"
-                  required
-                  autofocus
-                />
-              </div>
-
-              <div>
-                <TextInput
-                  id="email"
-                  v-model="form.sidebar_text_color"
-                  type="color"
-                  text="Text Color"
-                  placeholder="Enter Text Color"
-                  required
-                  autofocus
-                />
-              </div>
-              <div>
-                <TextInput
-                  id="email"
-                  v-model="form.sidebar_hover_color"
-                  type="color"
-                  text="Hover Background Color"
-                  placeholder="Enter Hover Background Color"
-                  required
-                  autofocus
-                />
-              </div>
-              <div>
-                <TextInput
-                  id="email"
-                  v-model="form.sidebar_hover_text_color"
-                  type="color"
-                  text="Hover Text Color"
-                  placeholder="Enter Hover Text Color"
-                  required
-                  autofocus
-                />
-              </div>
-              <div class="col-span-2">
-                <label>Hover Text Color</label>
-
-                <select name="" id="" class="w-full h-12" v-model="form.sidebar_position">
-                  <option value="left">Left</option>
-                  <option value="right">Right</option>
-                  <option value="top">Top</option>
-                </select>
-              </div>
-
-              <div class="col-span-2">
-                <TextInput
-                  id="email"
-                  v-model="form.sidebar_width"
-                  type="number"
-                  text="Width"
-                  placeholder="Enter Width"
-                  required
-                  autofocus
-                />
-              </div>
-            </div>
+          <div class="col-span-12">
+            <ThemeColor :setting="setting" />
           </div>
+          <!-- Sidebar -->
 
+          <div class="col-span-12">
+            <SidebarSetting :setting="setting" />
+          </div>
           <!-- Navbar -->
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <Label class="font-semibold mb-4">Navbar</Label>
-
-            <div class="space-y-4">
-              <div>
-                <TextInput
-                  id="email"
-                  v-model="form.navbar_bg_color"
-                  type="color"
-                  text="Navbar Background"
-                  placeholder="Enter Navbar Background"
-                  required
-                  autofocus
-                />
-              </div>
-              <div>
-                <TextInput
-                  id="email"
-                  v-model="form.navbar_border_color"
-                  type="color"
-                  text="Navbar Border Color"
-                  placeholder="Enter Navbar Border Color"
-                  required
-                  autofocus
-                />
-              </div>
-
-              <div>
-                
-                <TextInput
-                  id="email"
-                  v-model="form.navbar_text_color"
-                  type="color"
-                  text="Navbar Text Color"
-                  placeholder="Enter Navbar Text Color"
-                  required
-                  autofocus
-                />
-              </div>
-
-              <div>
-                <TextInput
-                  id="email"
-                  v-model="form.navbar_height"
-                  type="number"
-                  text="Height"
-                  placeholder="Enter Height"
-                  required
-                  autofocus
-                />
-              </div>
-            </div>
+          <div class="col-span-12">
+            <NavbarSetting :setting="setting" />
           </div>
 
           <!-- Typography -->

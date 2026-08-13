@@ -2,7 +2,7 @@
 import { useForm } from "@inertiajs/vue3";
 import Label from "@/Components/Label.vue";
 import TextInput from "@/Components/Elements/TextInput.vue";
-
+import ColorPicker from "../Elements/ColorPicker.vue";
 const props = defineProps({
   setting: Object,
 });
@@ -29,10 +29,9 @@ const save = () => {
     <div class="bg-white rounded-2xl shadow-sm border p-6">
       <Label class="font-semibold mb-4">Theme Colors</Label>
 
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-3 gap-4">
         <div>
-          <TextInput
-            id="email"
+          <ColorPicker
             v-model="form.primary_color"
             type="color"
             text="Primary"
@@ -43,8 +42,7 @@ const save = () => {
         </div>
 
         <div>
-          <TextInput
-            id="email"
+          <ColorPicker
             v-model="form.secondary_color"
             type="color"
             text="Secondary"
@@ -55,8 +53,7 @@ const save = () => {
         </div>
 
         <div>
-          <TextInput
-            id="email"
+          <ColorPicker
             v-model="form.accent_color"
             type="color"
             text="Accent"
@@ -67,8 +64,7 @@ const save = () => {
         </div>
 
         <div>
-          <TextInput
-            id="email"
+          <ColorPicker
             v-model="form.success_color"
             type="color"
             text="Success"
@@ -79,8 +75,7 @@ const save = () => {
         </div>
 
         <div>
-          <TextInput
-            id="email"
+          <ColorPicker
             v-model="form.warning_color"
             type="color"
             text="Warning"
@@ -91,8 +86,7 @@ const save = () => {
         </div>
 
         <div>
-          <TextInput
-            id="email"
+          <ColorPicker
             v-model="form.danger_color"
             type="color"
             text="Danger"
@@ -103,8 +97,7 @@ const save = () => {
         </div>
 
         <div>
-          <TextInput
-            id="email"
+          <ColorPicker
             v-model="form.info_color"
             type="color"
             text="Info"
@@ -115,8 +108,7 @@ const save = () => {
         </div>
 
         <div>
-          <TextInput
-            id="email"
+          <ColorPicker
             v-model="form.background_color"
             type="color"
             text="Background"
@@ -126,8 +118,7 @@ const save = () => {
           />
         </div>
         <div>
-          <TextInput
-            id="email"
+          <ColorPicker
             v-model="form.text_color"
             type="color"
             text="Text Color"
