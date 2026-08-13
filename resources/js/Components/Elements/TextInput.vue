@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, useTemplateRef } from "vue";
-import InputLabel from "../InputLabel.vue";
+
 
 defineProps({
   text: String,
@@ -26,12 +26,12 @@ defineExpose({ focus: () => inputRef.value?.focus() });
 
 <template>
   <div class="w-full">
-    <InputLabel
+    <!-- <InputLabel
       for="email"
       :value="text"
       class="text-gray-700 dark:text-gray-300 font-medium"
       :required="required"
-    />
+    /> -->
     <div class="relative w-full group">
       <input
         ref="inputElement"

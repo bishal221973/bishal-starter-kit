@@ -49,7 +49,7 @@ const toggleSidebar = () => {
 <template>
   <Head title="Dashboard" />
 
-  <div class="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased">
+  <div class="min-h-screen bg-background text-slate-900 font-sans antialiased">
     <!-- Top Navbar -->
     <Navbar @toggle-sidebar="toggleSidebar" :sidebarOpen="sidebarOpen" />
 

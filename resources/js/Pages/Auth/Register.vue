@@ -1,14 +1,13 @@
 <script setup>
 import { ref } from "vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import AuthenticationCardLogo from "@/Components/AuthenticationCardLogo.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
-import InputLabel from "@/Components/InputLabel.vue";
+// import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/Elements/TextInput.vue";
 import Button from "@/Components/Elements/Button.vue";
 import HorizontalLogo from "@/Components/Logo/HorizontalLogo.vue";
-
+import Label from "@/Components/Label.vue";
 const step = ref(1);
 
 const form = useForm({
@@ -97,7 +96,7 @@ const submit = () => {
           <!-- STEP 1 -->
           <div v-if="step === 1" class="space-y-5">
             <div>
-              <InputLabel for="name" value="Full Name" />
+              <!-- <InputLabel for="name" value="Full Name" /> -->
 
               <TextInput
                 id="name"
@@ -110,7 +109,7 @@ const submit = () => {
             </div>
 
             <div>
-              <InputLabel for="email" value="Email Address" />
+              <!-- <InputLabel for="email" value="Email Address" /> -->
 
               <TextInput
                 id="email"
@@ -134,7 +133,7 @@ const submit = () => {
           <!-- STEP 2 -->
           <div v-if="step === 2" class="space-y-5">
             <div>
-              <InputLabel for="password" value="Password" />
+              <!-- <InputLabel for="password" value="Password" /> -->
 
               <TextInput
                 id="password"
@@ -147,7 +146,7 @@ const submit = () => {
             </div>
 
             <div>
-              <InputLabel for="password_confirmation" value="Confirm Password" />
+              <!-- <InputLabel for="password_confirmation" value="Confirm Password" /> -->
 
               <TextInput
                 id="password_confirmation"
