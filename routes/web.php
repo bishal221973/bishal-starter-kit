@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SettingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,4 +22,9 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+});
+
+Route::prefix('settings')->group(function(){
+    Route::get('theme-setting',[SettingController::class,'theme'])->name('theme.setting');
+    Route::post('theme-setting-update',[SettingController::class,'themeUpdate'])->name('theme.setting.update');
 });

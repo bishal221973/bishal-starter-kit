@@ -14,9 +14,10 @@ const defaultTheme = {
     border_color: '#ffffff',
     sidebar_position: '#ffffff',
     sidebar_width: '#ffffff',
-    sidebar: '#ffffff',
+    sidebar: '#000',
     sidebar_text: '#ffffff',
     sidebar_hover_color: '#ffffff',
+    sidebar_hover_text_color: '#ffffff',
     sidebar_active_color: '#ffffff',
     sidebar_icon_color: '#ffffff',
     navbar: '#ffffff',
@@ -34,7 +35,7 @@ export function useTheme() {
 
     const theme = computed(() => {
         const dbTheme = page.props?.theme || {}
-        // console.log(dbTheme)
+        console.log(dbTheme?.sidebar_bg_color)
         return {
             primary: dbTheme.primary_color || defaultTheme.primary,
             secondary: dbTheme.secondary_color || defaultTheme.secondary,
@@ -51,6 +52,7 @@ export function useTheme() {
             sidebar: dbTheme.sidebar_bg_color || defaultTheme.sidebar,
             sidebar_text: dbTheme.sidebar_text_color || defaultTheme.sidebar_text,
             sidebar_hover_color: dbTheme.sidebar_hover_color || defaultTheme.sidebar_hover_color,
+            sidebar_hover_text_color: dbTheme.sidebar_hover_text_color || defaultTheme.sidebar_hover_text_color,
             sidebar_active_color: dbTheme.sidebar_active_color || defaultTheme.sidebar_active_color,
             sidebar_icon_color: dbTheme.sidebar_icon_color || defaultTheme.sidebar_icon_color,
             navbar: dbTheme.navbar_bg_color || defaultTheme.navbar,

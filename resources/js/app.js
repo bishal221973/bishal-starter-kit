@@ -59,8 +59,8 @@ watchEffect(() => {
     )
     document.documentElement.style.setProperty(
         '--sidebar_width',
-        theme.value.sidebar_width
-    )
+        `${theme.value.sidebar_width}px`
+    );
     document.documentElement.style.setProperty(
         '--sidebar',
         theme.value.sidebar
@@ -72,6 +72,10 @@ watchEffect(() => {
     document.documentElement.style.setProperty(
         '--sidebar_hover_color',
         theme.value.sidebar_hover_color
+    )
+    document.documentElement.style.setProperty(
+        '--sidebar_hover_text_color',
+        theme.value.sidebar_hover_text_color
     )
     document.documentElement.style.setProperty(
         '--sidebar_active_color',
@@ -97,7 +101,7 @@ watchEffect(() => {
     )
     document.documentElement.style.setProperty(
         '--navbar_height',
-        theme.value.navbar_height
+        `${theme.value.navbar_height}px`
     )
 
     // Card
@@ -121,6 +125,8 @@ watchEffect(() => {
         '--font_size',
         theme.value.font_size
     )
+
+    console.log(theme.value)
 
 })
 

@@ -1,13 +1,19 @@
 <script setup>
 const emit = defineEmits(["toggle-sidebar"]);
+import { useTheme } from '@/composables/useTheme'
 
 defineProps({
   sidebarOpen: Boolean,
 });
+
+const { theme } = useTheme()
 </script>
 <template>
   <header
-    class="fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-300"
+    class="fixed top-0 left-0 right-0 z-50 h-navbar_height  backdrop-blur-md border-b border-navbar_border shadow-sm transition-all duration-300"
+    :style="{
+        backgroundColor:theme.navbar+'90'
+    }"
   >
     <div class="h-full px-6 flex items-center justify-between">
       <div class="flex items-center gap-4">
@@ -33,7 +39,7 @@ defineProps({
 
         <div>
           <h1
-            class="font-bold text-lg tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent"
+            class="font-bold text-lg tracking-tight bg-gradient-to-r from-primary via-warning to-info bg-clip-text text-transparent"
           >
             Bishal Starter Kit
           </h1>
@@ -71,8 +77,13 @@ defineProps({
             B
           </div>
           <div class="hidden sm:block text-left transition-all duration-300">
-            <p class="text-xs font-semibold text-slate-800 leading-none">Bishal Codes</p>
-            <p class="text-[10px] text-slate-400 font-medium mt-1">Super Admin</p>
+            <p class="text-xs font-semibold text-slate-800 leading-none" 
+            :style="{
+                color:theme.navbar_text
+            }">Bishal Codes</p>
+            <p class="text-[10px] text-slate-400 font-medium mt-1" :style="{
+                color:theme.navbar_text+'80'
+            }">Super Admin</p>
           </div>
         </div>
       </div>

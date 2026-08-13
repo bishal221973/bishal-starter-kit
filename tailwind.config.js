@@ -35,6 +35,7 @@ export default {
                 sidebar: 'var(--sidebar)',
                 sidebar_text: 'var(--sidebar_text)',
                 sidebar_hover_color: 'var(--sidebar_hover_color)',
+                sidebar_hover_text_color: 'var(--sidebar_hover_text_color)',
                 sidebar_active_color: 'var(--sidebar_active_color)',
                 sidebar_icon_color: 'var(--sidebar_icon_color)',
                 navbar: 'var(--navbar)',
