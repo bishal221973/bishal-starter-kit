@@ -105,18 +105,21 @@ const submit = () => {
 
           <!-- Submit -->
           <Button
+            class="w-full relative"
             :submit="true"
-            type="success"
-            class="login-btn"
             :disabled="form.processing"
-            :class="{
-              'opacity-50 cursor-not-allowed': form.processing,
-            }"
-          >
-            <span v-if="form.processing"> Signing In... </span>
+            :processing="form.processing"
+            :text="form.processing ? 'Signing In...' : 'Sign In'"
+            type="success"
+          />
 
-            <span v-else> Sign In </span>
-          </Button>
+          <div>
+            <span class="text-[#f2f2f2]"
+              >Does not have an account ?
+              <Link class="font-bold text-white" :href="route('register')">Register</Link>
+              from here</span
+            >
+          </div>
         </form>
       </div>
     </div>
