@@ -6,9 +6,13 @@ import Card from "../Elements/Card.vue";
 import Button from "../Elements/Button.vue";
 import Modal from "../Modal.vue";
 import { ref } from "vue";
+import { RisingSelect } from "rising-select";
+import { useTheme } from "@/composables/useTheme.js";
+
 const props = defineProps({
   config: Object,
 });
+const { theme } = useTheme();
 
 const showModal = ref(false);
 
@@ -29,6 +33,12 @@ const save = () => {
     },
   });
 };
+
+const options = [
+  { label: "Daily", value: "daily" },
+  { label: "Weekly", value: "weekly" },
+  { label: "Monthly", value: "monthly" },
+];
 </script>
 
 <template>
@@ -46,11 +56,6 @@ const save = () => {
       <div class="px-6 py-3 border-b border-slate-100 bg-card_header_color">
         <div>
           <Label class="font-bold text-xl"> Backup Config </Label>
-
-          <Label class="text-slate-500 block">
-            Configure automatic backups, retention policies, and data recovery settings to
-            ensure your application data remains secure and protected.
-          </Label>
         </div>
       </div>
 
@@ -83,21 +88,35 @@ const save = () => {
           <div v-if="form.enable_auto_backup" class="space-y-2">
             <div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <TextInput
-                  v-model="form.backup_frequency"
-                  type="text"
-                  text="Backup Frequency"
-                  placeholder="Backup Frequency"
-                  required
-                />
+                <div>
+                  <Label class="font-medium text-slate-700 mb-[7px] block">
+                    Backup Frequency
+                    <span class="text-red-500 ml-1"> * </span>
+                  </Label>
+                  <RisingSelect
+                    v-model="form.backup_frequency"
+                    :options="options"
+                    wrapperBg="bg-white"
+                    wrapperRounded="rounded-xl"
+                    wrapperClass="border border-primary shadow-sm transition-all duration-200 ease-in-out outline-none hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-indigo-500/10 focus:shadow-md"
+                    inputClass="text-sm focus:ring-0 py-[1px] focus:outline-0"
+                    :primaryColor="theme?.primary"
+                    placeholder="Backup Frequency"
+                  />
+                </div>
 
                 <TextInput
                   v-model="form.backup_retention_days"
-                  type="text"
-                  text="Backup Frequency"
-                  placeholder="Backup Frequency"
+                  type="number"
+                  step="1"
+                  text="Backup Retention Days"
+                  placeholder="Backup Retention Days"
                 />
               </div>
+              <Label class="text-slate-500 block mt-10" opacity="80">
+                Configure automatic backups, retention policies, and data recovery
+                settings to ensure your application data remains secure and protected.
+              </Label>
             </div>
           </div>
 

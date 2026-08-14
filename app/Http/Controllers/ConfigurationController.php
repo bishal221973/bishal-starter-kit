@@ -18,13 +18,18 @@ class ConfigurationController extends Controller
     public function update(Request $request)
     {
         $data = $request->validate([
-            'enable_password_policy' => ['required'],
+            'enable_password_policy' => ['nullable'],
             'minimum_password_length' => ['nullable'],
             'require_uppercase' => ['nullable'],
             'require_lowercase' => ['nullable'],
             'require_number' => ['nullable'],
             'require_special_character' => ['nullable'],
             'password_expiry_days' => ['nullable'],
+
+            // Backup
+            'enable_auto_backup'=>'nullable',
+            'backup_frequency'=>'nullable',
+            'backup_retention_days'=>'nullable',
         ]);
 
         $setting = Configuration::first();
