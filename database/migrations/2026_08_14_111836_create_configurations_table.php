@@ -57,7 +57,6 @@ return new class extends Migration
             $table->boolean('show_logout_warning')->default(true);
             $table->unsignedInteger('logout_warning_time')->default(1); // minutes before logout
 
-
             // IP Security
             $table->boolean('enable_ip_blacklist')->default(false);
             $table->json('blacklisted_ips')->nullable();
@@ -70,12 +69,12 @@ return new class extends Migration
 
             $table->text('footer_text')->nullable();
 
-            // Backup
+            // Backup===
             $table->boolean('enable_auto_backup')->default(false);
             $table->string('backup_frequency')->default('daily');
             $table->unsignedInteger('backup_retention_days')->default(30);
 
-            // Password_policy
+            // Password_policy===
             $table->boolean('enable_password_policy')->default(false);
             $table->unsignedTinyInteger('minimum_password_length')->default(8);
             $table->boolean('require_uppercase')->default(true);
