@@ -24,13 +24,12 @@ const save = () => {
 };
 </script>
 <template>
-  <Card>
-  <template #header>
+  <Card class="mb-5">
+    <template #header>
       <Label class="font-bold mb-4 text-[19px]">Sidebar Settings</Label>
     </template>
     <form @submit.prevent="save">
       <div class="bg-white rounded-2xl shadow-sm border p-6">
-       
         <div class="grid grid-cols-3 gap-4">
           <div>
             <ColorPicker

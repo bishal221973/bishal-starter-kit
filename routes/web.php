@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -27,4 +28,9 @@ Route::middleware([
 Route::prefix('settings')->group(function(){
     Route::get('theme-setting',[SettingController::class,'theme'])->name('theme.setting');
     Route::post('theme-setting-update',[SettingController::class,'themeUpdate'])->name('theme.setting.update');
+});
+
+Route::prefix('configurations')->group(function(){
+    Route::get('configuration',[ConfigurationController::class,'index'])->name('configuration.setting');
+    Route::post('configuration-update',[ConfigurationController::class,'Update'])->name('configuration.setting.update');
 });

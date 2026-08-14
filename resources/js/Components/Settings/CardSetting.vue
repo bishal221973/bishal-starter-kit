@@ -22,7 +22,7 @@ const save = () => {
 };
 </script>
 <template>
-  <Card>
+  <Card class="mb-5">
     <template #header>
       <Label class="font-bold mb-4 text-[19px]">Card Settings</Label>
     </template>

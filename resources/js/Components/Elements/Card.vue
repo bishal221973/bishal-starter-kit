@@ -13,7 +13,7 @@ const { theme } = useTheme();
     <!-- Header -->
     <div
       v-if="$slots.header"
-      class="px-6 py-4 border-b border-slate-100 bg-card_header_color"
+      class="px-6 py-2 border-b border-slate-100 bg-card_header_color"
     >
       <slot name="header" />
     </div>
