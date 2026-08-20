@@ -129,7 +129,7 @@ const options = [
       <!-- =====================================================
            BODY
       ====================================================== -->
-      <div class="p-5 sm:p-6">
+      <div class="px-5 py-3">
         <form @submit.prevent="save">
           <!-- =================================================
                ENABLE AUTOMATIC BACKUP
@@ -160,15 +160,15 @@ const options = [
               <div>
                 <Label
                   for="enable_auto_backup"
-                  class="font-semibold text-slate-800 cursor-pointer"
+                  class="font-semibold text-sm cursor-pointer"
                 >
                   Enable Automatic Backup
                 </Label>
 
-                <p class="text-sm text-slate-500 mt-1">
+                <Label class="block text-xs opacity-70 mt-1">
                   Automatically create scheduled backups to protect
                   your application data and simplify recovery.
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -196,7 +196,7 @@ const options = [
           ================================================== -->
           <div
             v-if="form.enable_auto_backup"
-            class="mt-5 space-y-6"
+            class="mt-3 space-y-3"
           >
             <!-- ===============================================
                  SCHEDULE SETTINGS
@@ -216,10 +216,10 @@ const options = [
                     Backup Schedule
                   </Label>
 
-                  <p class="text-xs text-slate-500">
+                  <Label class="block text-xs opacity-70">
                     Choose how frequently automatic backups should
                     be created.
-                  </p>
+                  </Label>
                 </div>
               </div>
 
@@ -248,10 +248,10 @@ const options = [
                     placeholder="Select backup frequency"
                   />
 
-                  <p class="mt-1.5 text-xs text-slate-500">
+                  <Label class="block text-xs opacity-70 mt-0.5">
                     Select how often the system should automatically
                     create a backup.
-                  </p>
+                  </Label>
                 </div>
 
                 <!-- Retention -->
@@ -267,10 +267,10 @@ const options = [
                     placeholder="Enter retention days"
                   />
 
-                  <p class="mt-1.5 text-xs text-slate-500">
+                  <Label class="block text-xs opacity-70 mt-0.5">
                     Number of days backups should be kept before
                     older backups are removed.
-                  </p>
+                  </Label>
                 </div>
               </div>
             </div>
@@ -279,132 +279,21 @@ const options = [
                  BACKUP INFORMATION
             ================================================ -->
             <div
-              class="rounded-xl border border-slate-200 bg-slate-50/80 p-4"
-            >
-              <div class="flex items-start gap-3">
-                <div
-                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
-                >
-                  <i class="fa-solid fa-shield-halved"></i>
-                </div>
-
-                <div>
-                  <Label class="font-semibold text-slate-800">
-                    Backup & Recovery
-                  </Label>
-
-                  <p
-                    class="text-sm leading-6 text-slate-500 mt-1"
-                  >
-                    Automatic backups help protect your application
-                    against accidental data loss, system failures,
-                    and unexpected incidents. Keep multiple recent
-                    backups when possible for better recovery
-                    options.
-                  </p>
-                </div>
-              </div>
-
-              <!-- Summary -->
-              <div
-                class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3"
-              >
-                <!-- Status -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="flex items-center gap-2 text-xs text-slate-500 mb-1"
-                  >
-                    <i class="fa-solid fa-circle-check text-primary"></i>
-                    Status
-                  </div>
-
-                  <div
-                    class="text-sm font-bold"
-                    :class="
-                      form.enable_auto_backup
-                        ? 'text-emerald-600'
-                        : 'text-slate-500'
-                    "
-                  >
-                    {{
-                      form.enable_auto_backup
-                        ? "Enabled"
-                        : "Disabled"
-                    }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400 mt-0.5">
-                    automatic backup
-                  </div>
-                </div>
-
-                <!-- Frequency -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="flex items-center gap-2 text-xs text-slate-500 mb-1"
-                  >
-                    <i class="fa-solid fa-clock text-primary"></i>
-                    Frequency
-                  </div>
-
-                  <div
-                    class="text-sm font-bold text-slate-800 capitalize"
-                  >
-                    {{ form.backup_frequency }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400 mt-0.5">
-                    scheduled backup
-                  </div>
-                </div>
-
-                <!-- Retention -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="flex items-center gap-2 text-xs text-slate-500 mb-1"
-                  >
-                    <i
-                      class="fa-solid fa-box-archive text-primary"
-                    ></i>
-                    Retention
-                  </div>
-
-                  <div
-                    class="text-sm font-bold text-slate-800"
-                  >
-                    {{ form.backup_retention_days }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400 mt-0.5">
-                    days
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tip -->
-              <div
                 class="mt-4 flex items-start gap-2.5 rounded-lg bg-primary/5 border border-primary/10 px-3.5 py-3"
               >
                 <i
                   class="fa-solid fa-lightbulb text-primary mt-0.5 text-sm"
                 ></i>
 
-                <p class="text-xs leading-5 text-slate-600">
-                  <span class="font-semibold text-slate-700">
+                <Label class="text-xs leading-5 text-slate-600">
+                  <Label class="font-semibold text-slate-700">
                     Recommended:
-                  </span>
-                  Daily backups with at least 30 days of retention
+                  </Label>
+                  <span class="opacity-60">Daily backups with at least 30 days of retention
                   provide a good balance between data protection
-                  and storage usage for most applications.
-                </p>
+                  and storage usage for most applications.</span>
+                </Label>
               </div>
-            </div>
           </div>
 
           <!-- =================================================
@@ -426,12 +315,12 @@ const options = [
               Automatic Backup is Disabled
             </Label>
 
-            <p
-              class="max-w-md mx-auto mt-1.5 text-sm leading-6 text-slate-500"
+            <Label
+              class="max-w-md mx-auto mt-1.5 text-xs leading-6 opacity-60"
             >
               Enable automatic backup above to configure the backup
-              schedule and retention period for your application.
-            </p>
+              schedule <br> and retention period for your application.
+            </Label>
           </div>
 
           <!-- =================================================

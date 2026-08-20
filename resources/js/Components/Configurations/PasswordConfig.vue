@@ -405,10 +405,10 @@ const save = () => {
               Password Policy is Disabled
             </Label>
 
-            <p class="max-w-md mx-auto mt-1.5 text-sm leading-6 text-slate-500">
-              Enable the password policy above to configure password strength requirements
+            <Label class="max-w-md mx-auto mt-1.5 text-xs text-slate-500 opacity-60">
+              Enable the password policy above to configure password strength <br> requirements
               and expiration rules for your users.
-            </p>
+            </Label>
           </div>
 
           <!-- =================================================
