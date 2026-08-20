@@ -212,13 +212,13 @@ const blockedIpCount = computed(() => {
 
     <div class="text-left">
 
-      <span class="block font-medium text-slate-800">
+      <Label class="block font-medium text-sm">
         IP Security
-      </span>
+      </Label>
 
-      <span class="block text-xs text-slate-500 mt-0.5">
+      <Label class="block text-[12px] opacity-60 mt-0.5">
         Manage IP blacklist and blocked access attempts
-      </span>
+      </Label>
 
     </div>
 

@@ -118,11 +118,11 @@ const save = () => {
     </div>
 
     <div class="text-left">
-      <span class="block font-medium text-slate-800"> License Configuration </span>
+      <Label class="block font-medium text-sm"> License Configuration </Label>
 
-      <span class="block text-xs text-slate-500 mt-0.5">
-        Manage your application license key and licensing information
-      </span>
+      <Label class="block text-[12px] opacity-60 mt-0.5">
+        Manage your application license key
+      </Label>
     </div>
 
     <i

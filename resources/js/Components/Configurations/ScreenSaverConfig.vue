@@ -91,13 +91,13 @@ const options = [
 
     <!-- Content -->
     <div class="text-left">
-      <span class="block font-medium text-slate-800">
+      <Label class="block font-medium text-sm">
         Screen Saver Config
-      </span>
+      </Label>
 
-      <span class="block text-xs text-slate-500 mt-0.5">
+      <Label class="block text-[12px] opacity-60 mt-0.5">
         Manage screen saver timing, media and display options
-      </span>
+      </Label>
     </div>
 
     <!-- Arrow -->

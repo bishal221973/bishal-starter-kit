@@ -56,11 +56,11 @@ const save = () => {
     </div>
 
     <div class="text-left">
-      <span class="block font-medium text-slate-800"> Footer Configuration </span>
+      <Label class="block font-medium text-sm"> Footer Configuration </Label>
 
-      <span class="block text-xs text-slate-500 mt-0.5">
+      <Label class="block text-[12px] opacity-60 mt-0.5">
         Configure the text displayed in the application footer
-      </span>
+      </Label>
     </div>
 
     <i
