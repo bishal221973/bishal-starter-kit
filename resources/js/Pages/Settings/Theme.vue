@@ -6,6 +6,7 @@ import SidebarSetting from "@/Components/Settings/SidebarSetting.vue";
 import NavbarSetting from "@/Components/Settings/NavbarSetting.vue";
 import CardSetting from "@/Components/Settings/CardSetting.vue";
 import SettingMenu from "./SettingMenu.vue";
+import PageHeader from "@/Components/PageHeader.vue";
 const props = defineProps({
   setting: Object,
 });
@@ -14,12 +15,18 @@ const props = defineProps({
 <template>
   <AppLayout>
     <div class="mx-auto">
-      <div class="mb-6">
-        <Label class="text-2xl font-bold">Theme Settings</Label>
-        <Label class="text-slate-500 block" opacity="80"
-          >Customize the appearance of your application.</Label
-        >
-      </div>
+      <PageHeader
+        description="Customize the appearance of your application."
+        :breadcrumbs="[
+          {
+            label: 'Settings',
+            href: route('theme.setting'),
+          },
+          {
+            label: 'Theme Settings',
+          },
+        ]"
+      />
 
       <div class="flex gap-3">
         <SettingMenu />

@@ -67,7 +67,7 @@ defineExpose({
                 type="text"
                 maxlength="7"
                 placeholder="#3d98aa"
-                class="flex-1 border-0 bg-transparent py-4 px-4 text-sm font-mono text-slate-700 placeholder-slate-400 focus:ring-0 focus:outline-none"
+                class="flex-1 border-0 opacity-0 bg-transparent py-4 px-4 text-sm font-mono text-slate-700 placeholder-slate-400 focus:ring-0 focus:outline-none"
                 v-bind="$attrs"
             />
 

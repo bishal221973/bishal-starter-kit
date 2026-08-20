@@ -35,7 +35,6 @@ const save = () => {
               text="Navbar Background"
               placeholder="Enter Navbar Background"
               required
-              autofocus
             />
           </div>
           <div>
@@ -45,7 +44,6 @@ const save = () => {
               text="Navbar Border Color"
               placeholder="Enter Navbar Border Color"
               required
-              autofocus
             />
           </div>
 
@@ -56,7 +54,6 @@ const save = () => {
               text="Navbar Text Color"
               placeholder="Enter Navbar Text Color"
               required
-              autofocus
             />
           </div>
 
@@ -67,7 +64,6 @@ const save = () => {
               text="Height"
               placeholder="Enter Height"
               required
-              autofocus
             />
           </div>
         </div>

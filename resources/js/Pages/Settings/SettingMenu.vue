@@ -79,17 +79,7 @@ const isActive = (routeName) => {
 
       <div class="space-y-2">
 
-        <!-- Section title -->
-
-        <div class="px-2 pt-1 pb-2">
-
-          <Label
-            class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"
-          >
-            General
-          </Label>
-
-        </div>
+        
 
 
         <!-- Menu -->
@@ -98,6 +88,7 @@ const isActive = (routeName) => {
           v-for="item in menuItems"
           :key="item.route"
           :href="route(item.route)"
+          :preserve-scroll="false"
           class="group relative flex items-center gap-3 rounded-xl px-3 py-3 transition-all duration-200"
           :class="
             isActive(item.route)
