@@ -73,7 +73,7 @@ const buttonClass = computed(() => {
   position: relative;
   overflow: hidden;
   color: white;
-  padding: 12px 30px;
+  padding: 10px 20px;
   border: none;
   border-radius: 12px;
   font-weight: 600;
@@ -81,6 +81,9 @@ const buttonClass = computed(() => {
   transition: all 0.3s ease;
   transform: translateY(0);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+.modern-btn{
+  @apply text-sm
 }
 
 .modern-btn:hover {

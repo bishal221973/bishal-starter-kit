@@ -26,7 +26,7 @@ defineExpose({ focus: () => inputRef.value?.focus() });
 
 <template>
   <div class="w-full">
-    <Label v-if="text" class="font-medium text-slate-700 mb-[7px] block">
+    <Label v-if="text" class="font-medium text-sm mb-[7px] block">
       {{ text }}
       <span v-if="required" class="text-red-500 ml-1"> * </span>
     </Label>

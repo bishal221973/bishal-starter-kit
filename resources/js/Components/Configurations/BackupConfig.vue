@@ -114,14 +114,14 @@ const options = [
 
           <!-- Header Text -->
           <div>
-            <Label class="font-bold text-xl text-slate-800">
+            <Label class="font-bold text-lg text-slate-800">
               Backup Configuration
             </Label>
 
-            <p class="text-sm text-slate-500 mt-0.5">
+            <Label class="block text-xs opacity-70 mt-0.5">
               Configure automatic backups, scheduling, and data
               retention settings.
-            </p>
+            </Label>
           </div>
         </div>
       </div>

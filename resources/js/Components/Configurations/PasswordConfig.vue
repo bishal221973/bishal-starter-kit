@@ -20,26 +20,19 @@ const toggleModal = () => {
 };
 
 const form = useForm({
-  enable_password_policy:
-    props.config?.enable_password_policy == 1,
+  enable_password_policy: props.config?.enable_password_policy == 1,
 
-  minimum_password_length:
-    props.config?.minimum_password_length ?? 8,
+  minimum_password_length: props.config?.minimum_password_length ?? 8,
 
-  require_uppercase:
-    props.config?.require_uppercase == 1,
+  require_uppercase: props.config?.require_uppercase == 1,
 
-  require_lowercase:
-    props.config?.require_lowercase == 1,
+  require_lowercase: props.config?.require_lowercase == 1,
 
-  require_number:
-    props.config?.require_number == 1,
+  require_number: props.config?.require_number == 1,
 
-  require_special_character:
-    props.config?.require_special_character == 1,
+  require_special_character: props.config?.require_special_character == 1,
 
-  password_expiry_days:
-    props.config?.password_expiry_days ?? 90,
+  password_expiry_days: props.config?.password_expiry_days ?? 90,
 });
 
 const save = () => {
@@ -71,9 +64,7 @@ const save = () => {
 
     <!-- Content -->
     <div class="text-left">
-      <Label class="block font-medium text-sm">
-        Password Policy
-      </Label>
+      <Label class="block font-medium text-sm"> Password Policy </Label>
 
       <Label class="block text-[12px] opacity-60 mt-0.5">
         Manage password strength and security requirements
@@ -94,9 +85,7 @@ const save = () => {
       <!-- =====================================================
            HEADER
       ====================================================== -->
-      <div
-        class="px-6 py-4 border-b border-slate-100 bg-card_header_color"
-      >
+      <div class="px-6 py-4 border-b border-slate-100 bg-card_header_color">
         <div class="flex items-center gap-3">
           <!-- Icon -->
           <div
@@ -107,14 +96,12 @@ const save = () => {
 
           <!-- Header Text -->
           <div>
-            <Label class="font-bold text-xl text-slate-800">
-              Password Policy
-            </Label>
+            <Label class="font-bold text-lg"> Password Policy </Label>
 
-            <p class="text-sm text-slate-500 mt-0.5">
-              Configure password strength requirements and
-              expiration rules for user accounts.
-            </p>
+            <Label class="block text-xs opacity-70 mt-0.5">
+              Configure password strength requirements and expiration rules for user
+              accounts.
+            </Label>
           </div>
         </div>
       </div>
@@ -122,7 +109,7 @@ const save = () => {
       <!-- =====================================================
            BODY
       ====================================================== -->
-      <div class="p-5 sm:p-6">
+      <div class="py-3 px-5">
         <form @submit.prevent="save">
           <!-- =================================================
                ENABLE PASSWORD POLICY
@@ -152,15 +139,15 @@ const save = () => {
               <div>
                 <Label
                   for="enable_password_policy"
-                  class="font-semibold text-slate-800 cursor-pointer"
+                  class="font-semibold text-sm cursor-pointer"
                 >
                   Enable Password Policy
                 </Label>
 
-                <p class="text-sm text-slate-500 mt-1">
-                  Enforce password complexity and expiration
-                  requirements for user accounts.
-                </p>
+                <Label class="block text-xs opacity-70 mt-1">
+                  Enforce password complexity and expiration requirements for user
+                  accounts.
+                </Label>
               </div>
             </div>
 
@@ -186,10 +173,7 @@ const save = () => {
           <!-- =================================================
                POLICY SETTINGS
           ================================================== -->
-          <div
-            v-if="form.enable_password_policy"
-            class="mt-5 space-y-6"
-          >
+          <div v-if="form.enable_password_policy" class="mt-5 space-y-3">
             <!-- ===============================================
                  BASIC PASSWORD SETTINGS
             ================================================ -->
@@ -202,26 +186,19 @@ const save = () => {
                 </div>
 
                 <div>
-                  <Label
-                    class="font-semibold text-base text-slate-800"
-                  >
+                  <Label class="font-semibold text-base text-sm">
                     Password Settings
                   </Label>
 
-                  <p class="text-xs text-slate-500">
-                    Define the minimum password length and
-                    expiration period.
-                  </p>
+                  <Label class="block text-xs opacity-70">
+                    Define the minimum password length and expiration period.
+                  </Label>
                 </div>
               </div>
 
-              <div
-                class="grid grid-cols-1 md:grid-cols-2 gap-4"
-              >
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Minimum Length -->
-                <div
-                  class="rounded-xl border border-slate-200 p-4 bg-white"
-                >
+                <div class="rounded-xl border border-slate-200 p-4 bg-white">
                   <TextInput
                     v-model="form.minimum_password_length"
                     type="number"
@@ -232,16 +209,13 @@ const save = () => {
                     required
                   />
 
-                  <p class="mt-1.5 text-xs text-slate-500">
-                    Minimum number of characters required in a
-                    password.
-                  </p>
+                  <Label class="block text-xs opacity-70">
+                    Minimum number of characters required in a password.
+                  </Label>
                 </div>
 
                 <!-- Expiry -->
-                <div
-                  class="rounded-xl border border-slate-200 p-4 bg-white"
-                >
+                <div class="rounded-xl border border-slate-200 p-4 bg-white">
                   <TextInput
                     v-model="form.password_expiry_days"
                     type="number"
@@ -251,10 +225,10 @@ const save = () => {
                     max="3650"
                   />
 
-                  <p class="mt-1.5 text-xs text-slate-500">
-                    Number of days before users must change their
-                    password. Use 0 for no expiration.
-                  </p>
+                  <Label class="block text-xs opacity-70">
+                    Number of days before users must change their password. Use 0 for no
+                    expiration.
+                  </Label>
                 </div>
               </div>
             </div>
@@ -272,15 +246,13 @@ const save = () => {
                   </div>
 
                   <div>
-                    <Label
-                      class="font-semibold text-base text-slate-800"
-                    >
+                    <Label class="font-semibold text-base text-sm">
                       Password Requirements
                     </Label>
 
-                    <p class="text-xs text-slate-500">
+                    <Label class="block text-xs opacity-70">
                       Select the character types users must include.
-                    </p>
+                    </Label>
                   </div>
                 </div>
 
@@ -291,9 +263,7 @@ const save = () => {
                 </span>
               </div>
 
-              <div
-                class="grid grid-cols-1 md:grid-cols-2 gap-3"
-              >
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <!-- Uppercase -->
                 <label
                   class="group flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all duration-200"
@@ -310,16 +280,14 @@ const save = () => {
                   />
 
                   <div>
-                    <Label
-                      class="font-medium text-slate-800 cursor-pointer"
-                    >
+                    <Label class="font-medium text-sm cursor-pointer">
                       Uppercase Letters
                     </Label>
 
-                    <p class="text-xs text-slate-500 mt-1">
-                      Require at least one uppercase character
-                      such as <strong>A-Z</strong>.
-                    </p>
+                    <Label class="block text-xs opacity-70">
+                      Require at least one uppercase character such as
+                      <strong>A-Z</strong>.
+                    </Label>
                   </div>
                 </label>
 
@@ -339,16 +307,14 @@ const save = () => {
                   />
 
                   <div>
-                    <Label
-                      class="font-medium text-slate-800 cursor-pointer"
-                    >
+                    <Label class="font-medium text-sm cursor-pointer">
                       Lowercase Letters
                     </Label>
 
-                    <p class="text-xs text-slate-500 mt-1">
-                      Require at least one lowercase character
-                      such as <strong>a-z</strong>.
-                    </p>
+                    <Label class="block text-xs opacity-70">
+                      Require at least one lowercase character such as
+                      <strong>a-z</strong>.
+                    </Label>
                   </div>
                 </label>
 
@@ -368,16 +334,11 @@ const save = () => {
                   />
 
                   <div>
-                    <Label
-                      class="font-medium text-slate-800 cursor-pointer"
-                    >
-                      Numbers
-                    </Label>
+                    <Label class="font-medium text-sm cursor-pointer"> Numbers </Label>
 
-                    <p class="text-xs text-slate-500 mt-1">
-                      Require at least one numeric character such
-                      as <strong>0-9</strong>.
-                    </p>
+                    <Label class="block text-xs opacity-70">
+                      Require at least one numeric character such as <strong>0-9</strong>.
+                    </Label>
                   </div>
                 </label>
 
@@ -397,16 +358,14 @@ const save = () => {
                   />
 
                   <div>
-                    <Label
-                      class="font-medium text-slate-800 cursor-pointer"
-                    >
+                    <Label class="font-medium text-sm cursor-pointer">
                       Special Characters
                     </Label>
 
-                    <p class="text-xs text-slate-500 mt-1">
+                    <Label class="block text-xs opacity-70">
                       Require symbols such as
                       <strong>! @ # $ %</strong>.
-                    </p>
+                    </Label>
                   </div>
                 </label>
               </div>
@@ -415,168 +374,18 @@ const save = () => {
             <!-- ===============================================
                  SECURITY INFORMATION
             ================================================ -->
-            <div
-              class="rounded-xl border border-slate-200 bg-slate-50/80 p-4"
-            >
-              <div class="flex items-start gap-3">
-                <div
-                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
-                >
-                  <i class="fa-solid fa-shield-halved"></i>
-                </div>
-
-                <div>
-                  <Label
-                    class="font-semibold text-slate-800"
-                  >
-                    Password Security
-                  </Label>
-
-                  <p
-                    class="text-sm leading-6 text-slate-500 mt-1"
-                  >
-                    Strong password requirements help protect
-                    user accounts from unauthorized access. We
-                    recommend enabling multiple character
-                    requirements and using an appropriate expiration
-                    period.
-                  </p>
-                </div>
-              </div>
-
-              <!-- Security Summary -->
-              <div
-                class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3"
-              >
-                <!-- Length -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="text-xs text-slate-500 mb-1"
-                  >
-                    Minimum Length
-                  </div>
-
-                  <div
-                    class="text-lg font-bold text-slate-800"
-                  >
-                    {{ form.minimum_password_length }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400">
-                    characters
-                  </div>
-                </div>
-
-                <!-- Expiry -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="text-xs text-slate-500 mb-1"
-                  >
-                    Expiration
-                  </div>
-
-                  <div
-                    class="text-lg font-bold text-slate-800"
-                  >
-                    {{
-                      form.password_expiry_days == 0
-                        ? "Never"
-                        : form.password_expiry_days
-                    }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400">
-                    {{
-                      form.password_expiry_days == 0
-                        ? "no expiry"
-                        : "days"
-                    }}
-                  </div>
-                </div>
-
-                <!-- Character Rules -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="text-xs text-slate-500 mb-1"
-                  >
-                    Requirements
-                  </div>
-
-                  <div
-                    class="text-lg font-bold text-slate-800"
-                  >
-                    {{
-                      Number(form.require_uppercase) +
-                      Number(form.require_lowercase) +
-                      Number(form.require_number) +
-                      Number(form.require_special_character)
-                    }}
-                    / 4
-                  </div>
-
-                  <div class="text-[11px] text-slate-400">
-                    rules enabled
-                  </div>
-                </div>
-
-                <!-- Status -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="text-xs text-slate-500 mb-1"
-                  >
-                    Policy Status
-                  </div>
-
-                  <div
-                    class="text-sm font-bold"
-                    :class="
-                      form.enable_password_policy
-                        ? 'text-emerald-600'
-                        : 'text-slate-500'
-                    "
-                  >
-                    {{
-                      form.enable_password_policy
-                        ? "Enabled"
-                        : "Disabled"
-                    }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400">
-                    global setting
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tip -->
-              <div
+             <div
                 class="mt-4 flex items-start gap-2.5 rounded-lg bg-primary/5 border border-primary/10 px-3.5 py-3"
               >
-                <i
-                  class="fa-solid fa-lightbulb text-primary mt-0.5 text-sm"
-                ></i>
+                <i class="fa-solid fa-lightbulb text-primary mt-0.5 text-sm"></i>
 
-                <p
-                  class="text-xs leading-5 text-slate-600"
-                >
-                  <span class="font-semibold text-slate-700">
-                    Recommended:
-                  </span>
-                  Use a minimum length of 8 characters and require
-                  uppercase letters, lowercase letters, numbers,
-                  and special characters for stronger account
-                  protection.
-                </p>
+                <Label class="text-xs leading-5">
+                  <Label class="font-semibold opacity-100"> Recommended: </Label>
+                 <span class="opacity-60"> Use a minimum length of 8 characters and require uppercase letters,
+                  lowercase letters, numbers, and special characters for stronger account
+                  protection.</span>
+                </Label>
               </div>
-            </div>
           </div>
 
           <!-- =================================================
@@ -592,18 +401,13 @@ const save = () => {
               <i class="fa-solid fa-lock-open text-lg"></i>
             </div>
 
-            <Label
-              class="block mt-3 font-semibold text-slate-700"
-            >
+            <Label class="block mt-3 font-semibold text-slate-700">
               Password Policy is Disabled
             </Label>
 
-            <p
-              class="max-w-md mx-auto mt-1.5 text-sm leading-6 text-slate-500"
-            >
-              Enable the password policy above to configure
-              password strength requirements and expiration rules
-              for your users.
+            <p class="max-w-md mx-auto mt-1.5 text-sm leading-6 text-slate-500">
+              Enable the password policy above to configure password strength requirements
+              and expiration rules for your users.
             </p>
           </div>
 
@@ -611,21 +415,13 @@ const save = () => {
                FOOTER
           ================================================== -->
           <div
-            class="mt-6 flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
+            class="mt-0 flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
           >
-            <Button
-              @click="toggleModal"
-              type="danger"
-              text="Close"
-            />
+            <Button @click="toggleModal" type="danger" text="Close" />
 
             <Button
               :submit="true"
-              :text="
-                form.processing
-                  ? 'Saving...'
-                  : 'Save Settings'
-              "
+              :text="form.processing ? 'Saving...' : 'Save Settings'"
               :processing="form.processing"
               :disabled="form.processing"
             />
