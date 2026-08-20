@@ -302,14 +302,12 @@ const save = () => {
           </div>
 
           <div>
-            <Label class="font-bold text-xl text-slate-800">
-              Application Configuration
-            </Label>
+            <Label class="font-bold text-lg text-lg"> Application Configuration </Label>
 
-            <p class="text-sm text-slate-500 mt-0.5">
+            <Label class="block text-xs opacity-70">
               Configure application behavior, localization, maintenance mode and data
               display preferences.
-            </p>
+            </Label>
           </div>
         </div>
       </div>
@@ -318,13 +316,13 @@ const save = () => {
            BODY
       ====================================================== -->
 
-      <div class="p-5 sm:p-6">
+      <div class="px-5 py-3">
         <form @submit.prevent="save">
           <!-- =================================================
                APPLICATION
           ================================================== -->
 
-          <div class="mb-6">
+          <div class="mb-3">
             <div class="flex items-center gap-2 mb-3">
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -333,9 +331,11 @@ const save = () => {
               </div>
 
               <div>
-                <Label class="font-semibold text-base"> Application </Label>
+                <Label class="font-semibold text-base text-sm"> Application </Label>
 
-                <p class="text-xs text-slate-500">Basic application information.</p>
+                <Label class="block text-xs opacity-70"
+                  >Basic application information.</Label
+                >
               </div>
             </div>
 
@@ -360,11 +360,11 @@ const save = () => {
                 />
               </div>
 
-              <p class="text-xs text-slate-500 mt-3">
+              <Label class="block text-xs opacity-70 mt-0.5">
                 The application version is displayed when identifying the current system
                 release. Decimal places control how numeric and monetary values are
                 displayed.
-              </p>
+              </Label>
             </div>
           </div>
 
@@ -372,7 +372,7 @@ const save = () => {
                LOCALIZATION
           ================================================== -->
 
-          <div class="mb-6">
+          <div class="mb-3">
             <div class="flex items-center gap-2 mb-3">
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -381,11 +381,11 @@ const save = () => {
               </div>
 
               <div>
-                <Label class="font-semibold text-base"> Localization </Label>
+                <Label class="font-semibold text-base text-sm"> Localization </Label>
 
-                <p class="text-xs text-slate-500">
+                <Label class="block text-xs opacity-70">
                   Set the default language and timezone.
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -432,10 +432,10 @@ const save = () => {
                 </div>
               </div>
 
-              <p class="text-xs text-slate-500 mt-3">
+              <Label class="block text-xs opacity-70 mt-0.5">
                 Language affects the default interface language, while timezone determines
                 how dates and times are interpreted throughout the application.
-              </p>
+              </Label>
             </div>
           </div>
 
@@ -443,7 +443,7 @@ const save = () => {
                MAINTENANCE MODE
           ================================================== -->
 
-          <div class="mb-6">
+          <div class="mb-3">
             <div class="flex items-center gap-2 mb-3">
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -452,11 +452,11 @@ const save = () => {
               </div>
 
               <div>
-                <Label class="font-semibold text-base"> Maintenance Mode </Label>
+                <Label class="font-semibold text-base text-sm"> Maintenance Mode </Label>
 
-                <p class="text-xs text-slate-500">
+                <Label class="block text-xs opacity-70">
                   Temporarily restrict application access.
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -486,15 +486,15 @@ const save = () => {
                 <div>
                   <Label
                     for="maintenance_mode"
-                    class="font-semibold text-slate-800 cursor-pointer"
+                    class="font-semibold text-sm cursor-pointer"
                   >
                     Enable Maintenance Mode
                   </Label>
 
-                  <p class="text-sm text-slate-500 mt-1">
+                  <Label class="block text-xs opacity-70 mt-0.5">
                     Temporarily prevent normal users from accessing the application while
                     maintenance is being performed.
-                  </p>
+                  </Label>
                 </div>
               </div>
 
@@ -524,14 +524,12 @@ const save = () => {
             >
               <div class="flex items-center justify-between mb-3">
                 <div>
-                  <Label class="font-semibold text-slate-800">
-                    Allowed IP Addresses
-                  </Label>
+                  <Label class="font-semibold text-sm"> Allowed IP Addresses </Label>
 
-                  <p class="text-xs text-slate-500 mt-1">
+                  <Label class="block text-xs opacity-70 mt-0.5">
                     These addresses can access the application while maintenance mode is
                     enabled.
-                  </p>
+                  </Label>
                 </div>
 
                 <span
@@ -585,9 +583,9 @@ const save = () => {
                 <div
                   class="flex items-center justify-between px-4 py-3 bg-slate-50 border-b"
                 >
-                  <span class="text-sm font-medium text-slate-700">
+                  <Label class="text-sm font-medium">
                     Maintenance Allowed Addresses
-                  </span>
+                  </Label>
 
                   <button
                     type="button"
@@ -612,7 +610,9 @@ const save = () => {
                       </div>
 
                       <code class="text-sm font-medium text-slate-700">
-                        {{ ip }}
+                        <Label class="block text-xs opacity-70">
+                          {{ ip }}
+                        </Label>
                       </code>
                     </div>
 
@@ -635,14 +635,12 @@ const save = () => {
               >
                 <i class="fa-solid fa-network-wired text-slate-400"></i>
 
-                <p class="text-sm font-medium text-slate-600 mt-2">
-                  No allowed IP addresses
-                </p>
+                <Label class="block text-xs mt-3"> No allowed IP addresses </Label>
 
-                <p class="text-xs text-slate-500 mt-1">
+                <Label class="block text-xs opacity-70 mt-0.5">
                   Without an allowed IP, maintenance mode may restrict access for everyone
                   except your application's bypass mechanism.
-                </p>
+                </Label>
               </div>
             </div>
           </div>
@@ -651,7 +649,7 @@ const save = () => {
                SESSION
           ================================================== -->
 
-          <div class="mb-6">
+          <div class="mb-3">
             <div class="flex items-center gap-2 mb-3">
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -660,11 +658,11 @@ const save = () => {
               </div>
 
               <div>
-                <Label class="font-semibold text-base"> Session </Label>
+                <Label class="font-semibold text-base text-sm"> Session </Label>
 
-                <p class="text-xs text-slate-500">
+                <Label class="block text-xs opacity-70">
                   Configure how long user sessions remain active.
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -678,10 +676,10 @@ const save = () => {
                 required
               />
 
-              <p class="text-xs text-slate-500 mt-3">
+              <Label class="block text-xs opacity-70 mt-0.5">
                 Users will be required to authenticate again after the configured session
                 period expires.
-              </p>
+              </Label>
             </div>
           </div>
 
@@ -689,7 +687,7 @@ const save = () => {
                DATA TABLE
           ================================================== -->
 
-          <div class="mb-6">
+          <div class="mb-3">
             <div class="flex items-center gap-2 mb-3">
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -698,11 +696,11 @@ const save = () => {
               </div>
 
               <div>
-                <Label class="font-semibold text-base"> Data Tables </Label>
+                <Label class="font-semibold text-sm"> Data Tables </Label>
 
-                <p class="text-xs text-slate-500">
+                <Label class="block text-xs opacity-70">
                   Configure table loading and pagination behavior.
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -711,7 +709,7 @@ const save = () => {
                 <!-- Data Source -->
 
                 <div>
-                  <Label class="font-medium text-slate-700 mb-[7px] block">
+                  <Label class="font-medium text-sm mb-[7px] block">
                     Data Table Source
                     <span class="text-red-500 ml-1">*</span>
                   </Label>
@@ -731,7 +729,7 @@ const save = () => {
                 <!-- Pagination -->
 
                 <div>
-                  <Label class="font-medium text-slate-700 mb-[7px] block">
+                  <Label class="font-medium text-sm mb-[7px] block">
                     Default Pagination Size
                     <span class="text-red-500 ml-1">*</span>
                   </Label>
@@ -749,111 +747,22 @@ const save = () => {
                 </div>
               </div>
 
-              <p class="text-xs text-slate-500 mt-3">
+              <Label class="block text-xs opacity-70 mt-0.5">
                 Server-side tables load and paginate records from the backend, while
                 client-side tables load data into the browser. Choose a pagination size
                 appropriate for your application's dataset.
-              </p>
+              </Label>
             </div>
           </div>
 
-          <!-- =================================================
-               INFORMATION
-          ================================================== -->
-
-          <div class="rounded-xl border border-primary/10 bg-primary/5 p-4">
-            <div class="flex items-start gap-3">
-              <div
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
-              >
-                <i class="fa-solid fa-lightbulb"></i>
-              </div>
-
-              <div>
-                <Label class="font-semibold text-slate-800">
-                  Configuration Information
-                </Label>
-
-                <p class="text-sm leading-6 text-slate-600 mt-1">
-                  These settings control important application-wide behavior including
-                  localization, maintenance access, user sessions, table performance and
-                  pagination. Changes may affect all users of the application.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- =================================================
-               SUMMARY
-          ================================================== -->
-
-          <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-            <!-- Version -->
-
-            <div class="rounded-xl border border-slate-200 p-3">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-code-branch text-slate-400"></i>
-
-                <span class="text-xs text-slate-500"> Version </span>
-              </div>
-
-              <div class="mt-1 text-sm font-bold text-slate-700">
-                {{ form.application_version }}
-              </div>
-            </div>
-
-            <!-- Language -->
-
-            <div class="rounded-xl border border-slate-200 p-3">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-language text-slate-400"></i>
-
-                <span class="text-xs text-slate-500"> Language </span>
-              </div>
-
-              <div class="mt-1 text-sm font-bold text-slate-700">
-                {{ form.default_language === "np" ? "नेपाली" : "English" }}
-              </div>
-            </div>
-
-            <!-- Maintenance -->
-
-            <div class="rounded-xl border border-slate-200 p-3">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-screwdriver-wrench text-slate-400"></i>
-
-                <span class="text-xs text-slate-500"> Maintenance </span>
-              </div>
-
-              <div
-                class="mt-1 text-sm font-bold"
-                :class="form.maintenance_mode ? 'text-amber-600' : 'text-emerald-600'"
-              >
-                {{ form.maintenance_mode ? "Enabled" : "Disabled" }}
-              </div>
-            </div>
-
-            <!-- Pagination -->
-
-            <div class="rounded-xl border border-slate-200 p-3">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-list-ol text-slate-400"></i>
-
-                <span class="text-xs text-slate-500"> Page Size </span>
-              </div>
-
-              <div class="mt-1 text-sm font-bold text-slate-700">
-                {{ form.default_pagination_size }}
-              </div>
-            </div>
-          </div>
+         
 
           <!-- =================================================
                FOOTER
           ================================================== -->
 
           <div
-            class="mt-6 flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
+            class="flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
           >
             <Button @click="toggleModal" type="danger" text="Close" />
 
