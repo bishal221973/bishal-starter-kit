@@ -1,6 +1,5 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import Label from "@/Components/Label.vue";
 import PasswordConfig from "@/Components/Configurations/PasswordConfig.vue";
 import BackupConfig from "@/Components/Configurations/BackupConfig.vue";
 import SettingMenu from "./SettingMenu.vue";
@@ -14,6 +13,8 @@ import AppConfig from "@/Components/Configurations/AppConfig.vue";
 import FooterConfig from "@/Components/Configurations/FooterConfig.vue";
 import UserConfig from "@/Components/Configurations/UserConfig.vue";
 import LicenceConfig from "@/Components/Configurations/LicenceConfig.vue";
+import PageHeader from "@/Components/PageHeader.vue";
+import ZoomControl from "@/Components/Configurations/ZoomControl.vue";
 const props = defineProps({
   config: Object,
 });
@@ -26,12 +27,18 @@ const { theme } = useTheme();
 <template>
   <AppLayout>
     <div class="mx-auto">
-      <div class="mb-6">
-        <Label class="text-2xl font-bold">Configuration</Label>
-        <Label class="text-slate-500 block" opacity="80">
-          Manage your application's settings and customization options.
-        </Label>
-      </div>
+      <PageHeader
+        description="Manage your application's settings and customization options."
+        :breadcrumbs="[
+          {
+            label: 'Configuration',
+            href: route('configuration.setting'),
+          },
+          {
+            label: 'Configuration',
+          },
+        ]"
+      />
 
       <div class="flex gap-3">
         <SettingMenu />

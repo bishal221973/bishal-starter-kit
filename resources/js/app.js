@@ -5,6 +5,7 @@ import { createApp, h, watchEffect } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+// import { useZoom } from "@/composables/useZoom";
 
 import { useTheme } from '@/composables/useTheme'
 const { theme } = useTheme()
@@ -152,8 +153,10 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .mount(el);
+            // useZoom();
     },
     progress: {
         color: '#4B5563',
     },
+    // Initialize site-wide zoom
 });
