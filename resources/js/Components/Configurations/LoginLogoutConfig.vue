@@ -127,7 +127,7 @@ const save = () => {
 
           <!-- Header -->
           <div>
-            <Label class="font-bold text-lg text-sm">
+            <Label class="font-bold text-lg text-lg">
               Login & Security Configuration
             </Label>
 

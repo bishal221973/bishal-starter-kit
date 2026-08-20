@@ -261,16 +261,15 @@ const blockedIpCount = computed(() => {
 
           <div>
 
-            <Label
-              class="font-bold text-xl text-slate-800"
+            <Label class="font-bold text-lg text-lg"
             >
               IP Security
             </Label>
 
-            <p class="text-sm text-slate-500 mt-0.5">
+            <Label class="block text-xs opacity-70 mt-0.5">
               Control access using IP address blacklisting and
               monitor blocked connection attempts.
-            </p>
+            </Label>
 
           </div>
 
@@ -283,7 +282,7 @@ const blockedIpCount = computed(() => {
            BODY
       ====================================================== -->
 
-      <div class="p-5 sm:p-6">
+      <div class="px-5 py-3">
 
         <form @submit.prevent="save">
 
@@ -319,15 +318,15 @@ const blockedIpCount = computed(() => {
 
                 <Label
                   for="enable_ip_blacklist"
-                  class="font-semibold text-slate-800 cursor-pointer"
+                  class="font-semibold text-sm cursor-pointer"
                 >
                   Enable IP Blacklist
                 </Label>
 
-                <p class="text-sm text-slate-500 mt-1">
+                <Label class="block text-xs opacity-70 mt-0.5">
                   Prevent users or devices from accessing the
                   application from specified IP addresses.
-                </p>
+                </Label>
 
               </div>
 
@@ -382,14 +381,14 @@ const blockedIpCount = computed(() => {
                 <div>
 
                   <Label
-                    class="font-semibold text-base text-slate-800"
+                    class="font-semibold text-base text-sm"
                   >
                     Blacklisted IP Addresses
                   </Label>
 
-                  <p class="text-xs text-slate-500">
+                  <Label class="block text-xs opacity-70">
                     Add IP addresses that should be denied access.
-                  </p>
+                  </Label>
 
                 </div>
 
@@ -473,11 +472,11 @@ const blockedIpCount = computed(() => {
                   class="fa-solid fa-circle-info mt-0.5 text-primary"
                 ></i>
 
-                <span>
+                <Label class="block text-xs opacity-70">
                   You can add both IPv4 and IPv6 addresses.
                   Each address will be blocked when the blacklist
                   is enabled.
-                </span>
+                </Label>
 
               </div>
 
@@ -505,18 +504,18 @@ const blockedIpCount = computed(() => {
                     class="fa-solid fa-server text-slate-400"
                   ></i>
 
-                  <span
-                    class="text-sm font-medium text-slate-700"
+                  <Label
+                    class="text-sm font-medium"
                   >
                     Blocked Addresses
-                  </span>
+                  </Label>
 
                 </div>
 
                 <button
                   type="button"
                   @click="clearIps"
-                  class="text-xs font-medium text-red-500 hover:text-red-600 transition"
+                  class="text-xs font-medium text-danger transition"
                 >
                   Clear All
                 </button>
@@ -537,7 +536,7 @@ const blockedIpCount = computed(() => {
                   <div class="flex items-center gap-3">
 
                     <div
-                      class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-500"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-danger"
                     >
                       <i class="fa-solid fa-ban text-sm"></i>
                     </div>
@@ -547,12 +546,12 @@ const blockedIpCount = computed(() => {
                       <code
                         class="text-sm font-medium text-slate-700"
                       >
-                        {{ ip }}
+                        <Label>{{ ip }}</Label>
                       </code>
 
-                      <p class="text-[11px] text-slate-400">
+                      <Label class="block text-xs opacity-70">
                         Blocked IP address
-                      </p>
+                      </Label>
 
                     </div>
 
@@ -595,15 +594,15 @@ const blockedIpCount = computed(() => {
               </div>
 
               <Label
-                class="block mt-3 font-medium text-slate-700"
+                class="block mt-3 font-medium text-sm"
               >
                 No IP addresses blacklisted
               </Label>
 
-              <p class="text-xs text-slate-500 mt-1">
+              <Label class="block text-xs opacity-70 mt-1">
                 Add an IP address above to prevent it from
                 accessing the application.
-              </p>
+              </Label>
 
             </div>
 
@@ -643,15 +642,15 @@ const blockedIpCount = computed(() => {
 
                   <Label
                     for="log_blocked_ip_attempts"
-                    class="font-semibold text-slate-800 cursor-pointer"
+                    class="font-semibold text-sm cursor-pointer"
                   >
                     Log Blocked IP Attempts
                   </Label>
 
-                  <p class="text-sm text-slate-500 mt-1">
+                  <Label class="block text-xs opacity-70">
                     Record access attempts made by blacklisted
                     IP addresses for security auditing.
-                  </p>
+                  </Label>
 
                 </div>
 
@@ -684,162 +683,9 @@ const blockedIpCount = computed(() => {
           </div>
 
 
-          <!-- =================================================
-               SECURITY INFORMATION
-          ================================================== -->
-
-          <div
-            class="mt-5 rounded-xl border border-primary/10 bg-primary/5 p-4"
-          >
-
-            <div class="flex items-start gap-3">
-
-              <div
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
-              >
-                <i class="fa-solid fa-lightbulb"></i>
-              </div>
-
-              <div>
-
-                <Label
-                  class="font-semibold text-slate-800"
-                >
-                  IP Security Information
-                </Label>
-
-                <p
-                  class="text-sm leading-6 text-slate-600 mt-1"
-                >
-                  IP blacklisting can be useful for blocking known
-                  malicious addresses, unauthorized systems, or
-                  unwanted network traffic. Enable blocked-attempt
-                  logging if you need an audit trail for security
-                  monitoring and investigation.
-                </p>
-
-              </div>
-
-            </div>
-
-          </div>
+         
 
 
-          <!-- =================================================
-               SECURITY SUMMARY
-          ================================================== -->
-
-          <div
-            class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3"
-          >
-
-            <!-- Blacklist -->
-
-            <div
-              class="rounded-xl border border-slate-200 bg-white p-3"
-            >
-
-              <div class="flex items-center gap-2">
-
-                <i
-                  class="fa-solid fa-ban text-sm"
-                  :class="
-                    form.enable_ip_blacklist
-                      ? 'text-red-500'
-                      : 'text-slate-400'
-                  "
-                ></i>
-
-                <span class="text-xs text-slate-500">
-                  IP Blacklist
-                </span>
-
-              </div>
-
-              <div
-                class="mt-1 text-sm font-bold"
-                :class="
-                  form.enable_ip_blacklist
-                    ? 'text-emerald-600'
-                    : 'text-slate-500'
-                "
-              >
-                {{
-                  form.enable_ip_blacklist
-                    ? "Enabled"
-                    : "Disabled"
-                }}
-              </div>
-
-            </div>
-
-
-            <!-- IP Count -->
-
-            <div
-              class="rounded-xl border border-slate-200 bg-white p-3"
-            >
-
-              <div class="flex items-center gap-2">
-
-                <i
-                  class="fa-solid fa-list text-sm text-slate-400"
-                ></i>
-
-                <span class="text-xs text-slate-500">
-                  Blocked IPs
-                </span>
-
-              </div>
-
-              <div class="mt-1 text-sm font-bold text-slate-700">
-                {{ blockedIpCount }}
-              </div>
-
-            </div>
-
-
-            <!-- Logging -->
-
-            <div
-              class="rounded-xl border border-slate-200 bg-white p-3"
-            >
-
-              <div class="flex items-center gap-2">
-
-                <i
-                  class="fa-solid fa-file-lines text-sm"
-                  :class="
-                    form.log_blocked_ip_attempts
-                      ? 'text-emerald-500'
-                      : 'text-slate-400'
-                  "
-                ></i>
-
-                <span class="text-xs text-slate-500">
-                  Attempt Logging
-                </span>
-
-              </div>
-
-              <div
-                class="mt-1 text-sm font-bold"
-                :class="
-                  form.log_blocked_ip_attempts
-                    ? 'text-emerald-600'
-                    : 'text-slate-500'
-                "
-              >
-                {{
-                  form.log_blocked_ip_attempts
-                    ? "Enabled"
-                    : "Disabled"
-                }}
-              </div>
-
-            </div>
-
-          </div>
 
 
           <!-- =================================================
@@ -847,7 +693,7 @@ const blockedIpCount = computed(() => {
           ================================================== -->
 
           <div
-            class="mt-6 flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
+            class="flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
           >
 
             <Button
