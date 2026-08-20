@@ -45,6 +45,52 @@ class ConfigurationController extends Controller
             'date_type' => 'nullable',
             'date_format' => 'nullable',
             'time_format' => 'nullable',
+
+            // Login Security
+            'enable_login_attempt_limit' => 'nullable',
+            'max_login_attempts' => 'nullable',
+            'login_lockout_duration' => 'nullable',
+
+            // Auto Logout
+            'enable_auto_logout' => 'nullable',
+            'auto_logout_time' => 'nullable',
+            'show_logout_warning' => 'nullable',
+            'logout_warning_time' => 'nullable',
+
+            // Registration
+            'enable_registration' => 'nullable',
+            'enable_email_verification' => 'nullable',
+            'enable_2fa' => 'nullable',
+            'enable_multiple_branch' => 'nullable',
+
+            // Password Change
+            'force_logout_on_password_change' => 'nullable',
+            'invalidate_other_sessions' => 'nullable',
+
+            // Ip Config
+            'enable_ip_blacklist' => ['nullable'],
+            'blacklisted_ips' => [
+                'nullable',
+                'array',
+            ],
+            'blacklisted_ips.*' => [
+                'string',
+                'ip',
+            ],
+            'log_blocked_ip_attempts' => ['nullable'],
+
+            // Footer Text
+            'footer_text'=>'nullable',
+
+            // Footer Text
+            'auto_disable_inactive_users'=>'nullable',
+            'inactive_user_days'=>'nullable',
+            'enable_delete_account'=>'nullable',
+            'force_single_device_login'=>'nullable',
+
+            // Licence
+            'license_key'=>'nullable'
+
         ]);
 
         if ($request->hasFile('screen_saver_images')) {
@@ -56,7 +102,11 @@ class ConfigurationController extends Controller
 
             $data['screen_saver_images'] = $images;
         }
-        // return "Hello";
+        if ($request->has('blacklisted_ips')) {
+
+            $data['blacklisted_ips'] =
+                $request->input('blacklisted_ips', []);
+        }
         $setting = Configuration::first();
 
         if (! $setting) {

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('configurations', function (Blueprint $table) {
             $table->id();
+        //    =====
             $table->string('application_version')->default('1.0.0');
             $table->string('default_language')->default('en'); //en or np
             $table->string('timezone')->default('en'); //Nepal
@@ -24,13 +25,13 @@ return new class extends Migration
             $table->string('default_pagination_size')->default(20);
 
 
-
+            // Registration===
             $table->boolean('enable_registration')->default(false);
             $table->boolean('enable_email_verification')->default(false);
             $table->boolean('enable_2fa')->default(false);
             $table->boolean('enable_multiple_branch')->default(false);
 
-
+            // On password change===
             $table->boolean('force_logout_on_password_change')->default(true);
             $table->boolean('invalidate_other_sessions')->default(true);
             // 
@@ -51,22 +52,22 @@ return new class extends Migration
             $table->boolean('screen_saver_show_clock')->default(true);
             $table->boolean('screen_saver_show_date')->default(true);
 
-            // Auto Logout
+            // Auto Logout===
             $table->boolean('enable_auto_logout')->default(false);
             $table->unsignedInteger('auto_logout_time')->default(30); // minutes
             $table->boolean('show_logout_warning')->default(true);
             $table->unsignedInteger('logout_warning_time')->default(1); // minutes before logout
 
-            // IP Security
+            // IP Security===
             $table->boolean('enable_ip_blacklist')->default(false);
             $table->json('blacklisted_ips')->nullable();
             $table->boolean('log_blocked_ip_attempts')->default(true);
 
-            // Login Security
+            // Login Security===
             $table->boolean('enable_login_attempt_limit')->default(true);
             $table->unsignedTinyInteger('max_login_attempts')->default(5);
             $table->unsignedInteger('login_lockout_duration')->default(15); // minutes
-
+            // ====
             $table->text('footer_text')->nullable();
 
             // Backup===
@@ -83,7 +84,7 @@ return new class extends Migration
             $table->boolean('require_special_character')->default(false);
             $table->string('password_expiry_days')->default(90);
 
-            // Users
+            // Users ===
             $table->boolean('auto_disable_inactive_users')->default(false);
             $table->unsignedInteger('inactive_user_days')->default(90);
             $table->boolean('enable_delete_account')->default(false);
