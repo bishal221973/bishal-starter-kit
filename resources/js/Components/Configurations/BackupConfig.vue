@@ -99,7 +99,7 @@ const options = [
                     wrapperBg="bg-white"
                     wrapperRounded="rounded-xl"
                     wrapperClass="border border-primary shadow-sm transition-all duration-200 ease-in-out outline-none hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-indigo-500/10 focus:shadow-md"
-                    inputClass="text-sm focus:ring-0 py-[1px] focus:outline-0"
+                    inputClass="text-sm focus:ring-0 py-[10px] focus:outline-0"
                     :primaryColor="theme?.primary"
                     placeholder="Backup Frequency"
                   />

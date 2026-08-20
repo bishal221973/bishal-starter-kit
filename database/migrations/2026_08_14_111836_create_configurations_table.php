@@ -37,12 +37,12 @@ return new class extends Migration
             $table->string('cache_lifetime')->default(20);
             // $table->boolean('enable_2fa')->default(false); 
             // 
-            // date/time
+            // date/time====
             $table->string('date_type')->default('ad'); //bs or ad
             $table->string('date_format')->default('Y-m-d');
             $table->string('time_format')->default('24hour');
 
-            // Screen Saver
+            // Screen Saver ====
             $table->boolean('enable_screen_saver')->default(false);
             $table->unsignedInteger('screen_saver_timeout')->default(300); // seconds (5 min)
             $table->enum('screen_saver_type', ['image', 'slider', 'video'])->default('image');

@@ -8,7 +8,8 @@ import Modal from "../Modal.vue";
 import { ref } from "vue";
 import { RisingSelect } from "rising-select";
 import { useTheme } from "@/composables/useTheme.js";
-
+import { RisingPicker } from "rising-picker";
+import FileBrows from "../FileBrows.vue";
 const props = defineProps({
   config: Object,
 });
@@ -26,8 +27,8 @@ const form = useForm({
   screen_saver_type: props?.config?.screen_saver_type ?? "image",
   screen_saver_images: props?.config?.screen_saver_images ?? null,
   screen_saver_video: props?.config?.screen_saver_video ?? null,
-  screen_saver_show_clock: props?.config?.screen_saver_show_clock ?? true,
-  screen_saver_show_date: props?.config?.screen_saver_show_date ?? true,
+  screen_saver_show_clock: props?.config?.screen_saver_show_clock  == 1 ? true : false,
+  screen_saver_show_date: props?.config?.screen_saver_show_date == 1 ? true : false,
 });
 
 const save = () => {
@@ -92,7 +93,7 @@ const options = [
           <div v-if="form.enable_screen_saver" class="space-y-2">
             <div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <TextInput
+                <TextInput
                   v-model="form.screen_saver_timeout"
                   type="number"
                   step="1"
@@ -110,13 +111,60 @@ const options = [
                     wrapperBg="bg-white"
                     wrapperRounded="rounded-xl"
                     wrapperClass="border border-primary shadow-sm transition-all duration-200 ease-in-out outline-none hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-indigo-500/10 focus:shadow-md"
-                    inputClass="text-sm focus:ring-0 py-[1px] focus:outline-0"
+                    inputClass="text-sm focus:ring-0 py-[10px] focus:outline-0"
                     :primaryColor="theme?.primary"
                     placeholder="Backup Frequency"
                   />
                 </div>
+                <div class="col-span-2">
+                  <RisingPicker
+                    v-model="form.screen_saver_images"
+                    label="Profile Image"
+                    accept="image/*"
+                    :max-size="2 * 1024 * 1024"
+                    multiple
+                    :primaryColor="theme?.primary"
+                  />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+                <div class="col-span-1">
+                <!-- {{ form.screen_saver_show_clock }} -->
+                  <label
+                    class="flex items-center gap-3 border rounded-xl px-4 py-2 cursor-pointer"
+                  >
+                    <input
+                      v-model="form.screen_saver_show_clock"
+                      type="checkbox"
+                      class="w-5 h-5 rounded"
+                    />
 
-               
+                    <div>
+                      <Label class="font-medium">Show Clock</Label>
+                      <Label class="text-sm text-slate-500 block" opacity="80">
+                        Show clock on screen saver.
+                      </Label>
+                    </div>
+                  </label>
+                </div>
+                <div class="col-span-1">
+                  <label
+                    class="flex items-center gap-3 border rounded-xl px-4 py-2 cursor-pointer"
+                  >
+                    <input
+                      v-model="form.screen_saver_show_date"
+                      type="checkbox"
+                      class="w-5 h-5 rounded"
+                    />
+
+                    <div>
+                      <Label class="font-medium">Show Date</Label>
+                      <Label class="text-sm text-slate-500 block" opacity="80">
+                        Show date on screen saver.
+                      </Label>
+                    </div>
+                  </label>
+                </div>
               </div>
               <Label class="text-slate-500 block mt-10" opacity="80">
                 Configure automatic backups, retention policies, and data recovery

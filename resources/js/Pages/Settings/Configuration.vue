@@ -5,8 +5,10 @@ import PasswordConfig from "@/Components/Configurations/PasswordConfig.vue";
 import BackupConfig from "@/Components/Configurations/BackupConfig.vue";
 import SettingMenu from "./SettingMenu.vue";
 import ScreenSaverConfig from "@/Components/Configurations/ScreenSaverConfig.vue";
+import DateTimeConfig from "@/Components/Configurations/DateTimeConfig.vue";
 import { ref } from "vue";
 import { useTheme } from "@/composables/useTheme.js";
+import LoginLogoutConfig from "@/Components/Configurations/LoginLogoutConfig.vue";
 const props = defineProps({
   config: Object,
 });
@@ -38,6 +40,12 @@ const { theme } = useTheme();
             </div>
             <div>
               <ScreenSaverConfig :config="config" />
+            </div>
+            <div>
+              <DateTimeConfig :config="config" />
+            </div>
+            <div>
+              <LoginLogoutConfig :config="config" />
             </div>
           </div>
         </div>

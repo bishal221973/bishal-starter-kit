@@ -8,10 +8,11 @@ use Inertia\Inertia;
 
 class ConfigurationController extends Controller
 {
-    public function index(){
-        $config=Configuration::first();
-        return Inertia::render('Settings/Configuration',[
-            'config'=>$config
+    public function index()
+    {
+        $config = Configuration::first();
+        return Inertia::render('Settings/Configuration', [
+            'config' => $config
         ]);
     }
 
@@ -27,11 +28,35 @@ class ConfigurationController extends Controller
             'password_expiry_days' => ['nullable'],
 
             // Backup
-            'enable_auto_backup'=>'nullable',
-            'backup_frequency'=>'nullable',
-            'backup_retention_days'=>'nullable',
+            'enable_auto_backup' => 'nullable',
+            'backup_frequency' => 'nullable',
+            'backup_retention_days' => 'nullable',
+
+            // Screen Saver
+            'enable_screen_saver' => 'nullable',
+            'screen_saver_timeout' => 'nullable',
+            'screen_saver_type' => 'nullable',
+            'screen_saver_images' => 'nullable',
+            'screen_saver_video' => 'nullable',
+            'screen_saver_show_clock' => 'nullable',
+            'screen_saver_show_date' => 'nullable',
+
+            // Date time
+            'date_type' => 'nullable',
+            'date_format' => 'nullable',
+            'time_format' => 'nullable',
         ]);
 
+        if ($request->hasFile('screen_saver_images')) {
+            $images = [];
+
+            foreach ($request->file('screen_saver_images') as $image) {
+                $images[] = $image->store('screen_saver', 'public');
+            }
+
+            $data['screen_saver_images'] = $images;
+        }
+        // return "Hello";
         $setting = Configuration::first();
 
         if (! $setting) {
