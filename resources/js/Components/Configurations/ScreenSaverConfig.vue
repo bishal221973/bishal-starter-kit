@@ -25,26 +25,19 @@ const toggleModal = () => {
 };
 
 const form = useForm({
-  enable_screen_saver:
-    props.config?.enable_screen_saver == 1,
+  enable_screen_saver: props.config?.enable_screen_saver == 1,
 
-  screen_saver_timeout:
-    props.config?.screen_saver_timeout ?? 300,
+  screen_saver_timeout: props.config?.screen_saver_timeout ?? 300,
 
-  screen_saver_type:
-    props.config?.screen_saver_type ?? "image",
+  screen_saver_type: props.config?.screen_saver_type ?? "image",
 
-  screen_saver_images:
-    props.config?.screen_saver_images ?? null,
+  screen_saver_images: props.config?.screen_saver_images ?? null,
 
-  screen_saver_video:
-    props.config?.screen_saver_video ?? null,
+  screen_saver_video: props.config?.screen_saver_video ?? null,
 
-  screen_saver_show_clock:
-    props.config?.screen_saver_show_clock == 1,
+  screen_saver_show_clock: props.config?.screen_saver_show_clock == 1,
 
-  screen_saver_show_date:
-    props.config?.screen_saver_show_date == 1,
+  screen_saver_show_date: props.config?.screen_saver_show_date == 1,
 });
 
 const save = () => {
@@ -91,9 +84,7 @@ const options = [
 
     <!-- Content -->
     <div class="text-left">
-      <Label class="block font-medium text-sm">
-        Screen Saver Config
-      </Label>
+      <Label class="block font-medium text-sm"> Screen Saver Config </Label>
 
       <Label class="block text-[12px] opacity-60 mt-0.5">
         Manage screen saver timing, media and display options
@@ -114,9 +105,7 @@ const options = [
       <!-- =====================================================
            HEADER
       ====================================================== -->
-      <div
-        class="px-6 py-4 border-b border-slate-100 bg-card_header_color"
-      >
+      <div class="px-6 py-4 border-b border-slate-100 bg-card_header_color">
         <div class="flex items-center gap-3">
           <!-- Icon -->
           <div
@@ -127,14 +116,13 @@ const options = [
 
           <!-- Header Text -->
           <div>
-            <Label class="font-bold text-xl text-slate-800">
+            <Label class="font-bold text-lg text-slate-800">
               Screen Saver Configuration
             </Label>
 
-            <p class="text-sm text-slate-500 mt-0.5">
-              Configure inactivity timing, screen saver media and
-              display information.
-            </p>
+            <Label class="block text-xs opacity-70 mt-0.5">
+              Configure inactivity timing, screen saver media and display information.
+            </Label>
           </div>
         </div>
       </div>
@@ -172,17 +160,16 @@ const options = [
               <!-- Text -->
               <div>
                 <Label
-                  for="enable_screen_saver"
-                  class="font-semibold text-slate-800 cursor-pointer"
+                  for="enable_auto_backup"
+                  class="font-semibold text-sm cursor-pointer"
                 >
                   Enable Screen Saver
                 </Label>
 
-                <p class="text-sm text-slate-500 mt-1">
-                  Automatically activate the screen saver after a
-                  period of inactivity to protect your screen and
-                  reduce unnecessary display usage.
-                </p>
+                <Label class="block text-xs opacity-70 mt-1">
+                  Automatically activate the screen saver after a period of inactivity to
+                  protect your screen and reduce unnecessary display usage.
+                </Label>
               </div>
             </div>
 
@@ -208,10 +195,7 @@ const options = [
           <!-- =================================================
                SCREEN SAVER SETTINGS
           ================================================== -->
-          <div
-            v-if="form.enable_screen_saver"
-            class="mt-5 space-y-6"
-          >
+          <div v-if="form.enable_screen_saver" class="mt-5 space-y-6">
             <!-- ===============================================
                  BASIC SETTINGS
             ================================================ -->
@@ -224,26 +208,19 @@ const options = [
                 </div>
 
                 <div>
-                  <Label
-                    class="font-semibold text-base text-slate-800"
-                  >
+                  <Label class="font-semibold text-base text-sm">
                     Screen Saver Settings
                   </Label>
 
-                  <p class="text-xs text-slate-500">
-                    Configure when and how the screen saver should
-                    appear.
-                  </p>
+                  <Label class="block text-xs opacity-70">
+                    Configure when and how the screen saver should appear.
+                  </Label>
                 </div>
               </div>
 
-              <div
-                class="grid grid-cols-1 md:grid-cols-2 gap-4"
-              >
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Timeout -->
-                <div
-                  class="rounded-xl border border-slate-200 p-4 bg-white"
-                >
+                <div class="rounded-xl border border-slate-200 p-4 bg-white">
                   <TextInput
                     v-model="form.screen_saver_timeout"
                     type="number"
@@ -254,19 +231,14 @@ const options = [
                     required
                   />
 
-                  <p class="mt-1.5 text-xs text-slate-500">
-                    The screen saver will start after this many
-                    minutes of inactivity.
-                  </p>
+                  <Label class="block text-xs opacity-70 mt-1">
+                    The screen saver will start after this many minutes of inactivity.
+                  </Label>
                 </div>
 
                 <!-- Type -->
-                <div
-                  class="rounded-xl border border-slate-200 p-4 bg-white"
-                >
-                  <Label
-                    class="font-medium text-slate-700 mb-2 block"
-                  >
+                <div class="rounded-xl border border-slate-200 p-4 bg-white">
+                  <Label class="font-medium text-slate-700 mb-2 block">
                     Screen Saver Type
                     <span class="text-red-500 ml-1">*</span>
                   </Label>
@@ -282,10 +254,9 @@ const options = [
                     placeholder="Select screen saver type"
                   />
 
-                  <p class="mt-1.5 text-xs text-slate-500">
-                    Choose an image, image slider, or video based
-                    screen saver.
-                  </p>
+                  <Label class="block text-xs opacity-70 mt-1">
+                    Choose an image, image slider, or video based screen saver.
+                  </Label>
                 </div>
               </div>
             </div>
@@ -302,16 +273,14 @@ const options = [
                 </div>
 
                 <div>
-                  <Label
-                    class="font-semibold text-base text-slate-800"
-                  >
+                  <Label class="font-semibold text-base text-sm">
                     Screen Saver Media
                   </Label>
 
-                  <p class="text-xs text-slate-500">
-                    Select the media that should be displayed when
-                    the screen saver is active.
-                  </p>
+                  <Label class="block text-xs opacity-70">
+                    Select the media that should be displayed when the screen saver is
+                    active.
+                  </Label>
                 </div>
               </div>
 
@@ -332,32 +301,28 @@ const options = [
                   "
                   accept="image/*"
                   :max-size="2 * 1024 * 1024"
-                  :multiple="
-                    form.screen_saver_type === 'slider'
-                  "
+                  :multiple="form.screen_saver_type === 'slider'"
                   :primaryColor="theme?.primary"
                 />
 
-                <p class="mt-2 text-xs text-slate-500">
+                <Label class="block text-xs opacity-70 mt-1">
                   {{
                     form.screen_saver_type === "slider"
                       ? "Upload multiple images to create a rotating image slider."
                       : "Upload the image that should be displayed as the screen saver."
                   }}
-                </p>
+                </Label>
 
                 <div
                   v-if="form.screen_saver_type === 'slider'"
                   class="mt-3 flex items-start gap-2 rounded-lg bg-primary/5 border border-primary/10 px-3 py-2.5"
                 >
-                  <i
-                    class="fa-solid fa-circle-info text-primary mt-0.5 text-xs"
-                  ></i>
+                  <i class="fa-solid fa-circle-info text-primary mt-0.5 text-xs"></i>
 
-                  <p class="text-xs text-slate-500">
-                    Multiple images will be displayed sequentially
-                    while the screen saver is active.
-                  </p>
+                  <Label class="block text-xs opacity-70">
+                    Multiple images will be displayed sequentially while the screen saver
+                    is active.
+                  </Label>
                 </div>
               </div>
 
@@ -366,9 +331,7 @@ const options = [
                 v-if="form.screen_saver_type === 'video'"
                 class="rounded-xl border border-slate-200 bg-white p-4"
               >
-                <Label
-                  class="font-medium text-slate-700 mb-2 block"
-                >
+                <Label class="font-medium text-sm mb-2 block">
                   Screen Saver Video
                   <span class="text-red-500 ml-1">*</span>
                 </Label>
@@ -384,10 +347,10 @@ const options = [
                   class="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-indigo-500/10"
                 />
 
-                <p class="mt-2 text-xs text-slate-500">
-                  Provide the path or URL of the video that should
-                  play when the screen saver is active.
-                </p>
+                <Label class="block text-xs opacity-70 mt-1">
+                  Provide the path or URL of the video that should play when the screen
+                  saver is active.
+                </Label>
 
                 <div
                   class="mt-3 flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-100 px-3 py-2.5"
@@ -396,11 +359,10 @@ const options = [
                     class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 text-xs"
                   ></i>
 
-                  <p class="text-xs text-slate-600">
-                    Use a compressed video suitable for your display
-                    resolution to reduce bandwidth and storage
-                    usage.
-                  </p>
+                  <Label class="block text-xs opacity-70">
+                    Use a compressed video suitable for your display resolution to reduce
+                    bandwidth and storage usage.
+                  </Label>
                 </div>
               </div>
             </div>
@@ -417,22 +379,15 @@ const options = [
                 </div>
 
                 <div>
-                  <Label
-                    class="font-semibold text-base text-slate-800"
-                  >
-                    Display Options
-                  </Label>
+                  <Label class="font-semibold text-base text-sm"> Display Options </Label>
 
-                  <p class="text-xs text-slate-500">
-                    Choose additional information to show over the
-                    screen saver.
-                  </p>
+                  <Label class="block text-xs opacity-70">
+                    Choose additional information to show over the screen saver.
+                  </Label>
                 </div>
               </div>
 
-              <div
-                class="grid grid-cols-1 md:grid-cols-2 gap-3"
-              >
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <!-- Clock -->
                 <label
                   class="group flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all duration-200"
@@ -449,16 +404,11 @@ const options = [
                   />
 
                   <div>
-                    <Label
-                      class="font-medium text-slate-800 cursor-pointer"
-                    >
-                      Show Clock
-                    </Label>
+                    <Label class="font-medium text-sm cursor-pointer"> Show Clock </Label>
 
-                    <p class="text-xs text-slate-500 mt-1">
-                      Display the current time while the screen
-                      saver is active.
-                    </p>
+                    <Label class="block text-xs opacity-70">
+                      Display the current time while the screen saver is active.
+                    </Label>
                   </div>
                 </label>
 
@@ -478,16 +428,11 @@ const options = [
                   />
 
                   <div>
-                    <Label
-                      class="font-medium text-slate-800 cursor-pointer"
-                    >
-                      Show Date
-                    </Label>
+                    <Label class="font-medium text-sm cursor-pointer"> Show Date </Label>
 
-                    <p class="text-xs text-slate-500 mt-1">
-                      Display the current date while the screen
-                      saver is active.
-                    </p>
+                    <Label class="block text-xs opacity-70">
+                      Display the current date while the screen saver is active.
+                    </Label>
                   </div>
                 </label>
               </div>
@@ -497,159 +442,18 @@ const options = [
                  SCREEN SAVER SUMMARY
             ================================================ -->
             <div
-              class="rounded-xl border border-slate-200 bg-slate-50/80 p-4"
+              class="mt-4 flex items-start gap-2.5 rounded-lg bg-primary/5 border border-primary/10 px-3.5 py-3"
             >
-              <div class="flex items-start gap-3">
-                <div
-                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+              <i class="fa-solid fa-lightbulb text-primary mt-0.5 text-sm"></i>
+
+              <Label class="text-xs leading-5 text-slate-600">
+                <Label class="font-semibold text-slate-700"> Tip: </Label>
+                <span class="opacity-60"
+                  >Use a shorter timeout for public displays and longer intervals for
+                  personal workstations. Images and videos should be optimized for the
+                  screen's resolution.</span
                 >
-                  <i class="fa-solid fa-desktop"></i>
-                </div>
-
-                <div>
-                  <Label class="font-semibold text-slate-800">
-                    Screen Saver Overview
-                  </Label>
-
-                  <p
-                    class="text-sm leading-6 text-slate-500 mt-1"
-                  >
-                    The screen saver will automatically activate
-                    after the configured inactivity period and
-                    display the selected media.
-                  </p>
-                </div>
-              </div>
-
-              <!-- Summary Cards -->
-              <div
-                class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3"
-              >
-                <!-- Timeout -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="text-xs text-slate-500 mb-1"
-                  >
-                    Timeout
-                  </div>
-
-                  <div
-                    class="text-lg font-bold text-slate-800"
-                  >
-                    {{ form.screen_saver_timeout }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400">
-                    minutes
-                  </div>
-                </div>
-
-                <!-- Type -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="text-xs text-slate-500 mb-1"
-                  >
-                    Type
-                  </div>
-
-                  <div
-                    class="text-sm font-bold text-slate-800 capitalize"
-                  >
-                    {{
-                      form.screen_saver_type === "slider"
-                        ? "Image Slider"
-                        : form.screen_saver_type
-                    }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400">
-                    media mode
-                  </div>
-                </div>
-
-                <!-- Clock -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="text-xs text-slate-500 mb-1"
-                  >
-                    Clock
-                  </div>
-
-                  <div
-                    class="text-sm font-bold"
-                    :class="
-                      form.screen_saver_show_clock
-                        ? 'text-emerald-600'
-                        : 'text-slate-500'
-                    "
-                  >
-                    {{
-                      form.screen_saver_show_clock
-                        ? "Visible"
-                        : "Hidden"
-                    }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400">
-                    display option
-                  </div>
-                </div>
-
-                <!-- Date -->
-                <div
-                  class="rounded-lg bg-white border border-slate-200 p-3"
-                >
-                  <div
-                    class="text-xs text-slate-500 mb-1"
-                  >
-                    Date
-                  </div>
-
-                  <div
-                    class="text-sm font-bold"
-                    :class="
-                      form.screen_saver_show_date
-                        ? 'text-emerald-600'
-                        : 'text-slate-500'
-                    "
-                  >
-                    {{
-                      form.screen_saver_show_date
-                        ? "Visible"
-                        : "Hidden"
-                    }}
-                  </div>
-
-                  <div class="text-[11px] text-slate-400">
-                    display option
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tip -->
-              <div
-                class="mt-4 flex items-start gap-2.5 rounded-lg bg-primary/5 border border-primary/10 px-3.5 py-3"
-              >
-                <i
-                  class="fa-solid fa-lightbulb text-primary mt-0.5 text-sm"
-                ></i>
-
-                <p class="text-xs leading-5 text-slate-600">
-                  <span class="font-semibold text-slate-700">
-                    Tip:
-                  </span>
-                  Use a shorter timeout for public displays and
-                  longer intervals for personal workstations.
-                  Images and videos should be optimized for the
-                  screen's resolution.
-                </p>
-              </div>
+              </Label>
             </div>
           </div>
 
@@ -666,17 +470,13 @@ const options = [
               <i class="fa-solid fa-moon text-lg"></i>
             </div>
 
-            <Label
-              class="block mt-3 font-semibold text-slate-700"
-            >
+            <Label class="block mt-3 font-semibold text-slate-700">
               Screen Saver is Disabled
             </Label>
 
-            <p
-              class="max-w-md mx-auto mt-1.5 text-sm leading-6 text-slate-500"
-            >
-              Enable the screen saver above to configure the
-              inactivity timeout, media type, and display options.
+            <p class="max-w-md mx-auto mt-1.5 text-sm leading-6 text-slate-500">
+              Enable the screen saver above to configure the inactivity timeout, media
+              type, and display options.
             </p>
           </div>
 
@@ -684,21 +484,13 @@ const options = [
                FOOTER
           ================================================== -->
           <div
-            class="mt-6 flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
+            class="flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
           >
-            <Button
-              @click="toggleModal"
-              type="danger"
-              text="Close"
-            />
+            <Button @click="toggleModal" type="danger" text="Close" />
 
             <Button
               :submit="true"
-              :text="
-                form.processing
-                  ? 'Saving...'
-                  : 'Save Settings'
-              "
+              :text="form.processing ? 'Saving...' : 'Save Settings'"
               :processing="form.processing"
               :disabled="form.processing"
             />

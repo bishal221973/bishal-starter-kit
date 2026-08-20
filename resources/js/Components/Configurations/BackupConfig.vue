@@ -327,7 +327,7 @@ const options = [
                FOOTER
           ================================================== -->
           <div
-            class="mt-6 flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
+            class="flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
           >
             <Button
               @click="toggleModal"
