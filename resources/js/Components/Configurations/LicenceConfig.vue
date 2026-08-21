@@ -149,13 +149,13 @@ const save = () => {
           </div>
 
           <div>
-            <Label class="font-bold text-xl text-slate-800">
+            <Label class="font-bold text-lg text-lg">
               License Configuration
             </Label>
 
-            <p class="text-sm text-slate-500 mt-0.5">
+            <Label class="block text-xs opacity-70">
               Configure the license key used to identify and authorize this application.
-            </p>
+            </Label>
           </div>
         </div>
       </div>
@@ -164,7 +164,7 @@ const save = () => {
            BODY
       ====================================================== -->
 
-      <div class="p-5 sm:p-6">
+      <div class="px-5 py-3">
         <form @submit.prevent="save">
           <!-- =================================================
                LICENSE STATUS
@@ -189,15 +189,15 @@ const save = () => {
               </div>
 
               <div>
-                <Label class="font-semibold text-slate-800"> License Status </Label>
+                <Label class="font-semibold text-sm"> License Status </Label>
 
-                <p class="text-xs text-slate-500 mt-1">
+                <Label class="block text-xs opacity-70">
                   {{
                     form.license_key
                       ? "A license key has been configured for this application."
                       : "No license key has been configured yet."
                   }}
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -218,11 +218,11 @@ const save = () => {
           <div>
             <div class="flex items-center justify-between mb-2">
               <div>
-                <Label class="font-semibold text-slate-700"> License Key </Label>
+                <Label class="font-semibold text-sm"> License Key </Label>
 
-                <p class="text-xs text-slate-500 mt-1">
+                <Label class="block text-xs opacity-70">
                   Enter the license key provided for your application.
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -290,34 +290,7 @@ const save = () => {
             </div>
           </div>
 
-          <!-- =================================================
-               SECURITY NOTICE
-          ================================================== -->
-
-          <div class="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
-            <div class="flex items-start gap-3">
-              <div
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600"
-              >
-                <i class="fa-solid fa-shield-halved"></i>
-              </div>
-
-              <div>
-                <Label class="font-semibold text-amber-800">
-                  Keep Your License Key Secure
-                </Label>
-
-                <p class="text-sm text-amber-700 leading-6 mt-1">
-                  Your license key may grant access to application features or services.
-                  Do not share it publicly or include it in source code, screenshots,
-                  logs, or client-side configuration.
-                </p>
-              </div>
-            </div>
-          </div>
-
          
-
           
 
           <!-- =================================================
@@ -325,7 +298,7 @@ const save = () => {
           ================================================== -->
 
           <div
-            class="mt-6 flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
+            class="flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
           >
             <Button @click="toggleModal" type="danger" text="Close" />
 

@@ -89,11 +89,11 @@ const save = () => {
           </div>
 
           <div>
-            <Label class="font-bold text-xl text-slate-800"> User Configuration </Label>
+            <Label class="font-bold text-lg text-lg"> User Configuration </Label>
 
-            <p class="text-sm text-slate-500 mt-0.5">
+            <Label class="block text-xs opacity-70">
               Configure account lifecycle, inactivity and device login policies for users.
-            </p>
+            </Label>
           </div>
         </div>
       </div>
@@ -102,13 +102,13 @@ const save = () => {
            BODY
       ====================================================== -->
 
-      <div class="p-5 sm:p-6">
+      <div class="px-5 py-3">
         <form @submit.prevent="save">
           <!-- =================================================
                INACTIVE USERS
           ================================================== -->
 
-          <div class="mb-5">
+          <div class="mb-3">
             <div class="flex items-center gap-2 mb-3">
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -117,11 +117,11 @@ const save = () => {
               </div>
 
               <div>
-                <Label class="font-semibold text-base"> Inactive User Management </Label>
+                <Label class="font-semibold text-sm"> Inactive User Management </Label>
 
-                <p class="text-xs text-slate-500">
+                <Label class="block text-xs opacity-70">
                   Automatically disable accounts that have been inactive.
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -151,15 +151,15 @@ const save = () => {
                 <div>
                   <Label
                     for="auto_disable_inactive_users"
-                    class="font-medium text-slate-800 cursor-pointer"
+                    class="font-medium text-sm cursor-pointer"
                   >
                     Automatically Disable Inactive Users
                   </Label>
 
-                  <p class="text-sm text-slate-500 mt-1">
+                  <Label class="block text-xs opacity-70">
                     Automatically disable user accounts when they have not logged in for
                     the configured number of days.
-                  </p>
+                  </Label>
                 </div>
               </div>
 
@@ -199,10 +199,10 @@ const save = () => {
                 required
               />
 
-              <p class="text-xs text-slate-500 mt-2">
+              <Label class="block text-xs opacity-70">
                 Users who have not logged in for this number of days will be automatically
                 disabled.
-              </p>
+              </Label>
             </div>
           </div>
 
@@ -210,7 +210,7 @@ const save = () => {
                ACCOUNT DELETION
           ================================================== -->
 
-          <div class="mb-5">
+          <div class="mb-3">
             <div class="flex items-center gap-2 mb-3">
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -219,11 +219,11 @@ const save = () => {
               </div>
 
               <div>
-                <Label class="font-semibold text-base"> Account Management </Label>
+                <Label class="font-semibold text-sm"> Account Management </Label>
 
-                <p class="text-xs text-slate-500">
+                <Label class="block text-xs opacity-70">
                   Control whether users can delete their accounts.
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -251,15 +251,15 @@ const save = () => {
                 <div>
                   <Label
                     for="enable_delete_account"
-                    class="font-medium text-slate-800 cursor-pointer"
+                    class="font-medium text-sm cursor-pointer"
                   >
                     Allow Account Deletion
                   </Label>
 
-                  <p class="text-sm text-slate-500 mt-1">
+                  <Label class="block text-xs opacity-70">
                     Allow users to permanently delete their own accounts from the
                     application.
-                  </p>
+                  </Label>
                 </div>
               </div>
 
@@ -290,9 +290,9 @@ const save = () => {
               class="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3"
             >
               <div class="flex items-start gap-2">
-                <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
+                <i class="fa-solid fa-triangle-exclamation text-warning mt-0.5"></i>
 
-                <p class="text-xs text-amber-700 leading-5">
+                <p class="text-xs text-warning leading-5">
                   Account deletion can be permanent. Make sure important user data is
                   handled according to your application's data retention policy.
                 </p>
@@ -313,11 +313,11 @@ const save = () => {
               </div>
 
               <div>
-                <Label class="font-semibold text-base"> Device Login </Label>
+                <Label class="font-semibold text-sm"> Device Login </Label>
 
-                <p class="text-xs text-slate-500">
+                <Label class="block text-xs opacity-70">
                   Control simultaneous sessions across devices.
-                </p>
+                </Label>
               </div>
             </div>
 
@@ -345,14 +345,14 @@ const save = () => {
                 <div>
                   <Label
                     for="force_single_device_login"
-                    class="font-medium text-slate-800 cursor-pointer"
+                    class="font-medium text-sm cursor-pointer"
                   >
                     Force Single Device Login
                   </Label>
 
-                  <p class="text-sm text-slate-500 mt-1">
+                  <Label class="block text-xs opacity-70">
                     Allow each user to maintain only one active device session at a time.
-                  </p>
+                  </Label>
                 </div>
               </div>
 
@@ -377,105 +377,14 @@ const save = () => {
             </label>
           </div>
 
-          <!-- =================================================
-               INFORMATION
-          ================================================== -->
-
-          <div class="rounded-xl border border-primary/10 bg-primary/5 p-4">
-            <div class="flex items-start gap-3">
-              <div
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
-              >
-                <i class="fa-solid fa-circle-info"></i>
-              </div>
-
-              <div>
-                <Label class="font-semibold text-slate-800">
-                  User Management Information
-                </Label>
-
-                <p class="text-sm text-slate-600 leading-6 mt-1">
-                  These settings control the lifecycle and access behavior of user
-                  accounts. Automatically disabling inactive users can improve security,
-                  while single device login can help prevent account sharing.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- =================================================
-               CURRENT STATUS
-          ================================================== -->
-
-          <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <!-- Inactive -->
-
-            <div class="rounded-xl border border-slate-200 p-3">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-user-clock text-slate-400"></i>
-
-                <span class="text-xs text-slate-500"> Inactive Users </span>
-              </div>
-
-              <p
-                class="mt-1 text-sm font-bold"
-                :class="
-                  form.auto_disable_inactive_users ? 'text-primary' : 'text-slate-600'
-                "
-              >
-                {{
-                  form.auto_disable_inactive_users
-                    ? `${form.inactive_user_days} Days`
-                    : "Disabled"
-                }}
-              </p>
-            </div>
-
-            <!-- Delete -->
-
-            <div class="rounded-xl border border-slate-200 p-3">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-user-xmark text-slate-400"></i>
-
-                <span class="text-xs text-slate-500"> Account Deletion </span>
-              </div>
-
-              <p
-                class="mt-1 text-sm font-bold"
-                :class="form.enable_delete_account ? 'text-red-500' : 'text-slate-600'"
-              >
-                {{ form.enable_delete_account ? "Allowed" : "Disabled" }}
-              </p>
-            </div>
-
-            <!-- Device -->
-
-            <div class="rounded-xl border border-slate-200 p-3">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-mobile-screen-button text-slate-400"></i>
-
-                <span class="text-xs text-slate-500"> Device Login </span>
-              </div>
-
-              <p
-                class="mt-1 text-sm font-bold"
-                :class="
-                  form.force_single_device_login ? 'text-primary' : 'text-slate-600'
-                "
-              >
-                {{
-                  form.force_single_device_login ? "Single Device" : "Multiple Devices"
-                }}
-              </p>
-            </div>
-          </div>
+         
 
           <!-- =================================================
                FOOTER
           ================================================== -->
 
           <div
-            class="mt-6 flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
+            class="flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
           >
             <Button @click="toggleModal" type="danger" text="Close" />
 
