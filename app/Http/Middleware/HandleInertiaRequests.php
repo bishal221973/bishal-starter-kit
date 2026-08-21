@@ -44,7 +44,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'theme' => $setting ? $setting->toArray() : [],
-            'screenSaver'=>AppConfig::screenSaver(),
+            'screenSaver' => AppConfig::screenSaver(),
+            'autoLogout' => fn() =>
+            AppConfig::autoLogout(),
             //
         ];
     }

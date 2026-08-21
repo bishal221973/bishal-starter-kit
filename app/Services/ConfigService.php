@@ -124,23 +124,28 @@ class ConfigService
         ];
     }
 
-    public static function autoLogout(): ?array
+    public static function autoLogout(): array
     {
         $config = static::config();
 
-        if (!$config || !$config->enable_auto_logout) {
-            return null;
+        if (!$config) {
+            return [
+                'enabled' => false,
+                'timeout' => 30,
+                'show_warning' => true,
+                'warning_time' => 1,
+            ];
         }
 
         return [
-            'enabled' => true,
+            'enabled' => (bool) $config->enable_auto_logout,
 
             'timeout' => (int) (
                 $config->auto_logout_time ?? 30
             ),
 
             'show_warning' => (bool) (
-                $config->show_logout_warning ?? false
+                $config->show_logout_warning ?? true
             ),
 
             'warning_time' => (int) (

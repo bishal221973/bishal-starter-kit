@@ -5,7 +5,7 @@ import Sidebar from "@/Components/Sidebar.vue";
 import Navbar from "@/Components/Navbar.vue";
 import { useTheme } from "@/composables/useTheme";
 import ScreenSaver from "@/Components/ScreenSaver.vue";
-
+import AutoLogout from "@/Components/AutoLogout.vue";
 const sidebarOpen = ref(true);
 const { theme } = useTheme();
 
@@ -88,7 +88,14 @@ const page = usePage();
     :timeout="page?.props?.screenSaver?.timeout * 60"
     type="slider"
     :images="page?.props?.screenSaver?.images"
-    :show-clock=page?.props?.screenSaver?.show_clock
-    :show-date=page?.props?.screenSaver?.show_date
+    :show-clock="page?.props?.screenSaver?.show_clock"
+    :show-date="page?.props?.screenSaver?.show_date"
+  />
+
+  <AutoLogout
+    :enabled="page.props.autoLogout?.enabled ?? false"
+    :timeout="page.props.autoLogout?.timeout ?? 30"
+    :show-warning="page.props.autoLogout?.show_warning ?? true"
+    :warning-time="page.props.autoLogout?.warning_time ?? 1"
   />
 </template>
