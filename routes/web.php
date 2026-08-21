@@ -56,3 +56,4 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::get('verify-email',[EmailVerifyController::class,'index'])->name('verification.notice');
+Route::post('verify-email/send',[EmailVerifyController::class,'send'])->name('verification.send');
