@@ -54,9 +54,16 @@ class EmailVerifyController extends Controller
             ]
         );
 
-        Mail::to($user->email)->send(
-            new WelcomeMail($user, $verificationUrl)
-        );
+        // Mail::to($user->email)->send(
+        //     new WelcomeMail($user, $verificationUrl)
+        // );
+        dispatch(function () use ($user, $verificationUrl) {
+            MailConfig::configure();
+
+            Mail::to($user->email)->send(
+                new WelcomeMail($user, $verificationUrl)
+            );
+        })->afterResponse();
 
         return back()->with(
             'success',
