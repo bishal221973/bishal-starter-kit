@@ -8,6 +8,10 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  inputClass: {
+    type: [String, Array, Object],
+    default: "",
+  },
 });
 // Modern Vue 3.4+ two-way binding
 const model = defineModel({ type: String, default: "" });
@@ -37,6 +41,7 @@ defineExpose({ focus: () => inputRef.value?.focus() });
         type="text"
         class="w-full px-4 py-[11.5px] bg-white border border-primary rounded-xl text-slate-900 placeholder-slate-400 text-sm shadow-sm transition-all duration-200 ease-in-out outline-none hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-indigo-500/10 focus:shadow-md"
         v-bind="$attrs"
+        :class="inputClass"
       />
     </div>
   </div>
