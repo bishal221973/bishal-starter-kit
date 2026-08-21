@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\AppConfig;
 use App\Models\Configuration;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,6 +11,7 @@ class ConfigurationController extends Controller
 {
     public function index()
     {
+        // return AppConfig::hello('Bishal');
         $config = Configuration::first();
         return Inertia::render('Settings/Configuration', [
             'config' => $config
