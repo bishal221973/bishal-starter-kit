@@ -87,11 +87,11 @@ const save = () => {
           </div>
 
           <div>
-            <Label class="font-bold text-xl text-slate-800"> Footer Configuration </Label>
+            <Label class="font-bold text-lg text-lg"> Footer Configuration </Label>
 
-            <p class="text-sm text-slate-500 mt-0.5">
+            <Label class="block text-xs opacity-70">
               Customize the text displayed at the bottom of your application pages.
-            </p>
+            </Label>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ const save = () => {
            BODY
       ====================================================== -->
 
-      <div class="p-5 sm:p-6">
+      <div class="px-5 py-3">
         <form @submit.prevent="save">
           <!-- =================================================
                FOOTER TEXT
@@ -109,12 +109,12 @@ const save = () => {
           <div>
             <div class="flex items-center justify-between mb-2">
               <div>
-                <Label class="font-semibold text-slate-700"> Footer Text </Label>
+                <Label class="font-semibold text-sm"> Footer Text </Label>
 
-                <p class="text-xs text-slate-500 mt-1">
+                <Label class="block text-xs opacity-70">
                   Enter the copyright, company information, or other text you want to
                   display in the footer.
-                </p>
+                </Label>
               </div>
 
               <span
@@ -123,6 +123,7 @@ const save = () => {
               >
                 {{ characterCount }}/{{ maxLength }}
               </span>
+            </div>
             </div>
 
             <!-- Textarea -->
@@ -137,38 +138,13 @@ const save = () => {
               ></textarea>
             </div>
 
-            <!-- Helper -->
-
-            <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <div class="flex items-start gap-3">
-                <div
-                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
-                >
-                  <i class="fa-solid fa-circle-info"></i>
-                </div>
-
-                <div>
-                  <Label class="font-medium text-slate-700"> Footer Information </Label>
-
-                  <p class="text-sm text-slate-500 leading-6 mt-1">
-                    This text will be displayed at the bottom of application pages. You
-                    can use it for copyright notices, company information, contact
-                    details, or a short application message.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          
-
          
           <!-- =================================================
                FOOTER
           ================================================== -->
 
           <div
-            class="mt-6 flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
+            class="flex flex-col-reverse sm:flex-row gap-3 justify-end border-t border-slate-100 pt-4"
           >
             <Button @click="toggleModal" type="danger" text="Close" />
 
