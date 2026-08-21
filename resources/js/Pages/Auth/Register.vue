@@ -1,14 +1,10 @@
 <script setup>
-import { ref } from "vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
+
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
-// import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/Elements/TextInput.vue";
 import Button from "@/Components/Elements/Button.vue";
-import HorizontalLogo from "@/Components/Logo/HorizontalLogo.vue";
-import Label from "@/Components/Label.vue";
-const step = ref(1);
 
 const form = useForm({
   name: "",
@@ -18,258 +14,468 @@ const form = useForm({
   terms: false,
 });
 
-const nextStep = () => {
-  if (step.value < 3) {
-    step.value++;
-  }
-};
-
-const previousStep = () => {
-  if (step.value > 1) {
-    step.value--;
-  }
-};
-
 const submit = () => {
   form.post(route("register"), {
-    onFinish: () => form.reset("password", "password_confirmation"),
+    onFinish: () => {
+      form.reset("password", "password_confirmation");
+    },
   });
 };
 </script>
+
 <template>
   <Head title="Register" />
 
-  <div class="min-h-screen flex bg-slate-50">
-    <!-- Left Side -->
+  <div class="min-h-screen bg-slate-50 flex">
+
+    <!-- =====================================================
+         LEFT SIDE
+    ====================================================== -->
+
     <div
-      class="hidden lg:flex lg:w-1/2 bg-primary text-white p-16 flex-col justify-between"
+      class="hidden lg:flex lg:w-1/2 relative overflow-hidden
+             bg-primary text-white p-12 xl:p-16
+             flex-col justify-between"
     >
-      <div>
-        <!-- <HorizontalLogo/> -->
+      <!-- Decorative background -->
+      <div
+        class="absolute -top-32 -right-32 w-96 h-96
+               rounded-full bg-white/10 blur-3xl"
+      ></div>
 
-        <h1 class="mt-12 text-5xl font-bold leading-tight">
-          Build Faster With
-          <br />
-          Bishal Starter Kit
-        </h1>
+      <div
+        class="absolute -bottom-40 -left-40 w-[28rem] h-[28rem]
+               rounded-full bg-black/10 blur-3xl"
+      ></div>
 
-        <p class="mt-6 text-lg opacity-90">
-          Modern Laravel + Vue starter kit with authentication, themes, reusable
-          components, and best practices.
-        </p>
+      <!-- Content -->
+      <div class="relative z-10">
+
+        <!-- Logo -->
+        <div class="flex items-center gap-3">
+          <div
+            class="w-11 h-11 rounded-xl bg-white/15
+                   flex items-center justify-center
+                   backdrop-blur-sm"
+          >
+            <i class="fas fa-layer-group text-lg"></i>
+          </div>
+
+          <span class="text-xl font-bold">
+            Bishal Starter Kit
+          </span>
+        </div>
+
+        <!-- Heading -->
+        <div class="mt-20 max-w-xl">
+
+          <div
+            class="inline-flex items-center gap-2
+                   px-3 py-1.5 rounded-full
+                   bg-white/10 border border-white/10
+                   text-sm font-medium"
+          >
+            <span
+              class="w-2 h-2 rounded-full bg-white"
+            ></span>
+
+            Get started today
+          </div>
+
+          <h1
+            class="mt-6 text-5xl xl:text-6xl
+                   font-bold leading-[1.08]"
+          >
+            Build something
+            <br />
+            amazing.
+          </h1>
+
+          <p
+            class="mt-6 max-w-lg
+                   text-lg leading-relaxed
+                   text-white/80"
+          >
+            Create your account and start building with
+            a modern Laravel, Vue 3 and Inertia starter
+            kit designed for developers.
+          </p>
+        </div>
+
+        <!-- Features -->
+        <div class="mt-12 space-y-4">
+
+          <div class="flex items-center gap-3">
+            <div
+              class="w-8 h-8 rounded-lg
+                     bg-white/10
+                     flex items-center justify-center"
+            >
+              <i class="fas fa-check text-sm"></i>
+            </div>
+
+            <span class="text-white/90">
+              Laravel + Vue 3 + Inertia
+            </span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div
+              class="w-8 h-8 rounded-lg
+                     bg-white/10
+                     flex items-center justify-center"
+            >
+              <i class="fas fa-check text-sm"></i>
+            </div>
+
+            <span class="text-white/90">
+              Authentication ready
+            </span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div
+              class="w-8 h-8 rounded-lg
+                     bg-white/10
+                     flex items-center justify-center"
+            >
+              <i class="fas fa-check text-sm"></i>
+            </div>
+
+            <span class="text-white/90">
+              Theme & reusable components
+            </span>
+          </div>
+
+        </div>
       </div>
 
-      <div class="space-y-5 text-lg">
-        <div>✓ Laravel 12 + Vue 3 + Inertia</div>
-        <div>✓ Authentication Ready</div>
-        <div>✓ Theme Management</div>
-        <div>✓ Modern UI Components</div>
+      <!-- Footer -->
+      <div
+        class="relative z-10
+               text-sm text-white/60"
+      >
+        © {{ new Date().getFullYear() }} Bishal Starter Kit
       </div>
     </div>
 
-    <!-- Right Side -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-6">
-      <div
-        class="w-full max-w-xl bg-white rounded-3xl shadow-xl border border-slate-100 p-8"
-      >
-        <!-- Header -->
-        <div class="text-center">
-          <h2 class="text-3xl font-bold text-slate-800">Create Account</h2>
+    <!-- =====================================================
+         RIGHT SIDE
+    ====================================================== -->
 
-          <p class="mt-2 text-slate-500">Complete the steps below.</p>
+    <div
+      class="w-full lg:w-1/2
+             min-h-screen
+             flex items-center justify-center
+             px-5 py-10 sm:px-8"
+    >
+
+      <div class="w-full max-w-md">
+
+        <!-- Mobile Logo -->
+        <div class="lg:hidden flex justify-center mb-8">
+
+          <div class="flex items-center gap-3">
+
+            <div
+              class="w-10 h-10 rounded-xl
+                     bg-primary text-white
+                     flex items-center justify-center"
+            >
+              <i class="fas fa-layer-group"></i>
+            </div>
+
+            <span class="font-bold text-xl text-slate-800">
+              Bishal Starter Kit
+            </span>
+
+          </div>
+
         </div>
 
-        <!-- Progress -->
-        <div class="flex items-center mt-10 mb-8">
-          <div class="step" :class="{ active: step >= 1 }">1</div>
+        <!-- Card -->
+        
 
-          <div class="step-line" :class="{ active: step >= 2 }"></div>
+          <!-- Header -->
+          <div class="mb-8">
 
-          <div class="step" :class="{ active: step >= 2 }">2</div>
+            <h2
+              class="text-2xl sm:text-3xl
+                     font-bold text-slate-800"
+            >
+              Create your account
+            </h2>
 
-          <div class="step-line" :class="{ active: step >= 3 }"></div>
+            <p class="mt-2 text-sm text-slate-500">
+              Fill in your details to get started.
+            </p>
 
-          <div class="step" :class="{ active: step >= 3 }">3</div>
-        </div>
+          </div>
 
-        <form @submit.prevent="submit">
-          <!-- STEP 1 -->
-          <div v-if="step === 1" class="space-y-5">
+          <!-- Form -->
+          <form
+            @submit.prevent="submit"
+            class="space-y-5"
+          >
+
+            <!-- Name -->
             <div>
-              <!-- <InputLabel for="name" value="Full Name" /> -->
+
+              <label
+                for="name"
+                class="block mb-2
+                       text-sm font-medium
+                       text-slate-700"
+              >
+                Full Name
+              </label>
 
               <TextInput
                 id="name"
                 v-model="form.name"
                 type="text"
+                autocomplete="name"
                 placeholder="Enter your full name"
+                class="w-full"
+                :disabled="form.processing"
               />
 
-              <InputError class="mt-2" :message="form.errors.name" />
+              <InputError
+                class="mt-2"
+                :message="form.errors.name"
+              />
+
             </div>
 
+            <!-- Email -->
             <div>
-              <!-- <InputLabel for="email" value="Email Address" /> -->
+
+              <label
+                for="email"
+                class="block mb-2
+                       text-sm font-medium
+                       text-slate-700"
+              >
+                Email Address
+              </label>
 
               <TextInput
                 id="email"
                 v-model="form.email"
                 type="email"
-                placeholder="Enter your email"
+                autocomplete="email"
+                placeholder="you@example.com"
+                class="w-full"
+                :disabled="form.processing"
               />
 
-              <InputError class="mt-2" :message="form.errors.email" />
+              <InputError
+                class="mt-2"
+                :message="form.errors.email"
+              />
+
             </div>
 
-            <Button
-              type="primary"
-              class="w-full"
-              @click.prevent="nextStep"
-              text="Continue"
-            >
-            </Button>
-          </div>
-
-          <!-- STEP 2 -->
-          <div v-if="step === 2" class="space-y-5">
+            <!-- Password -->
             <div>
-              <!-- <InputLabel for="password" value="Password" /> -->
+
+              <label
+                for="password"
+                class="block mb-2
+                       text-sm font-medium
+                       text-slate-700"
+              >
+                Password
+              </label>
 
               <TextInput
                 id="password"
                 v-model="form.password"
                 type="password"
-                placeholder="Enter password"
+                autocomplete="new-password"
+                placeholder="Create a strong password"
+                class="w-full"
+                :disabled="form.processing"
               />
 
-              <InputError class="mt-2" :message="form.errors.password" />
+              <InputError
+                class="mt-2"
+                :message="form.errors.password"
+              />
+
             </div>
 
+            <!-- Confirm Password -->
             <div>
-              <!-- <InputLabel for="password_confirmation" value="Confirm Password" /> -->
+
+              <label
+                for="password_confirmation"
+                class="block mb-2
+                       text-sm font-medium
+                       text-slate-700"
+              >
+                Confirm Password
+              </label>
 
               <TextInput
                 id="password_confirmation"
                 v-model="form.password_confirmation"
                 type="password"
-                placeholder="Confirm password"
+                autocomplete="new-password"
+                placeholder="Confirm your password"
+                class="w-full"
+                :disabled="form.processing"
               />
 
-              <InputError class="mt-2" :message="form.errors.password_confirmation" />
+              <InputError
+                class="mt-2"
+                :message="form.errors.password_confirmation"
+              />
+
             </div>
 
-            <div class="flex gap-3">
-              <Button type="secondary" @click.prevent="previousStep" text="Back">
-              </Button>
+            <!-- Terms -->
+            <div
+              class="p-4
+                     rounded-xl
+                     border border-slate-200
+                     bg-slate-50"
+            >
 
-              <Button
-                type="primary"
-                class="flex-1"
-                @click.prevent="nextStep"
-                text="Continue"
+              <label
+                class="flex items-start gap-3
+                       cursor-pointer"
               >
-              </Button>
-            </div>
-          </div>
 
-          <!-- STEP 3 -->
-          <div v-if="step === 3" class="space-y-6">
-            <!-- <div
-                            class="p-4 rounded-xl border border-slate-200 bg-slate-50"
-                        >
-                            <label class="flex items-start gap-3">
-                                <Checkbox
-                                    v-model:checked="form.terms"
-                                    name="terms"
-                                />
+                <Checkbox
+                  v-model:checked="form.terms"
+                  name="terms"
+                  :disabled="form.processing"
+                  class="mt-0.5"
+                />
 
-                                <span class="text-sm text-slate-600">
-                                    I agree to the Terms &
-                                    Privacy Policy
-                                </span>
-                            </label>
-                        </div> -->
-            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
-              <label class="flex items-start gap-3">
-                <Checkbox v-model:checked="form.terms" name="terms" />
-
-                <span class="text-sm text-slate-600">
+                <span
+                  class="text-sm
+                         leading-5
+                         text-slate-600"
+                >
                   I agree to the
+
                   <Link
                     :href="route('terms.show')"
                     target="_blank"
-                    class="font-medium text-[#348797] hover:underline"
+                    class="font-semibold
+                           text-primary
+                           hover:underline"
                   >
                     Terms of Service
                   </Link>
+
                   and
+
                   <Link
                     :href="route('policy.show')"
                     target="_blank"
-                    class="font-medium text-[#348797] hover:underline"
+                    class="font-semibold
+                           text-primary
+                           hover:underline"
                   >
                     Privacy Policy
                   </Link>
                 </span>
+
               </label>
+
+              <InputError
+                class="mt-2 ml-7"
+                :message="form.errors.terms"
+              />
+
             </div>
 
-            <div class="flex gap-3">
-              <Button type="secondary" @click.prevent="previousStep" text="Back">
-              </Button>
+            <!-- Register -->
+            <Button
+              submit
+              type="primary"
+              class="w-full !py-3"
+              :disabled="form.processing"
+              :text="
+                form.processing
+                  ? 'Creating Account...'
+                  : 'Create Account'
+              "
+            />
 
-              <Button
-                submit
-                type="primary"
-                class="flex-1"
-                :disabled="form.processing"
-                :text="form.processing ? 'Creating...' : 'Create Account'"
+          </form>
+
+          <!-- Divider -->
+          <div class="relative my-7">
+
+            <div class="absolute inset-0 flex items-center">
+              <div
+                class="w-full border-t
+                       border-slate-200"
+              ></div>
+            </div>
+
+            <div class="relative flex justify-center">
+
+              <span
+                class="px-4
+                       bg-white
+                       text-xs
+                       text-slate-400
+                       uppercase
+                       tracking-wider"
               >
-              </Button>
+                Already have an account?
+              </span>
+
             </div>
+
           </div>
-        </form>
 
-        <div class="mt-8 text-center">
-          <span class="text-slate-500"> Already registered? </span>
+          <!-- Login -->
+          <div class="text-center">
 
-          <Link :href="route('login')" class="ml-1 text-primary font-semibold">
-            Sign In
-          </Link>
-        </div>
+            <Link
+              :href="route('login')"
+              class="inline-flex items-center
+                     justify-center
+                     w-full
+                     px-4 py-3
+                     rounded-xl
+                     border border-slate-200
+                     text-sm font-semibold
+                     text-slate-700
+                     hover:bg-slate-50
+                     hover:border-slate-300
+                     transition"
+            >
+              Sign in to your account
+
+              <i
+                class="fas fa-arrow-right
+                       ml-2 text-xs"
+              ></i>
+            </Link>
+
+          </div>
+
+
+        <!-- Bottom -->
+        <p
+          class="mt-6
+                 text-center
+                 text-xs
+                 text-slate-400"
+        >
+          By creating an account, you agree to our
+          Terms of Service and Privacy Policy.
+        </p>
+
       </div>
     </div>
+
   </div>
 </template>
-<style scoped>
-.step {
-  width: 42px;
-  height: 42px;
-  border-radius: 9999px;
-  background: #e2e8f0;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  transition: all 0.3s ease;
-}
-
-.step.active {
-  background: var(--primary);
-  color: white;
-}
-
-.step-line {
-  flex: 1;
-  height: 4px;
-  background: #e2e8f0;
-  margin: 0 8px;
-  border-radius: 999px;
-  transition: all 0.3s ease;
-}
-
-.step-line.active {
-  background: var(--primary);
-}
-</style>

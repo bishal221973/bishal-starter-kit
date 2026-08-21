@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Facades\AppConfig;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -22,7 +23,8 @@ class CreateNewUser implements CreatesNewUsers
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => $this->passwordRules(),
+            // 'password' => $this->passwordRules(),
+            'password' => AppConfig::password(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
@@ -30,6 +32,9 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            'password_expired_at' => AppConfig::passwordExpiryDays()
+                ? now()->addDays(AppConfig::passwordExpiryDays())
+                : null,
         ]);
     }
 }

@@ -31,6 +31,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'password_expired_at',
+        'password_created_at'
     ];
 
     /**
@@ -65,5 +67,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function passwordExpired(): bool
+    {
+        return $this->password_expired_at !== null
+            && $this->password_expired_at->isPast();
     }
 }
