@@ -444,7 +444,7 @@ const save = () => {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <!-- Registration -->
 
-              <label
+              <!-- <label
                 class="flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all"
                 :class="
                   form.enable_registration
@@ -465,7 +465,7 @@ const save = () => {
                     Allow new users to create accounts.
                   </Label>
                 </div>
-              </label>
+              </label> -->
 
               <!-- Email Verification -->
 
@@ -520,7 +520,7 @@ const save = () => {
               <!-- Multiple Branch -->
 
               <label
-                class="flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all"
+                class="flex items-start col-span-2 gap-3 rounded-xl border p-4 cursor-pointer transition-all"
                 :class="
                   form.enable_multiple_branch
                     ? 'border-primary/30 bg-primary/5'

@@ -158,7 +158,7 @@ class ConfigService
     {
         $config = static::config();
 
-        if (!$config || !$config->enable_registration) {
+        if (!$config) {
             return null;
         }
 

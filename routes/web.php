@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConfigurationController;
+use App\Http\Controllers\EmailVerifyController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Foundation\Application;
@@ -19,6 +20,7 @@ Route::get('/', function () {
 Route::middleware([
     'auth:sanctum',
     'password.expired',
+    'conditional.verified',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
@@ -51,3 +53,6 @@ Route::middleware(['auth'])->group(function () {
         'store'
     ])->name('password.change.store');
 });
+
+
+Route::get('verify-email',[EmailVerifyController::class,'index'])->name('verification.notice');
