@@ -187,7 +187,7 @@ const settingsActive = computed(() => {
 
         <Transition name="submenu">
           <div
-            v-show="sidebarOpen && (activeMenu === 'users' || usersActive)"
+            v-if="sidebarOpen && (activeMenu === 'users' || usersActive)"
             class="ml-7 mt-1 pl-3 border-l border-slate-200 space-y-1"
           >
             <Link
@@ -278,7 +278,7 @@ const settingsActive = computed(() => {
 
         <Transition name="submenu">
           <div
-            v-show="sidebarOpen && (activeMenu === 'settings' || settingsActive)"
+            v-if="sidebarOpen && (activeMenu === 'settings' || settingsActive)"
             class="ml-7 mt-1 pl-3 border-l border-slate-200 space-y-1"
           >
             <Link
@@ -374,20 +374,18 @@ const settingsActive = computed(() => {
 }
 
 .submenu-link {
-  @apply text-sidebar_text opacity-70
+  @apply text-sidebar_text opacity-70;
 }
-
 
 .submenu-link:hover {
   background-color: var(--sidebar-hover-color);
   color: var(--sidebar-hover-text-color);
-  
+
   transform: translateX(2px);
 }
 
-
 .submenu-link:hover {
-  @apply text-sidebar_hover_text_color opacity-100
+  @apply text-sidebar_hover_text_color opacity-100;
 }
 /* ============================================================
    ACTIVE SUBMENU
@@ -400,8 +398,7 @@ const settingsActive = computed(() => {
   font-weight: 600;
 }
 .submenu-active {
-    @apply text-sidebar_hover_text_color opacity-100
-
+  @apply text-sidebar_hover_text_color opacity-100;
 }
 
 /* ============================================================

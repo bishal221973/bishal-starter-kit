@@ -16,22 +16,7 @@ const applyZoom = () => {
   document.body.style.zoom = `${zoomLevel.value}%`;
 };
 
-const zoomIn = () => {
-  if (zoomLevel.value < 150) {
-    zoomLevel.value += 10;
-    applyZoom();
-  }
-};
 
-
-
-onMounted(() => {
-  window.addEventListener("keydown", handleKeyboard);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("keydown", handleKeyboard);
-});
 </script>
 
 <template>
