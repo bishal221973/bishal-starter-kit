@@ -32,7 +32,9 @@ class User extends Authenticatable
         'email',
         'password',
         'password_expired_at',
-        'password_created_at'
+        'password_created_at',
+        'login_attempts',
+        'locked_until',
     ];
 
     /**
@@ -68,6 +70,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'password_expired_at' => 'datetime',
+            'locked_until' => 'datetime',
         ];
     }
 

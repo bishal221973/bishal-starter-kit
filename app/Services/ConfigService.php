@@ -104,4 +104,88 @@ class ConfigService
             'show_date' => (bool) $config->screen_saver_show_date,
         ];
     }
+
+    public static function loginSecurity(): array
+    {
+        $config = static::config();
+
+        if (!$config) {
+            return [
+                'enabled' => false,
+                'max_attempts' => 5,
+                'lockout_duration' => 15,
+            ];
+        }
+
+        return [
+            'enabled' => (bool) $config->enable_login_attempt_limit,
+            'max_attempts' => (int) ($config->max_login_attempts ?? 5),
+            'lockout_duration' => (int) ($config->login_lockout_duration ?? 15),
+        ];
+    }
+
+    public static function autoLogout(): ?array
+    {
+        $config = static::config();
+
+        if (!$config || !$config->enable_auto_logout) {
+            return null;
+        }
+
+        return [
+            'enabled' => true,
+
+            'timeout' => (int) (
+                $config->auto_logout_time ?? 30
+            ),
+
+            'show_warning' => (bool) (
+                $config->show_logout_warning ?? false
+            ),
+
+            'warning_time' => (int) (
+                $config->logout_warning_time ?? 1
+            ),
+        ];
+    }
+
+    public static function registration(): ?array
+    {
+        $config = static::config();
+
+        if (!$config || !$config->enable_registration) {
+            return null;
+        }
+
+        return [
+            'enabled' => true,
+
+            'email_verification' => (bool) (
+                $config->enable_email_verification
+            ),
+
+            'two_factor' => (bool) (
+                $config->enable_2fa
+            ),
+
+            'multiple_branch' => (bool) (
+                $config->enable_multiple_branch
+            ),
+        ];
+    }
+
+    public static function passwordChange(): array
+    {
+        $config = static::config();
+
+        return [
+            'force_logout' => (bool) (
+                $config?->force_logout_on_password_change ?? false
+            ),
+
+            'invalidate_other_sessions' => (bool) (
+                $config?->invalidate_other_sessions ?? false
+            ),
+        ];
+    }
 }

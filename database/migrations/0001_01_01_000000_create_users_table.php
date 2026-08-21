@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('profile_photo_path', 2048)->nullable();
             $table->date('password_created_at')->default(now());
             $table->date('password_expired_at')->nullable();
+            $table->unsignedInteger('login_attempts')->default(0);
+            $table->timestamp('locked_until')->nullable();
             $table->timestamps();
         });
 
