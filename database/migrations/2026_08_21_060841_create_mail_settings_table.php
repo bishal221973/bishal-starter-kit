@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('mail_settings', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('organization_id')
+                ->nullable()
+                ->constrained();
+
             $table->string('mailer')->default('smtp');
             $table->string('host')->nullable();
             $table->unsignedInteger('port')->default(587);

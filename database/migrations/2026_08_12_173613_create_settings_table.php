@@ -13,6 +13,11 @@ return new class extends Migration
         {
                 Schema::create('settings', function (Blueprint $table) {
                         $table->id();
+
+
+                         $table->foreignId('organization_id')
+                ->nullable()
+                ->constrained();
                         /*
     
     |--------------------------------------------------------------------------
@@ -46,8 +51,8 @@ return new class extends Migration
 
                         $table->string('sidebar_bg_color')->default('#0f172a');
                         $table->string('sidebar_text_color')->default('#ffffff');
-                        $table->string('sidebar_hover_color')->default('#1e293b');
-                        $table->string('sidebar_hover_text_color')->default('#1e293b');
+                        $table->string('sidebar_hover_color')->default('#173668');
+                        $table->string('sidebar_hover_text_color')->default('#ffffff');
                         $table->string('sidebar_active_color')->default('#3d98aa');
                         $table->string('sidebar_icon_color')->default('#cbd5e1');
                         $table->boolean('sidebar_collapsed')->default(false);

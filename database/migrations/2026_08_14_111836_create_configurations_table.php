@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('configurations', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('organization_id')
+                ->nullable()
+                ->constrained();
         //    =====
             $table->string('application_version')->default('1.0.0');
             $table->string('default_language')->default('en'); //en or np

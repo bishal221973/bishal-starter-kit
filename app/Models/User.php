@@ -79,4 +79,15 @@ class User extends Authenticatable
         return $this->password_expired_at !== null
             && $this->password_expired_at->isPast();
     }
+
+    public function organizations()
+    {
+        return $this->belongsToMany(Organization::class)
+            ->withPivot([
+                'role',
+                'is_active',
+                'joined_at',
+            ])
+            ->withTimestamps();
+    }
 }

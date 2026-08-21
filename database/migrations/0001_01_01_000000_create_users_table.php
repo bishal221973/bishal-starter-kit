@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('password_expired_at')->nullable();
             $table->unsignedInteger('login_attempts')->default(0);
             $table->timestamp('locked_until')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
 
