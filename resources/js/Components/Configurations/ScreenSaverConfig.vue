@@ -59,10 +59,7 @@ const options = [
     label: "Image Slider",
     value: "slider",
   },
-  {
-    label: "Video",
-    value: "video",
-  },
+  
 ];
 </script>
 
@@ -218,7 +215,7 @@ const options = [
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <!-- Timeout -->
                 <div class="rounded-xl border border-slate-200 p-4 bg-white">
                   <TextInput
@@ -237,7 +234,7 @@ const options = [
                 </div>
 
                 <!-- Type -->
-                <div class="rounded-xl border border-slate-200 p-4 bg-white">
+                <!-- <div class="rounded-xl border border-slate-200 p-4 bg-white">
                   <Label class="font-medium text-slate-700 mb-2 block">
                     Screen Saver Type
                     <span class="text-red-500 ml-1">*</span>
@@ -257,14 +254,14 @@ const options = [
                   <Label class="block text-xs opacity-70 mt-1">
                     Choose an image, image slider, or video based screen saver.
                   </Label>
-                </div>
+                </div> -->
               </div>
             </div>
 
             <!-- ===============================================
                  MEDIA
             ================================================ -->
-            <div>
+            <!-- <div>
               <div class="flex items-center gap-2 mb-3">
                 <div
                   class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -284,7 +281,6 @@ const options = [
                 </div>
               </div>
 
-              <!-- IMAGE -->
               <div
                 v-if="
                   form.screen_saver_type === 'image' ||
@@ -326,7 +322,6 @@ const options = [
                 </div>
               </div>
 
-              <!-- VIDEO -->
               <div
                 v-if="form.screen_saver_type === 'video'"
                 class="rounded-xl border border-slate-200 bg-white p-4"
@@ -336,10 +331,7 @@ const options = [
                   <span class="text-red-500 ml-1">*</span>
                 </Label>
 
-                <!--
-                  Replace this input with your preferred file
-                  browser/uploader component if needed.
-                -->
+               
                 <input
                   v-model="form.screen_saver_video"
                   type="text"
@@ -365,7 +357,7 @@ const options = [
                   </Label>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <!-- ===============================================
                  DISPLAY OPTIONS

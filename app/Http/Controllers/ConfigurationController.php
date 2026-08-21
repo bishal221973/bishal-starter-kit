@@ -82,24 +82,40 @@ class ConfigurationController extends Controller
             'log_blocked_ip_attempts' => ['nullable'],
 
             // Footer Text
-            'footer_text'=>'nullable',
+            'footer_text' => 'nullable',
 
             // Footer Text
-            'auto_disable_inactive_users'=>'nullable',
-            'inactive_user_days'=>'nullable',
-            'enable_delete_account'=>'nullable',
-            'force_single_device_login'=>'nullable',
+            'auto_disable_inactive_users' => 'nullable',
+            'inactive_user_days' => 'nullable',
+            'enable_delete_account' => 'nullable',
+            'force_single_device_login' => 'nullable',
 
             // Licence
-            'license_key'=>'nullable'
+            'license_key' => 'nullable'
 
         ]);
 
         if ($request->hasFile('screen_saver_images')) {
+
+            $files = $request->file('screen_saver_images');
+
+            // Always convert single upload to array
+            $files = is_array($files)
+                ? $files
+                : [$files];
+
             $images = [];
 
-            foreach ($request->file('screen_saver_images') as $image) {
-                $images[] = $image->store('screen_saver', 'public');
+            foreach ($files as $image) {
+
+                if (!$image->isValid()) {
+                    continue;
+                }
+
+                $images[] = $image->store(
+                    'screen_saver',
+                    'public'
+                );
             }
 
             $data['screen_saver_images'] = $images;

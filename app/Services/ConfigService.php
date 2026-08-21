@@ -80,4 +80,28 @@ class ConfigService
 
         return (int) $config->password_expiry_days;
     }
+    public static function screenSaver(): ?array
+    {
+        $config = static::config();
+
+        if (!$config || !$config->enable_screen_saver) {
+            return null;
+        }
+
+        return [
+            'enabled' => true,
+
+            'timeout' => (int) $config->screen_saver_timeout,
+
+            'type' => $config->screen_saver_type,
+
+            'images' => $config->screen_saver_images ?? [],
+
+            'video' => $config->screen_saver_video,
+
+            'show_clock' => (bool) $config->screen_saver_show_clock,
+
+            'show_date' => (bool) $config->screen_saver_show_date,
+        ];
+    }
 }

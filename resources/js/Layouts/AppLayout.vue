@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from "vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, usePage } from "@inertiajs/vue3";
 import Sidebar from "@/Components/Sidebar.vue";
 import Navbar from "@/Components/Navbar.vue";
-import { useTheme } from '@/composables/useTheme'
+import { useTheme } from "@/composables/useTheme";
+import ScreenSaver from "@/Components/ScreenSaver.vue";
 
 const sidebarOpen = ref(true);
-const { theme } = useTheme()
+const { theme } = useTheme();
 
 // Modernized menu items with active route checking placeholder
 const menuItems = [
@@ -44,6 +45,8 @@ const menuItems = [
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
 };
+
+const page = usePage();
 </script>
 
 <template>
@@ -55,16 +58,37 @@ const toggleSidebar = () => {
 
     <!-- Sidebar layout fix: Transition padding wrapper instead of content margins -->
     <div class="flex h-[100vh] overflow-hidden">
-      <Sidebar v-if="theme?.sidebar_position =='left'" :sidebarOpen="sidebarOpen" :pt="`${theme?.navbar_height+25}px`"/>
+      <Sidebar
+        v-if="theme?.sidebar_position == 'left'"
+        :sidebarOpen="sidebarOpen"
+        :pt="`${theme?.navbar_height + 25}px`"
+      />
 
       <!-- Main Content Area: Padding based control eliminates layout jump glitches completely -->
-      <main :style="{paddingTop:theme?.navbar_height+'px'}" :class="['min-h-screen transition-all w-full duration-300 overflow-y-auto']">
+      <main
+        :style="{ paddingTop: theme?.navbar_height + 'px' }"
+        :class="['min-h-screen transition-all w-full duration-300 overflow-y-auto']"
+      >
         <div class="p-6 w-full mx-auto space-y-6">
           <!-- Elegant Page Header Card -->
+
           <slot />
         </div>
       </main>
-      <Sidebar v-if="theme?.sidebar_position =='right'" :sidebarOpen="sidebarOpen" :pt="`${theme?.navbar_height+25}px`"/>
+      <Sidebar
+        v-if="theme?.sidebar_position == 'right'"
+        :sidebarOpen="sidebarOpen"
+        :pt="`${theme?.navbar_height + 25}px`"
+      />
     </div>
   </div>
+
+  <ScreenSaver
+    :enabled="page?.props?.screenSaver?.enabled"
+    :timeout="page?.props?.screenSaver?.timeout * 60"
+    type="slider"
+    :images="page?.props?.screenSaver?.images"
+    :show-clock=page?.props?.screenSaver?.show_clock
+    :show-date=page?.props?.screenSaver?.show_date
+  />
 </template>

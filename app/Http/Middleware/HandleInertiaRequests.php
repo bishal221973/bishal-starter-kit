@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Facades\AppConfig;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,6 +44,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'theme' => $setting ? $setting->toArray() : [],
+            'screenSaver'=>AppConfig::screenSaver(),
             //
         ];
     }
