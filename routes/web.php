@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailVerifyController;
+use App\Http\Controllers\MailSettingController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Foundation\Application;
@@ -34,7 +35,7 @@ Route::middleware([
 
     Route::prefix('configurations')->group(function () {
         Route::get('configuration', [ConfigurationController::class, 'index'])->name('configuration.setting');
-        Route::post('configuration-update', [ConfigurationController::class, 'Update'])->name('configuration.setting.update');
+        Route::post('configuration-update', [MailSettingController::class, 'Update'])->name('configuration.mail.setting.update');
     });
 });
 
@@ -42,6 +43,7 @@ Route::middleware([
 
 
 Route::middleware(['auth'])->group(function () {
+    Route::post('configuration-update', [ConfigurationController::class, 'Update'])->name('configuration.setting.update');
 
     Route::get('/change-password', [
         PasswordChangeController::class,
@@ -52,8 +54,12 @@ Route::middleware(['auth'])->group(function () {
         PasswordChangeController::class,
         'store'
     ])->name('password.change.store');
+    Route::get('verify-email', [EmailVerifyController::class, 'index'])->name('verification.notice');
+    Route::post('verify-email/send', [EmailVerifyController::class, 'send'])->name('verification.send');
+    Route::get('/email/verify/{id}/{hash}', [
+        EmailVerifyController::class,
+        'verify',
+    ])
+        ->middleware('signed')
+        ->name('verification.verify');
 });
-
-
-Route::get('verify-email',[EmailVerifyController::class,'index'])->name('verification.notice');
-Route::post('verify-email/send',[EmailVerifyController::class,'send'])->name('verification.send');

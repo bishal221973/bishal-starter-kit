@@ -14,9 +14,10 @@ import FooterConfig from "@/Components/Configurations/FooterConfig.vue";
 import UserConfig from "@/Components/Configurations/UserConfig.vue";
 import LicenceConfig from "@/Components/Configurations/LicenceConfig.vue";
 import PageHeader from "@/Components/PageHeader.vue";
-import ZoomControl from "@/Components/Configurations/ZoomControl.vue";
+import MailConfig from "@/Components/Configurations/MailConfig.vue";
 const props = defineProps({
   config: Object,
+  mailConfig:Object,
 });
 
 const selectedUsers = ref([]);
@@ -75,6 +76,7 @@ const { theme } = useTheme();
             <div>
               <LicenceConfig :config="config" />
             </div>
+            <MailConfig :config="mailConfig"/>
           </div>
         </div>
       </div>

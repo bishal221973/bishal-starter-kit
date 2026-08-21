@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Facades\AppConfig;
 use App\Models\Configuration;
+use App\Models\MailSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,8 +14,10 @@ class ConfigurationController extends Controller
     {
         // return AppConfig::hello('Bishal');
         $config = Configuration::first();
+        $mailConfig=MailSetting::first();
         return Inertia::render('Settings/Configuration', [
-            'config' => $config
+            'config' => $config,
+            'mailConfig'=>$mailConfig
         ]);
     }
 
