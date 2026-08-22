@@ -8,10 +8,14 @@ use Inertia\Inertia;
 
 class BranchController extends Controller
 {
-    public function index(){
-        $branches=Organization::where('parent_id',1)->latest()->get();
-        return Inertia::render('Admin/Manage/Branch/Index',[
-            'branches'=>$branches
+    public function index(Request $request)
+    {
+        $branches = Organization::where('parent_id', 1)->latest()->get();
+        $branches1=Organization::query()
+    ->dataTablePaginate();
+        return Inertia::render('Admin/Manage/Branch/Index', [
+            'branches' => $branches,
+            'branches1' => $branches1
         ]);
     }
 }

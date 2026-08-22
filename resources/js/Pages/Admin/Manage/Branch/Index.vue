@@ -7,7 +7,8 @@ import Table from "@/Components/Datatable/Table.vue";
 const props = defineProps({
   config: Object,
   mailConfig: Object,
-  branches:Object,
+  branches: Object,
+  branches1: Object,
 });
 
 const selectedUsers = ref([]);
@@ -66,8 +67,35 @@ const users = [
 
       <div>
         <Table
+          mode="server"
+          :data="branches1"
+          :columns="columns"
+          :route="route('branches.index')"
+          :pagination="true"
+          :searchable="true"
+          :sortable="true"
+          :page-size="10"
+          :loading="false"
+        >
+          <template #cell-name="{ row }">
+            <span class="font-medium">
+              {{ row.name }}
+            </span>
+          </template>
+
+          <template #actions="{ row }">
+            <Link
+              :href="route('branches.edit', row.id)"
+              class="text-primary hover:underline"
+            >
+              Edit
+            </Link>
+          </template>
+        </Table>
+        <Table
           :columns="columns"
           :data="branches"
+          mode="client"
           selectable
           searchable
           pagination
@@ -78,7 +106,6 @@ const users = [
               {{ row.name }}
             </div>
           </template>
-          
 
           <template #cell-role="{ row }">
             <span
