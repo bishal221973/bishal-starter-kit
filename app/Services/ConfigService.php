@@ -193,4 +193,19 @@ class ConfigService
             ),
         ];
     }
+
+    public static function ipSecurity(): array
+    {
+        $config = static::config();
+
+        return [
+            'enabled' => (bool) (
+                $config?->ip_blocking_enabled ?? false
+            ),
+
+            'blocked_ips' => $config?->blacklisted_ips
+                ? $config->blacklisted_ips
+                : [],
+        ];
+    }
 }

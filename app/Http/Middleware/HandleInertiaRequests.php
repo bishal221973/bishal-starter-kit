@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
             'screenSaver' => AppConfig::screenSaver(),
             'autoLogout' => fn() =>
             AppConfig::autoLogout(),
+            'registration'=>AppConfig::registration()
             //
         ];
     }

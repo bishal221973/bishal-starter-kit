@@ -12,6 +12,7 @@ class Configuration extends Model
     {
         return [
             'screen_saver_images' => 'array',
+            'blacklisted_ips' => 'array',
         ];
     }
 
