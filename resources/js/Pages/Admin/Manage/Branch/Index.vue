@@ -75,6 +75,7 @@ const columns = [
       :filterable="true"
       :pagination="true"
       :page-size="10"
+      :selectable="true"
     >
       <!-- Custom cell -->
       <template #cell-name="{ row }">
