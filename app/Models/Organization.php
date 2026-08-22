@@ -50,6 +50,11 @@ class Organization extends Model
         'subscription_ends_at' => 'datetime',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     /*
     |--------------------------------------------------------------------------
     | DataTable
@@ -63,7 +68,7 @@ class Organization extends Model
             'slug',
             'email',
             'phone',
-  
+
 
             // Relationship search
             // 'parent.name',

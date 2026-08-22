@@ -27,4 +27,12 @@ class BranchController extends Controller
             'parent'=>OrganizationConfig::current()
         ]);
     }
+
+    public function edit(Organization $organization){
+        return Inertia::render('Admin/Setting/CreateOrganization',[
+            'parent'=>OrganizationConfig::current(),
+            'organization'=>$organization
+        ]);
+
+    }
 }

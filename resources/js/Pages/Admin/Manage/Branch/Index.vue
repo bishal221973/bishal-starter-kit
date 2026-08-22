@@ -103,13 +103,13 @@ const columns = [
       <!-- Actions -->
       <template #actions="{ row }">
         <div class="flex justify-end gap-2">
-          <button
+          <Link :href="route('branches.edit',row)"
             type="button"
             class="text-xs font-medium text-primary hover:underline"
             @click="console.log(row)"
           >
             Edit
-          </button>
+          </Link>
 
           <button type="button" class="text-xs font-medium text-red-600 hover:underline">
             Delete

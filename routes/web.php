@@ -45,7 +45,10 @@ Route::middleware(['has.organization'])->group(function () {
             Route::post('configuration-update', [MailSettingController::class, 'Update'])->name('configuration.mail.setting.update');
         });
 
-        Route::resource('branches',BranchController::class);
+        Route::resource('branches', BranchController::class)
+            ->parameters([
+                'branches' => 'organization',
+            ]);
     });
 
 
