@@ -34,12 +34,13 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  selectedCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
-const emit = defineEmits([
-  "page-change",
-  "page-size-change",
-]);
+const emit = defineEmits(["page-change", "page-size-change"]);
 
 function changePage(page) {
   const nextPage = Number(page);
@@ -109,20 +110,14 @@ function paginationPages() {
   >
     <!-- Information -->
     <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-      <span>
-        Rows per page
-      </span>
+      <span> Rows per page </span>
 
       <select
         :value="currentPageSize"
         class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs outline-none focus:border-primary focus:ring-1 focus:ring-primary"
         @change="changePageSize($event.target.value)"
       >
-        <option
-          v-for="size in pageSizeOptions"
-          :key="size"
-          :value="size"
-        >
+        <option v-for="size in pageSizeOptions" :key="size" :value="size">
           {{ size }}
         </option>
       </select>
@@ -133,13 +128,21 @@ function paginationPages() {
         of
         {{ total }}
       </span>
+
+      <div
+          v-if="selectedCount > 0"
+          class="inline-flex h-10 shrink-0 items-center gap-2  text-sm font-medium"
+        >
+          <span
+            class="flex h-5 min-w-5 items-center justify-center rounded-md bg-white/15 px-1 text-[11px] font-bold"
+          >
+            {{ selectedCount }} Row Selected
+          </span>
+        </div>
     </div>
 
     <!-- Navigation -->
-    <div
-      v-if="totalPages > 1"
-      class="flex flex-wrap items-center gap-1"
-    >
+    <div v-if="totalPages > 1" class="flex flex-wrap items-center gap-1">
       <!-- Previous -->
       <button
         type="button"
@@ -151,17 +154,9 @@ function paginationPages() {
       </button>
 
       <!-- Pages -->
-      <template
-        v-for="(page, index) in paginationPages()"
-        :key="`${page}-${index}`"
-      >
+      <template v-for="(page, index) in paginationPages()" :key="`${page}-${index}`">
         <!-- Ellipsis -->
-        <span
-          v-if="page === '...'"
-          class="px-2 text-xs text-slate-400"
-        >
-          ...
-        </span>
+        <span v-if="page === '...'" class="px-2 text-xs text-slate-400"> ... </span>
 
         <!-- Page -->
         <button

@@ -76,6 +76,7 @@ const columns = [
       :pagination="true"
       :page-size="10"
       :selectable="true"
+      primaryColor="var(--primary)"
     >
       <!-- Custom cell -->
       <template #cell-name="{ row }">

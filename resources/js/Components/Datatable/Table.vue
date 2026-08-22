@@ -118,6 +118,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  primaryColor:{
+    type:String,
+    default:"#3D98AB"
+  }
 });
 
 const emit = defineEmits([
@@ -668,6 +672,7 @@ defineExpose({
       :selectable="selectable"
       :selected-count="selectedRows.length"
       @clear-filters="clearFilters"
+      :primaryColor="primaryColor"
     >
       <template #toolbar>
         <slot name="toolbar" :selected="selectedRows" />
@@ -676,6 +681,8 @@ defineExpose({
       <template #toolbar-right>
         <slot name="toolbar-right" :selected="selectedRows" />
       </template>
+
+      
     </Toolbar>
 
     <div class="overflow-x-auto">
@@ -738,6 +745,7 @@ defineExpose({
       :total="total"
       @page-change="changePage"
       @page-size-change="changePageSize"
+      :selected-count="selectedRows.length"
     />
   </div>
 </template>
