@@ -63,12 +63,10 @@ class Organization extends Model
             'slug',
             'email',
             'phone',
-            'country',
-            'state',
-            'city',
+  
 
             // Relationship search
-            'parent.name',
+            // 'parent.name',
         ];
     }
 

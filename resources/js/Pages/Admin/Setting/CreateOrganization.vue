@@ -8,7 +8,16 @@ import { RisingPicker } from "rising-picker";
 import { RisingSelect } from "rising-select";
 import { computed } from "vue";
 
+const props=defineProps({
+  parent:{
+    type:String,
+    default:null
+  }
+})
+
 const form = useForm({
+  parent_id:props?.parent?.id,
+  parent_name:props?.parent?.name,
   name: "",
   email: "",
   phone: "",
@@ -28,44 +37,6 @@ const form = useForm({
   subscription_status: "trial",
   subscription_ends_at: "",
 });
-
-const subscriptionOptions = [
-  {
-    label: "Trial",
-    value: "trial",
-  },
-  {
-    label: "Active",
-    value: "active",
-  },
-  {
-    label: "Expired",
-    value: "expired",
-  },
-  {
-    label: "Cancelled",
-    value: "cancelled",
-  },
-];
-
-const countryOptions = [
-  {
-    label: "Nepal",
-    value: "Nepal",
-  },
-  {
-    label: "India",
-    value: "India",
-  },
-  {
-    label: "United States",
-    value: "United States",
-  },
-  {
-    label: "United Kingdom",
-    value: "United Kingdom",
-  },
-];
 
 const submit = () => {
   form.post(route("organizations.store"), {
@@ -91,11 +62,11 @@ const logoPreview = computed(() => {
     <!-- HEADER -->
     <div class="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
       <PageHeader
-        description="Set up your organization profile and workspace preferences."
+        :description="`Set up your ${parent?.id ? 'branch' : 'organization'} profile and workspace preferences.`"
         :breadcrumbs="[
           {
-            label: 'Organizations',
-            href: route('organizations.index'),
+            label: parent?.id ? 'Branch' : 'Organizations',
+            href: parent?.id ? route('branches.index') : route('organizations.index'),
           },
           {
             label: 'Create',
@@ -126,7 +97,7 @@ const logoPreview = computed(() => {
                   <img
                     v-if="form.logo"
                     :src="logoPreview"
-                    alt="Organization logo"
+                    :alt="parent?.id ? 'Branch Profile' : 'Organization Profile'"
                     class="h-full w-full object-cover"
                   />
 
@@ -148,11 +119,11 @@ const logoPreview = computed(() => {
                 </div>
 
                 <Label class="mt-4 text-lg font-bold text-slate-800">
-                  {{ form.name || "Your Organization" }}
+                  {{ form.name || parent?.id ? "Your Branch" : "Your Organization" }}
                 </Label>
 
                 <Label class="block opacity-60 mt-1 text-xs leading-5 text-slate-400">
-                  Your organization profile will appear throughout the workspace.
+                  Your {{parent?.id ? 'branch' :  'organization'}} profile will appear throughout the workspace.
                 </Label>
               </div>
             </div>
@@ -161,7 +132,7 @@ const logoPreview = computed(() => {
             <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div class="flex items-center justify-between gap-4">
                 <div>
-                  <Label class="block text-xs font-semibold text-slate-700">Organization status</Label>
+                  <Label class="block text-xs font-semibold text-slate-700">{{parent?.id ? 'Branch' : 'Organization'}} status</Label>
 
                   <Label class="opacity-60 mt-1 text-[11px] text-slate-400">
                     Control whether this organization is active.
@@ -214,11 +185,22 @@ const logoPreview = computed(() => {
 
               <div class="p-6">
                 <div class="grid gap-4 sm:grid-cols-2">
+                <!-- {{ parent }} -->
+                <div class="col-span-2" v-if="parent?.id">
+                 <TextInput
+                      v-model="form.parent_name"
+                      type="text"
+                      text="Organization Name"
+                      placeholder="e.g. Rising Technology"
+                      required
+                      :disable="true"
+                    />
+                </div>
                   <div>
                     <TextInput
                       v-model="form.name"
                       type="text"
-                      text="Organization Name"
+                      :text="parent?.id ? 'Branch Name' : 'Organization Name'"
                       placeholder="e.g. Rising Technology"
                       required
                     />
@@ -419,7 +401,7 @@ const logoPreview = computed(() => {
                     />
                   </svg>
 
-                  {{ form.processing ? "Creating..." : "Create Organization" }}
+                  {{ form.processing ? "Creating..." : parent?.id ? "Create Branch" : "Create Organization" }}
                 </button>
               </div>
             </div>

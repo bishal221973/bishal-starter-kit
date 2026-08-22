@@ -2,7 +2,7 @@
 // import DataTable from "@/Components/Table.vue";
 import DataTable from "@/Components/Datatable/Table.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
-
+import { Link } from "@inertiajs/vue3";
 const props = defineProps({
   branches: {
     type: Object,
@@ -77,7 +77,14 @@ const columns = [
       :page-size="10"
       :selectable="true"
       primaryColor="var(--primary)"
+      headerBgColor="#ecf6f8"
+      headerTextColor="#000"
     >
+    <template #toolbar-right>
+        <Link :href="route('branches.create')" class="bg-primary px-5 text-sm py-2 rounded-md text-white">
+            <i class="fa fa-plus mr-2"></i>Add Branch
+        </Link>
+    </template>
       <!-- Custom cell -->
       <template #cell-name="{ row }">
         {{ row?.name }} <br>

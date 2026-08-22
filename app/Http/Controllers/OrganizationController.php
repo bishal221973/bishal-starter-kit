@@ -35,21 +35,29 @@ class OrganizationController extends Controller
             'country' => 'nullable',
             'postal_code' => 'nullable',
             'is_active' => 'nullable',
-            'subscription_status' => 'nullable'
+            'subscription_status' => 'nullable',
+            'parent_id' => 'nullable'
         ]);
+
+        // return $request;
         $slug = Str::slug($request->name);
 
         $userId = Auth::id();
         $data['slug'] = $slug;
         $org = Organization::create($data);
-        OrganizationUser::create([
-            'organization_id' => $org->id,
-            'user_id' => $userId,
-            'employee_code'   => now()->format('Y_m_d') . '_' . $org->id . '_' . $userId,
-        ]);
+        if (!$request?->parent_id) {
+            OrganizationUser::create([
+                'organization_id' => $org->id,
+                'user_id' => $userId,
+                'employee_code'   => now()->format('Y_m_d') . '_' . $org->id . '_' . $userId,
+            ]);
+            return redirect()
+                ->route('dashboard')
+                ->with('success', 'Organization has been created and you have been added successfully.');
+        }
 
         return redirect()
-            ->route('dashboard')
-            ->with('success', 'Organization has been created and you have been added successfully.');
+            ->back()
+            ->with('success', 'New branch have been created successfully.');
     }
 }

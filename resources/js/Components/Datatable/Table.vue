@@ -121,6 +121,14 @@ const props = defineProps({
   primaryColor:{
     type:String,
     default:"#3D98AB"
+  },
+  headerBgColor:{
+    type:String,
+    default:"#F8FAFC"
+  },
+  headerTextColor:{
+    type:String,
+    default:"#000"
   }
 });
 
@@ -701,6 +709,8 @@ defineExpose({
           @sort="sort"
           @filter-change="updateFilter"
           @toggle-select-all="toggleSelectAll"
+          :headerBgColor="headerBgColor"
+          :headerTextColor="headerTextColor"
         />
 
         <TableBody

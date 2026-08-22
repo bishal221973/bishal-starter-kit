@@ -8,6 +8,10 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  disable: {
+    type: Boolean,
+    default: false,
+  },
   inputClass: {
     type: [String, Array, Object],
     default: "",
@@ -39,7 +43,9 @@ defineExpose({ focus: () => inputRef.value?.focus() });
         ref="inputElement"
         v-model="model"
         type="text"
-        class="w-full px-4 py-[9px] bg-white border border-primary rounded-xl text-slate-900 placeholder-slate-400 text-sm shadow-sm transition-all duration-200 ease-in-out outline-none hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-indigo-500/10 focus:shadow-md"
+        :disable="disable"
+        :readonly="disable"
+        class="w-full px-4 py-[9px] bg-white border border-gray-200 rounded-lg text-slate-900 placeholder-slate-400 text-sm shadow-sm transition-all duration-200 ease-in-out outline-none hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-indigo-500/10 focus:shadow-md"
         v-bind="$attrs"
         :class="inputClass"
       />

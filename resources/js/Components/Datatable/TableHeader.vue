@@ -49,31 +49,22 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  headerBgColor: String,
+  headerTextColor:String
 });
 
-const emit = defineEmits([
-  "sort",
-  "filter-change",
-  "toggle-select-all",
-]);
+const emit = defineEmits(["sort", "filter-change", "toggle-select-all"]);
 
 function handleFilterChange(column, event) {
-  emit(
-    "filter-change",
-    column.key,
-    event.target.value
-  );
+  emit("filter-change", column.key, event.target.value);
 }
 </script>
 
 <template>
-  <thead class="bg-slate-50">
+  <thead :style="{ backgroundColor: headerBgColor }">
     <tr>
       <!-- Selection -->
-      <th
-        v-if="selectable"
-        class="w-12 px-4 py-3"
-      >
+      <th v-if="selectable" class="w-12 px-4 py-3">
         <input
           type="checkbox"
           :checked="allSelected"
@@ -97,38 +88,29 @@ function handleFilterChange(column, event) {
             class="flex items-center gap-1.5 hover:text-slate-700"
             @click="emit('sort', column)"
           >
-            <span>
+            <span :style="{color:headerTextColor}">
               {{ column.label }}
             </span>
 
-            <span
-              v-if="sortBy === column.key"
-              class="font-bold text-primary"
-            >
+            <span v-if="sortBy === column.key" class="font-bold" :style="{color:headerTextColor}">
               {{ sortDirection === "asc" ? "↑" : "↓" }}
             </span>
           </button>
 
           <!-- Non sortable -->
-          <span v-else>
+          <span v-else :style="{color:headerTextColor}">
             {{ column.label }}
           </span>
 
           <!-- Select filter -->
           <select
-            v-if="
-              filterable &&
-              column.filterable &&
-              column.filterType === 'select'
-            "
+            v-if="filterable && column.filterable && column.filterType === 'select'"
             :value="activeFilters[column.key] ?? ''"
             class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-normal normal-case tracking-normal text-slate-600 outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
             @click.stop
             @change="handleFilterChange(column, $event)"
           >
-            <option value="">
-              All
-            </option>
+            <option value="">All</option>
 
             <option
               v-for="option in column.filterOptions || []"
