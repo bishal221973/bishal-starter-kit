@@ -97,6 +97,19 @@ return new class extends Migration
             // licence
             $table->string('license_key')->nullable();
 
+            // Toat Notification
+            $table->enum('position',['top-right','top-center','top-left','bottom-right','bottom-center','bottom-left'])->default('top-right');
+            $table->integer('timeout')->default(10);
+            $table->boolean('closeOnClick')->default(true);
+            $table->string('draggablePercent')->default('0.7');
+            $table->boolean('draggable')->default(true);
+            $table->boolean('pauseOnFocusLoss')->default(true);
+            $table->boolean('pauseOnHover')->default(true);
+            $table->boolean('closeButton')->default(true);
+            $table->boolean('hideProgressBar')->default(true);
+            $table->boolean('rtl')->default(true);
+            $table->enum('icon',['true','false','fas fa-rocket','MyIconComponent','material'])->default('true');
+
             $table->timestamps();
         });
     }

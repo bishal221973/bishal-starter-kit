@@ -14,10 +14,10 @@ class ConfigurationController extends Controller
     {
         // return AppConfig::hello('Bishal');
         $config = Configuration::first();
-        $mailConfig=MailSetting::first();
+        $mailConfig = MailSetting::first();
         return Inertia::render('Settings/Configuration', [
             'config' => $config,
-            'mailConfig'=>$mailConfig
+            'mailConfig' => $mailConfig
         ]);
     }
 
@@ -94,7 +94,20 @@ class ConfigurationController extends Controller
             'force_single_device_login' => 'nullable',
 
             // Licence
-            'license_key' => 'nullable'
+            'license_key' => 'nullable',
+
+            // Toast Notification,
+            'position' => 'nullable',
+            'timeout' => 'nullable',
+            'closeOnClick' => 'nullable',
+            'draggablePercent' => 'nullable',
+            'draggable' => 'nullable',
+            'pauseOnFocusLoss' => 'nullable',
+            'pauseOnHover' => 'nullable',
+            'closeButton' => 'nullable',
+            'hideProgressBar' => 'nullable',
+            'rtl' => 'nullable',
+            'icon' => 'nullable',
 
         ]);
 
