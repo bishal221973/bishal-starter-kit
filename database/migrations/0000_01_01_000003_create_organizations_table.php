@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('website')->nullable();
+            $table->string('vat')->nullable();
 
             // Organization branding
             $table->string('logo')->nullable();
@@ -38,11 +39,6 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('country')->nullable();
             $table->string('postal_code')->nullable();
-
-            // SaaS configuration
-            $table->string('timezone')->default('UTC');
-            $table->string('currency', 3)->default('USD');
-            $table->string('locale', 10)->default('en');
 
             // Organization status
             $table->boolean('is_active')->default(true);

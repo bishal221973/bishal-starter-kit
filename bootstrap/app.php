@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckPasswordExpiration;
 use App\Http\Middleware\EnsureEmailIsVerified;
+use App\Http\Middleware\EnsureUserHasOrganization;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'password.expired' => CheckPasswordExpiration::class,
             'conditional.verified' => EnsureEmailIsVerified::class,
+            'has.organization' => EnsureUserHasOrganization::class,
         ]);
 
         //

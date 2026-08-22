@@ -21,7 +21,7 @@ const applyZoom = () => {
 
 <template>
   <header
-    class="fixed top-0 left-0 right-0 z-50 h-navbar_height backdrop-blur-xl border-b shadow-[0_1px_20px_rgba(0,0,0,0.04)] transition-all duration-300"
+    class="fixed  top-0 left-0 right-0 z-50 h-navbar_height backdrop-blur-xl border-b shadow-[0_1px_20px_rgba(0,0,0,0.04)] transition-all duration-300"
     :style="{
       backgroundColor: theme.navbar + 'E8',
       borderColor: theme.navbar_border || 'rgba(148,163,184,0.15)',

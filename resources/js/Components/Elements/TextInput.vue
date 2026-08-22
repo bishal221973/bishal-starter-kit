@@ -39,7 +39,7 @@ defineExpose({ focus: () => inputRef.value?.focus() });
         ref="inputElement"
         v-model="model"
         type="text"
-        class="w-full px-4 py-[11.5px] bg-white border border-primary rounded-xl text-slate-900 placeholder-slate-400 text-sm shadow-sm transition-all duration-200 ease-in-out outline-none hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-indigo-500/10 focus:shadow-md"
+        class="w-full px-4 py-[9px] bg-white border border-primary rounded-xl text-slate-900 placeholder-slate-400 text-sm shadow-sm transition-all duration-200 ease-in-out outline-none hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-indigo-500/10 focus:shadow-md"
         v-bind="$attrs"
         :class="inputClass"
       />
