@@ -21,13 +21,6 @@ const columns = [
   },
 
   {
-    key: "slug",
-    label: "Slug",
-    sortable: true,
-    searchable: true,
-  },
-
-  {
     key: "email",
     label: "Email",
     sortable: true,
@@ -42,7 +35,7 @@ const columns = [
   },
 
   {
-    key: "status",
+    key: "is_active",
     label: "Status",
     sortable: true,
 
@@ -53,11 +46,11 @@ const columns = [
     filterOptions: [
       {
         label: "Active",
-        value: "active",
+        value: "1",
       },
       {
         label: "Inactive",
-        value: "inactive",
+        value: "0",
       },
     ],
   },
@@ -84,14 +77,17 @@ const columns = [
       :page-size="10"
     >
       <!-- Custom cell -->
-      <template #cell-status="{ value }">
+      <template #cell-name="{ row }">
+        {{ row?.name }} <br>
+        {{ row?.slug }}
+      </template>
+
+      <template #cell-is_active="{ value }">
         <span
           class="rounded-full px-2.5 py-1 text-xs font-medium"
-          :class="
-            value === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-          "
+          :class="value == 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
         >
-          {{ value === "active" ? "Active" : "Inactive" }}
+          {{ value == 1 ? "Active" : "Inactive" }}
         </span>
       </template>
 

@@ -141,22 +141,33 @@ class BranchController extends Controller
         );
     }
 
+    // public function index(Request $request)
+    // {
+
+    //     $branches = Organization::query()
+    //         ->with('parent')
+    //         ->where(
+    //             'parent_id',
+    //             1
+    //         )
+    //         ->dataTablePaginate($request);
+
+    //     return Inertia::render(
+    //         'Admin/Manage/Branch/Index',
+    //         [
+    //             'branches' => $branches,
+    //         ]
+    //     );
+    // }
     public function index(Request $request)
     {
-       
         $branches = Organization::query()
-            ->with('parent')
-            ->where(
-                'parent_id',
-                1
-            )
-            ->dataTablePaginate($request);
+            ->dataTablePaginate(
+                $request
+            );
 
-        return Inertia::render(
-            'Admin/Manage/Branch/Index',
-            [
-                'branches' => $branches,
-            ]
-        );
+        return Inertia::render('Admin/Manage/Branch/Index', [
+            'branches' => $branches,
+        ]);
     }
 }
