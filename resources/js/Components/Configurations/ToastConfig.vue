@@ -8,6 +8,9 @@ import { ref } from "vue";
 import { RisingSelect } from "rising-select";
 import { useTheme } from "@/composables/useTheme.js";
 
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+
 const props = defineProps({
   config: {
     type: Object,
@@ -30,9 +33,6 @@ const form = useForm({
 
   closeOnClick: props.config?.closeOnClick == 1,
 
-  draggablePercent: props.config?.draggablePercent ?? "0.7",
-
-  draggable: props.config?.draggable == 1,
 
   pauseOnFocusLoss: props.config?.pauseOnFocusLoss == 1,
 
@@ -120,6 +120,8 @@ const testNotification = () => {
     hideProgressBar: form.hideProgressBar,
     rtl: form.rtl,
   };
+
+  
 
   toast.success("This is a test notification.", options);
 };
@@ -270,7 +272,7 @@ const testNotification = () => {
 
                 <div>
                   <Label class="font-semibold text-base text-sm">
-                    Drag & Interaction
+                    User Interaction
                   </Label>
 
                   <Label class="block text-xs opacity-70">
@@ -280,29 +282,7 @@ const testNotification = () => {
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <!-- Draggable -->
-                <label
-                  class="group flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all duration-200"
-                  :class="
-                    form.draggable
-                      ? 'border-primary/30 bg-primary/5'
-                      : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                  "
-                >
-                  <input
-                    v-model="form.draggable"
-                    type="checkbox"
-                    class="mt-0.5 w-5 h-5 rounded cursor-pointer accent-primary"
-                  />
-
-                  <div>
-                    <Label class="font-medium text-sm cursor-pointer"> Draggable </Label>
-
-                    <Label class="block text-xs opacity-70">
-                      Allow users to drag notifications.
-                    </Label>
-                  </div>
-                </label>
+                
 
                 <!-- Close On Click -->
                 <label
@@ -358,7 +338,7 @@ const testNotification = () => {
 
                 <!-- Pause On Focus Loss -->
                 <label
-                  class="group flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all duration-200"
+                  class="group col-span-2 flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all duration-200"
                   :class="
                     form.pauseOnFocusLoss
                       ? 'border-primary/30 bg-primary/5'
@@ -383,27 +363,7 @@ const testNotification = () => {
                 </label>
               </div>
 
-              <!-- Draggable Percent -->
-              <div
-                v-if="form.draggable"
-                class="mt-3 rounded-xl border border-slate-200 p-4 bg-white"
-              >
-                <TextInput
-                  v-model="form.draggablePercent"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="1"
-                  text="Draggable Percent"
-                  placeholder="0.7"
-                  required
-                />
-
-                <Label class="block text-xs opacity-70 mt-1">
-                  Percentage of the notification width required to trigger a dismiss
-                  gesture. Example: 0.7 means 70%.
-                </Label>
-              </div>
+              
             </div>
 
             <!-- =================================================
@@ -481,7 +441,7 @@ const testNotification = () => {
 
                 <!-- RTL -->
                 <label
-                  class="group flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all duration-200"
+                  class="group col-span-2 flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all duration-200"
                   :class="
                     form.rtl
                       ? 'border-primary/30 bg-primary/5'
@@ -503,27 +463,7 @@ const testNotification = () => {
                   </div>
                 </label>
 
-                <!-- Icon -->
-                <div class="rounded-xl border border-slate-200 p-4 bg-white">
-                  <Label class="font-medium text-slate-700 mb-2 block">
-                    Notification Icon
-                  </Label>
-
-                  <RisingSelect
-                    v-model="form.icon"
-                    :options="iconOptions"
-                    wrapperBg="bg-white"
-                    wrapperRounded="rounded-xl"
-                    wrapperClass="border border-slate-200 shadow-sm transition-all duration-200 ease-in-out outline-none hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-indigo-500/10 focus:shadow-md"
-                    inputClass="text-sm focus:ring-0 py-[10px] focus:outline-0"
-                    :primaryColor="theme?.primary"
-                    placeholder="Select notification icon"
-                  />
-
-                  <Label class="block text-xs opacity-70 mt-1">
-                    Select the icon style used by toast notifications.
-                  </Label>
-                </div>
+                
               </div>
             </div>
 

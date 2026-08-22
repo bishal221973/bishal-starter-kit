@@ -218,4 +218,42 @@ class ConfigService
                 ?? 'All rights reserved.',
         ];
     }
+    public static function toastNotification(): array
+    {
+        $config = static::config();
+
+        return [
+            'position' => $config?->position ?? 'top-right',
+
+            'timeout' => (int) (
+                $config?->timeout ?? 10
+            ),
+
+            'close_on_click' => (bool) (
+                $config?->closeOnClick ?? true
+            ),
+
+            'pause_on_focus_loss' => (bool) (
+                $config?->pauseOnFocusLoss ?? true
+            ),
+
+            'pause_on_hover' => (bool) (
+                $config?->pauseOnHover ?? true
+            ),
+
+            'close_button' => (bool) (
+                $config?->closeButton ?? true
+            ),
+
+            'hide_progress_bar' => (bool) (
+                $config?->hideProgressBar ?? true
+            ),
+
+            'rtl' => (bool) (
+                $config?->rtl ?? true
+            ),
+
+            'icon' => $config?->icon ?? 'true',
+        ];
+    }
 }
