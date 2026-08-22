@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailVerifyController;
 use App\Http\Controllers\MailSettingController;
@@ -43,6 +44,8 @@ Route::middleware(['has.organization'])->group(function () {
             Route::get('configuration', [ConfigurationController::class, 'index'])->name('configuration.setting');
             Route::post('configuration-update', [MailSettingController::class, 'Update'])->name('configuration.mail.setting.update');
         });
+
+        Route::resource('branches',BranchController::class);
     });
 
 

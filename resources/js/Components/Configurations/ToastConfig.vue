@@ -120,9 +120,6 @@ const testNotification = () => {
     hideProgressBar: form.hideProgressBar,
     rtl: form.rtl,
   };
-
-  
-
   toast.success("This is a test notification.", options);
 };
 </script>
@@ -148,7 +145,7 @@ const testNotification = () => {
       <Label class="block font-medium text-sm"> Toast Notification Config </Label>
 
       <Label class="block text-[12px] opacity-60 mt-0.5">
-        Manage notification position, timing, appearance and behavior
+        Manage notification position, timing and appearance
       </Label>
     </div>
 

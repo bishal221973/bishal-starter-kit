@@ -215,49 +215,49 @@ const settingsActive = computed(() => {
             </Link>
           </div>
         </Transition>
-<!-- {{ page?.props?.registration?.multiple_branch }} -->
-        <Link v-if="page?.props?.registration?.multiple_branch"
-        href="/dashboard"
-        :class="[
-          'group relative flex items-center gap-3',
-          'px-3 py-2 mb-0 rounded-xl',
-          'transition-all duration-200',
-          isActive('/dashboard')
-            ? 'bg-primary text-white shadow-sm'
-            : 'text-sidebar_text hover:bg-sidebar_hover_color hover:text-sidebar_hover_text_color',
-        ]"
-      >
-        <!-- Active indicator -->
-
-        <span
-          v-if="isActive('/dashboard')"
-          class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-white"
-        ></span>
-
-        <!-- Icon -->
-
-        <span
-          class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg transition-colors"
-          :class="isActive('/dashboard') ? 'bg-white/15' : 'group-hover:bg-white/10'"
+        <Link
+          v-if="page?.props?.registration?.multiple_branch"
+          :href="route('branches.index')"
+          :class="[
+            'group relative flex items-center gap-3',
+            'px-3 py-2 mb-0 rounded-xl',
+            'transition-all duration-200',
+            isActive('/dashboard')
+              ? 'bg-primary text-white shadow-sm'
+              : 'text-sidebar_text hover:bg-sidebar_hover_color hover:text-sidebar_hover_text_color',
+          ]"
         >
-          <i class="fas fa-boxes text-sm"></i>
-        </span>
+          <!-- Active indicator -->
 
-        <!-- Label -->
+          <span
+            v-if="isActive('/dashboard')"
+            class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-white"
+          ></span>
 
-        <span v-show="sidebarOpen" class="font-medium text-sm whitespace-nowrap">
-          Branch
-        </span>
+          <!-- Icon -->
 
-        <!-- Tooltip -->
+          <span
+            class="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg transition-colors"
+            :class="isActive('/dashboard') ? 'bg-white/15' : 'group-hover:bg-white/10'"
+          >
+            <i class="fas fa-boxes text-sm"></i>
+          </span>
 
-        <span
-          v-if="!sidebarOpen"
-          class="pointer-events-none absolute left-16 z-50 whitespace-nowrap rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
-        >
-          Branch
-        </span>
-      </Link>
+          <!-- Label -->
+
+          <span v-show="sidebarOpen" class="font-medium text-sm whitespace-nowrap">
+            Branch
+          </span>
+
+          <!-- Tooltip -->
+
+          <span
+            v-if="!sidebarOpen"
+            class="pointer-events-none absolute left-16 z-50 whitespace-nowrap rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
+          >
+            Branch
+          </span>
+        </Link>
       </div>
 
       <!-- =====================================================
