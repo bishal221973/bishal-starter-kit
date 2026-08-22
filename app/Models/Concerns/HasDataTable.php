@@ -58,8 +58,8 @@ trait HasDataTable
                 $this,
                 'dataTableSortable'
             )
-            ? $this->dataTableSortable
-            : [];
+                ? $this->dataTableSortable
+                : [];
 
         $sort = $request->input(
             'sort',

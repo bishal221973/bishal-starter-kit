@@ -4,7 +4,7 @@ import DataTable from "@/Components/Datatable/Table.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 
 const props = defineProps({
-  organizations: {
+  branches: {
     type: Object,
     default: () => ({
       data: [],
@@ -74,7 +74,7 @@ const columns = [
   <AppLayout>
     <DataTable
       mode="server"
-      :data="organizations"
+      :data="branches"
       :columns="columns"
       :route="route('branches.index')"
       :searchable="true"

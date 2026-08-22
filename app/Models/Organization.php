@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\HasDataTable;
+use App\Traits\DataTable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,26 +11,32 @@ class Organization extends Model
 {
     use SoftDeletes;
     use HasFactory;
-
-    use HasDataTable;
+    use DataTable;
 
     protected $fillable = [
+        'parent_id',
+
         'name',
         'slug',
         'email',
         'phone',
         'website',
+
         'logo',
         'favicon',
+
         'address',
         'city',
         'state',
         'country',
         'postal_code',
+
         'timezone',
         'currency',
         'locale',
+
         'is_active',
+
         'trial_ends_at',
         'subscription_status',
         'subscription_ends_at',
@@ -38,26 +44,65 @@ class Organization extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+
         'trial_ends_at' => 'datetime',
+
         'subscription_ends_at' => 'datetime',
     ];
 
-    protected array $dataTableSearchable = [
-        'name',
-        'slug',
-        'email',
-        'phone',
-        'vat',
-    ];
+    /*
+    |--------------------------------------------------------------------------
+    | DataTable
+    |--------------------------------------------------------------------------
+    */
 
-    protected array $dataTableSortable = [
-        'name',
-        'slug',
-        'email',
-        'phone',
-        'vat',
-        'created_at',
-    ];
+    public function dataTableSearchable(): array
+    {
+        return [
+            'name',
+            'slug',
+            'email',
+            'phone',
+            'country',
+            'state',
+            'city',
+
+            // Relationship search
+            'parent.name',
+        ];
+    }
+
+    public function dataTableSortable(): array
+    {
+        return [
+            'name',
+            'slug',
+            'email',
+            'phone',
+            'country',
+            'state',
+            'city',
+            'created_at',
+        ];
+    }
+
+    public function dataTableFilters(): array
+    {
+        return [
+            'parent_id',
+            'country',
+            'state',
+            'city',
+            'is_active',
+            'subscription_status',
+        ];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
 
     public function users()
     {
@@ -68,5 +113,21 @@ class Organization extends Model
                 'joined_at',
             ])
             ->withTimestamps();
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(
+            self::class,
+            'parent_id'
+        );
+    }
+
+    public function children()
+    {
+        return $this->hasMany(
+            self::class,
+            'parent_id'
+        );
     }
 }
