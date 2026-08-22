@@ -65,15 +65,46 @@ const page = usePage();
       />
 
       <!-- Main Content Area: Padding based control eliminates layout jump glitches completely -->
-      <main
+      <!-- <main
         :style="{ paddingTop: theme?.navbar_height + 'px' }"
         :class="['min-h-screen transition-all w-full duration-300 overflow-y-auto']"
       >
         <div class="p-6 w-full mx-auto space-y-6">
-          <!-- Elegant Page Header Card -->
-
+         
           <slot />
         </div>
+      </main> -->
+      <main
+        :style="{ paddingTop: theme?.navbar_height + 'px' }"
+        :class="[
+          'min-h-screen transition-all w-full duration-300 overflow-y-auto flex flex-col',
+        ]"
+      >
+        <div class="p-6 w-full mx-auto space-y-6 flex-1">
+          <slot />
+        </div>
+
+        <!-- Footer -->
+        <footer class="border-t border-slate-200 bg-background px-6 py-4">
+          <div
+            class="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500"
+          >
+            <p v-if="page?.props?.footer?.text">{{ page?.props?.footer?.text }}</p>
+            <p v-else>
+              © {{ new Date().getFullYear() }} Rising Tech Nepal. All rights reserved.
+            </p>
+
+            <div class="flex items-center gap-4">
+              <Link href="#" class="transition hover:text-primary"> Privacy Policy </Link>
+
+              <Link href="#" class="transition hover:text-primary">
+                Terms & Conditions
+              </Link>
+
+              <span> v1.0.0 </span>
+            </div>
+          </div>
+        </footer>
       </main>
       <Sidebar
         v-if="theme?.sidebar_position == 'right'"

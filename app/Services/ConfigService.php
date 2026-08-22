@@ -208,4 +208,14 @@ class ConfigService
                 : [],
         ];
     }
+
+    public static function footer(): array
+    {
+        $config = static::config();
+
+        return [
+            'text' => $config?->footer_text
+                ?? 'All rights reserved.',
+        ];
+    }
 }
