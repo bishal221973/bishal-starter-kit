@@ -2,6 +2,9 @@
 import { computed, ref, watch, onBeforeUnmount } from "vue";
 import { router } from "@inertiajs/vue3";
 import Toolbar from "./Toolbar.vue";
+import TableHeader from "./TableHeader.vue";
+import TableBody from "./TableBody.vue";
+import TablePagination from "./TablePagination.vue";
 
 const props = defineProps({
   mode: {
@@ -204,7 +207,6 @@ const processedClientRows = computed(() => {
       })
     );
   }
-
 
   Object.entries(activeFilters.value).forEach(([key, filterValue]) => {
     if (filterValue === "" || filterValue === null || filterValue === undefined) {
@@ -678,248 +680,64 @@ defineExpose({
 
     <div class="overflow-x-auto">
       <table class="w-full min-w-full text-left text-sm">
-        <thead class="bg-slate-50">
-          <tr>
-            <th v-if="selectable" class="w-12 px-4 py-3">
-              <input
-                type="checkbox"
-                :checked="allSelected"
-                :disabled="!displayRows.length"
-                class="rounded border-slate-300 text-primary focus:ring-primary"
-                @change="toggleSelectAll"
-              />
-            </th>
+        <TableHeader
+          :columns="visibleColumns"
+          :selectable="selectable"
+          :sortable="sortable"
+          :sort-by="sortBy"
+          :sort-direction="sortDirection"
+          :filterable="filterable"
+          :active-filters="activeFilters"
+          :all-selected="allSelected"
+          :has-rows="displayRows.length > 0"
+          :actions="!!$slots.actions"
+          @sort="sort"
+          @filter-change="updateFilter"
+          @toggle-select-all="toggleSelectAll"
+        />
 
-            <th
-              v-for="column in visibleColumns"
-              :key="column.key"
-              class="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500"
-            >
-              <div class="flex items-center gap-2">
-                <button
-                  v-if="sortable && column.sortable !== false"
-                  type="button"
-                  class="flex items-center gap-1.5 hover:text-slate-700"
-                  @click="sort(column)"
-                >
-                  <span>
-                    {{ column.label }}
-                  </span>
-
-                  <span v-if="sortBy === column.key" class="font-bold text-primary">
-                    {{ sortDirection === "asc" ? "↑" : "↓" }}
-                  </span>
-                </button>
-
-                <span v-else>
-                  {{ column.label }}
-                </span>
-
-                <select
-                  v-if="filterable && column.filterable && column.filterType === 'select'"
-                  :value="activeFilters[column.key] ?? ''"
-                  class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-normal normal-case tracking-normal text-slate-600 outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
-                  @click.stop
-                  @change="updateFilter(column.key, $event.target.value)"
-                >
-                  <option value="">All</option>
-
-                  <option
-                    v-for="option in column.filterOptions || []"
-                    :key="option.value"
-                    :value="option.value"
-                  >
-                    {{ option.label }}
-                  </option>
-                </select>
-              </div>
-            </th>
-
-            <th
-              v-if="$slots.actions"
-              class="w-24 whitespace-nowrap px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
-            >
-              Actions
-            </th>
-          </tr>
-        </thead>
-
-        <tbody v-if="loading">
-          <tr>
-            <td
-              :colspan="
-                visibleColumns.length + (selectable ? 1 : 0) + ($slots.actions ? 1 : 0)
-              "
-              class="px-4 py-16 text-center"
-            >
-              <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
-                <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle
-                    class="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  />
-
-                  <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4Z"
-                  />
-                </svg>
-
-                Loading...
-              </div>
-            </td>
-          </tr>
-        </tbody>
-
-        <tbody v-else-if="displayRows.length" class="divide-y divide-slate-100">
-          <tr
-            v-for="row in displayRows"
-            :key="row?.[rowKey]"
-            class="transition hover:bg-slate-50"
-            @click="emit('row-click', row)"
+        <TableBody
+          :rows="displayRows"
+          :columns="visibleColumns"
+          :loading="loading"
+          :selectable="selectable"
+          :row-key="rowKey"
+          :selected-rows="selectedRows"
+          :empty-text="emptyText"
+          :search="search"
+          :actions="!!$slots.actions"
+          @row-click="emit('row-click', $event)"
+          @toggle-row="toggleRow"
+          @clear-search="clearSearch"
+        >
+          <template
+            v-for="column in visibleColumns"
+            :key="column.key"
+            #[`cell-${column.key}`]="slotProps"
           >
-            <td v-if="selectable" class="px-4 py-3" @click.stop>
-              <input
-                type="checkbox"
-                :checked="isSelected(row)"
-                class="rounded border-slate-300 text-primary focus:ring-primary"
-                @change="toggleRow(row)"
-              />
-            </td>
+            <slot :name="`cell-${column.key}`" v-bind="slotProps" />
+          </template>
 
-            <td
-              v-for="column in visibleColumns"
-              :key="column.key"
-              class="px-4 py-3 text-slate-700"
-            >
-              <slot
-                :name="`cell-${column.key}`"
-                :row="row"
-                :value="getValue(row, column.key)"
-              >
-                {{ getValue(row, column.key) ?? "—" }}
-              </slot>
-            </td>
-
-            <td v-if="$slots.actions" class="px-4 py-3 text-right" @click.stop>
-              <slot name="actions" :row="row" />
-            </td>
-          </tr>
-        </tbody>
-
-        <tbody v-else>
-          <tr>
-            <td
-              :colspan="
-                visibleColumns.length + (selectable ? 1 : 0) + ($slots.actions ? 1 : 0)
-              "
-              class="px-4 py-16 text-center"
-            >
-              <div class="flex flex-col items-center justify-center">
-                <div
-                  class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100"
-                >
-                  <svg
-                    class="h-6 w-6 text-slate-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M20 13V7a2 2 0 00-2-2h-3l-2-2H9L7 5H4a2 2 0 00-2 2v6m18 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4m18 0H2"
-                    />
-                  </svg>
-                </div>
-
-                <p class="text-sm font-medium text-slate-600">
-                  {{ emptyText }}
-                </p>
-
-                <button
-                  v-if="search"
-                  type="button"
-                  class="mt-2 text-xs font-semibold text-primary hover:underline"
-                  @click="clearSearch"
-                >
-                  Clear search
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
+          <template #actions="slotProps">
+            <slot name="actions" v-bind="slotProps" />
+          </template>
+        </TableBody>
+        <tfoot>
+          <slot name="footer" />
+        </tfoot>
       </table>
     </div>
-
-    <div
+    <TablePagination
       v-if="pagination"
-      class="flex flex-col gap-3 border-t border-slate-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-    >
-      <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-        <span> Rows per page </span>
-
-        <select
-          :value="currentPageSize"
-          class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-          @change="changePageSize($event.target.value)"
-        >
-          <option v-for="size in pageSizeOptions" :key="size" :value="size">
-            {{ size }}
-          </option>
-        </select>
-
-        <span>
-          Showing
-          {{ showingFrom }}–{{ showingTo }}
-          of
-          {{ total }}
-        </span>
-      </div>
-
-      <div v-if="totalPages > 1" class="flex flex-wrap items-center gap-1">
-        <button
-          type="button"
-          class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-          :disabled="currentPage === 1"
-          @click="changePage(currentPage - 1)"
-        >
-          Previous
-        </button>
-
-        <template v-for="(page, index) in paginationPages" :key="`${page}-${index}`">
-          <span v-if="page === '...'" class="px-2 text-xs text-slate-400"> ... </span>
-
-          <button
-            v-else
-            type="button"
-            class="h-8 min-w-8 rounded-lg px-2 text-xs font-medium transition"
-            :class="
-              currentPage === page
-                ? 'bg-primary text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-            "
-            @click="changePage(page)"
-          >
-            {{ page }}
-          </button>
-        </template>
-
-        <button
-          type="button"
-          class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-          :disabled="currentPage === totalPages"
-          @click="changePage(currentPage + 1)"
-        >
-          Next
-        </button>
-      </div>
-    </div>
+      :current-page="currentPage"
+      :total-pages="totalPages"
+      :current-page-size="currentPageSize"
+      :page-size-options="pageSizeOptions"
+      :showing-from="showingFrom"
+      :showing-to="showingTo"
+      :total="total"
+      @page-change="changePage"
+      @page-size-change="changePageSize"
+    />
   </div>
 </template>
