@@ -12,7 +12,7 @@ class BranchController extends Controller
     {
         $branches = Organization::where('parent_id', 1)->latest()->get();
         $branches1 = Organization::query()
-            ->dataTablePaginate();
+           ->dataTablePaginate($request);
         return Inertia::render('Admin/Manage/Branch/Index', [
             'branches' => $branches,
             'branches1' => $branches1

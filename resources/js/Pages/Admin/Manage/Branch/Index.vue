@@ -16,26 +16,42 @@ const selectedUsers = ref([]);
 const { theme } = useTheme();
 
 const columns = [
-  {
-    key: "name",
-    label: "Name",
-    sortable: true,
-  },
-  {
-    key: "email",
-    label: "Email",
-    sortable: true,
-  },
-  {
-    key: "role",
-    label: "Role",
-    sortable: true,
-  },
-  {
-    key: "created_at",
-    label: "Created",
-    sortable: true,
-  },
+    {
+        key: "name",
+        label: "Name",
+        searchable: true,
+        sortable: true,
+    },
+    {
+        key: "slug",
+        label: "Slug",
+        searchable: true,
+        sortable: true,
+    },
+    {
+        key: "email",
+        label: "Email",
+        searchable: true,
+        sortable: true,
+    },
+    {
+        key: "phone",
+        label: "Phone",
+        searchable: true,
+        sortable: true,
+    },
+    {
+        key: "vat",
+        label: "VAT",
+        searchable: true,
+        sortable: true,
+    },
+    {
+        key: "created_at",
+        label: "Created",
+        searchable: false,
+        sortable: true,
+    },
 ];
 
 const users = [
@@ -74,8 +90,6 @@ const users = [
           :pagination="true"
           :searchable="true"
           :sortable="true"
-          :page-size="10"
-          :loading="false"
         >
           <template #cell-name="{ row }">
             <span class="font-medium">
