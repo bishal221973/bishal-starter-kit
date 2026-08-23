@@ -2,6 +2,8 @@
 
 namespace App\Ai\Agents;
 
+use App\Ai\Tools\SearchDocumentation;
+use App\Ai\Tools\SearchRoutes;
 use Laravel\Ai\Attributes\Model;
 use Laravel\Ai\Attributes\Provider;
 use Laravel\Ai\Contracts\Agent;
@@ -66,8 +68,10 @@ Rules:
 2. Give practical solutions.
 3. Explain errors clearly.
 4. Provide code examples when useful.
-5. If you don't know something about the starter kit, say so.
-6. Stay focused on supporting this starter kit.
+5. If you don't know something about the starter kit, use the available tools to search for the information.
+6. Use SearchDocumentation when you need information from the starter kit documentation.
+7. Use SearchRoutes when you need to inspect application routes.
+8. Stay focused on supporting this starter kit.
 PROMPT;
     }
 
@@ -88,6 +92,8 @@ PROMPT;
      */
     public function tools(): iterable
     {
-        return [];
+        return [
+            new SearchDocumentation(),
+        ];
     }
 }
