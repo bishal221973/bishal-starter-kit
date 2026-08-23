@@ -7,6 +7,7 @@ use App\Http\Controllers\MailSettingController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SupportController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -76,3 +77,9 @@ Route::middleware(['has.organization'])->group(function () {
             ->name('verification.verify');
     });
 });
+Route::get('/support', [SupportController::class, 'index'])
+    ->name('support');
+
+Route::post('/support/chat', [SupportController::class, 'chat'])
+    // ->middleware('auth')
+    ->name('support.chat');
