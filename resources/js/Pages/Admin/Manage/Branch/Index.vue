@@ -2,7 +2,7 @@
 // import DataTable from "@/Components/Table.vue";
 import DataTable from "@/Components/Datatable/Table.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link,router, useForm } from "@inertiajs/vue3";
 const props = defineProps({
   branches: {
     type: Object,
@@ -61,6 +61,22 @@ const columns = [
     sortable: true,
   },
 ];
+
+const deleteOrganization = (org) => {
+    if (!confirm(`Are you sure you want to delete "${org.name}"?`)) {
+        return;
+    }
+
+    useForm({}).delete(
+        route("branches.destroy", org.slug),
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                // optional toast
+            },
+        }
+    );
+};
 </script>
 
 <template>
@@ -111,7 +127,7 @@ const columns = [
             Edit
           </Link>
 
-          <button type="button" class="text-xs font-medium text-red-600 hover:underline">
+          <button  @click="deleteOrganization(row)" type="button" class="text-xs font-medium text-red-600 hover:underline">
             Delete
           </button>
         </div>

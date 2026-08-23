@@ -35,4 +35,9 @@ class BranchController extends Controller
         ]);
 
     }
+
+    public function destroy(Organization $organization){
+        $organization->delete();
+        redirect()->route('branches.index')->with('success','Selected organization have been removed.');
+    }
 }
