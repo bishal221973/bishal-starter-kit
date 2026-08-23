@@ -1,5 +1,6 @@
 <?php
 
+use App\Ai\Agents\SupportAggent;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailVerifyController;
@@ -83,3 +84,8 @@ Route::get('/support', [SupportController::class, 'index'])
 Route::post('/support/chat', [SupportController::class, 'chat'])
     // ->middleware('auth')
     ->name('support.chat');
+
+Route::get('/support-test', function () {
+    return (new SupportAggent)
+        ->stream("How to install it ?");
+})->name('support');

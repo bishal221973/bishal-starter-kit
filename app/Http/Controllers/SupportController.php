@@ -22,11 +22,7 @@ class SupportController extends Controller
             ],
         ]);
 
-        $response = (new SupportAggent)
-            ->prompt($request->message);
-
-        return response()->json([
-            'message' => $response->text,
-        ]);
+        return (new SupportAggent)
+            ->stream($request->message);
     }
 }

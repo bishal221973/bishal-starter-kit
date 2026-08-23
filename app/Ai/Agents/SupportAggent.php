@@ -21,7 +21,7 @@ class SupportAggent implements Agent, Conversational, HasTools
     public function instructions(): Stringable|string
     {
         return <<<'PROMPT'
-You are the official AI support assistant for my Laravel Starter Kit.
+You are the official AI support assistant for my Bishal Starter Kit.
 
 The starter kit is built with:
 
