@@ -50,10 +50,10 @@ const { theme } = useTheme();
               <PasswordConfig :config="config" />
             </div>
             <div>
-              <BackupConfig :config="config" />
+              <ScreenSaverConfig :config="config" />
             </div>
             <div>
-              <ScreenSaverConfig :config="config" />
+              <BackupConfig :config="config" />
             </div>
             <div>
               <DateTimeConfig :config="config" />

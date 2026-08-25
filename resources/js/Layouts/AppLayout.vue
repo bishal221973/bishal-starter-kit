@@ -188,10 +188,10 @@ watch(
     :show-clock="page?.props?.screenSaver?.show_clock"
     :show-date="page?.props?.screenSaver?.show_date"
   />
-
+<!-- {{ page.props.autoLogout }} -->
   <AutoLogout
     :enabled="page.props.autoLogout?.enabled ?? false"
-    :timeout="page.props.autoLogout?.timeout ?? 30"
+    :timeout="page.props.autoLogout?.timeout ?? 1"
     :show-warning="page.props.autoLogout?.show_warning ?? true"
     :warning-time="page.props.autoLogout?.warning_time ?? 1"
   />

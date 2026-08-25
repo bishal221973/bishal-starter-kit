@@ -21,7 +21,7 @@ const props = defineProps({
     */
     timeout: {
         type: Number,
-        default: 30,
+        default: 10,
     },
 
     /*
@@ -325,10 +325,11 @@ onUnmounted(() => {
 </script>
 
 <template>
+    {{ timeout }}
     <!-- =========================================================
          AUTO LOGOUT WARNING
     ========================================================== -->
-
+<!-- adad -->
     <Teleport to="body">
         <Transition name="logout-warning">
             <div
