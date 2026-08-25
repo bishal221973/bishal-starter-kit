@@ -256,4 +256,37 @@ class ConfigService
             'icon' => $config?->icon ?? 'true',
         ];
     }
+
+    public static function appConfig(): array
+    {
+        $config = static::config();
+
+        return [
+            'version' => $config?->application_version ?? '1.0.0',
+
+            'language' => $config?->default_language ?? 'en',
+
+            'timezone' => $config?->timezone ?? 'Asia/Kathmandu',
+
+            'decimal_places' => (int) (
+                $config?->decimal_places ?? 2
+            ),
+
+            'maintenance_mode' => (bool) (
+                $config?->maintenance_mode ?? false
+            ),
+
+            'maintenance_mode_allowed_ips' => $config?->maintenance_mode_allowed_ips ?? [],
+
+            'session_timeout' => (int) (
+                $config?->session_timeout ?? 2
+            ),
+
+            'data_table_source' => $config?->data_table_source ?? 'server',
+
+            'default_pagination_size' => (int) (
+                $config?->default_pagination_size ?? 20
+            ),
+        ];
+    }
 }

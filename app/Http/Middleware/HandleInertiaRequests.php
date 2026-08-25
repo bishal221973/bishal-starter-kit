@@ -50,6 +50,7 @@ class HandleInertiaRequests extends Middleware
             'registration' => AppConfig::registration(),
             'footer' => AppConfig::footer(),
             'toast' => AppConfig::toastNotification(),
+            'appConfig'=>AppConfig::appConfig(),
 
             'flash' => [
                 'success' => fn() => $request->session()->get('success'),

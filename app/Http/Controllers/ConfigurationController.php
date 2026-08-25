@@ -6,6 +6,7 @@ use App\Facades\AppConfig;
 use App\Models\Configuration;
 use App\Models\MailSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Inertia\Inertia;
 
 class ConfigurationController extends Controller
@@ -109,6 +110,17 @@ class ConfigurationController extends Controller
             'rtl' => 'nullable',
             'icon' => 'nullable',
 
+            // App config
+            'application_version' => 'nullable',
+            'default_language' => 'nullable',
+            'timezone' => 'nullable',
+            'decimal_places' => 'nullable',
+            'maintenance_mode' => 'nullable',
+            'maintenance_mode_allowed_ips' => 'nullable',
+            'session_timeout' => 'nullable',
+            'data_table_source' => 'nullable',
+            'default_pagination_size' => 'nullable',
+
         ]);
 
         if ($request->hasFile('screen_saver_images')) {
@@ -147,6 +159,10 @@ class ConfigurationController extends Controller
             $setting = Configuration::create($data);
         } else {
             $setting->update($data);
+        }
+
+        if ($setting->maintenance_mode) {
+            Artisan::call('down');
         }
 
         return back()->with('success', 'Theme settings updated successfully.');

@@ -98,11 +98,7 @@ const languageOptions = [
   {
     label: "English",
     value: "en",
-  },
-  {
-    label: "नेपाली",
-    value: "np",
-  },
+  }
 ];
 
 const timezoneOptions = [
@@ -687,7 +683,7 @@ const save = () => {
                DATA TABLE
           ================================================== -->
 
-          <div class="mb-3">
+          <!-- <div class="mb-3">
             <div class="flex items-center gap-2 mb-3">
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -706,8 +702,7 @@ const save = () => {
 
             <div class="rounded-xl border border-slate-200 p-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Data Source -->
-
+           
                 <div>
                   <Label class="font-medium text-sm mb-[7px] block">
                     Data Table Source
@@ -725,8 +720,6 @@ const save = () => {
                     placeholder="Select Data Source"
                   />
                 </div>
-
-                <!-- Pagination -->
 
                 <div>
                   <Label class="font-medium text-sm mb-[7px] block">
@@ -753,7 +746,7 @@ const save = () => {
                 appropriate for your application's dataset.
               </Label>
             </div>
-          </div>
+          </div> -->
 
          
 

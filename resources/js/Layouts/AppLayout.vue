@@ -167,7 +167,7 @@ watch(
                 Terms & Conditions
               </Link>
 
-              <span> v1.0.0 </span>
+              <span> {{ page?.props?.appConfig?.version }} </span>
             </div>
           </div>
         </footer>
