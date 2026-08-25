@@ -13,6 +13,7 @@ import Employeement from "./Include/Employeement.vue";
 import Document from "./Include/Document.vue";
 import PasswordChange from "./Include/PasswordChange.vue";
 import TwoFactor from "./Include/TwoFactor.vue";
+import AccountDelete from "./Include/AccountDelete.vue";
 const props = defineProps({
   user: {
     type: Object,
@@ -32,6 +33,10 @@ const page=usePage()
 const activeTab = ref("personal");
 const twoFactorEnabled = computed(() => {
     return page.props.registration?.two_factor ?? false;
+});
+
+const accountDelete = computed(() => {
+    return page.props.userConfig?.allow_account_delete ?? false;
 });
 
 const tabs = computed(() => {
@@ -64,6 +69,14 @@ const tabs = computed(() => {
             key: "twoFactor",
             label: "Two-Factor Auth",
             icon: "fa-solid fa-shield-halved",
+        });
+    }
+
+     if (accountDelete.value) {
+        items.push({
+            key: "accountDelete",
+            label: "Account Delete",
+            icon: "fa-solid fa-trash",
         });
     }
 
@@ -127,6 +140,9 @@ const tabs = computed(() => {
           </section>
           <section v-if="activeTab === 'twoFactor'" class="space-y-6">
             <TwoFactor :user="user" />
+          </section>
+          <section v-if="activeTab === 'accountDelete'" class="space-y-6">
+            <AccountDelete :user="user" />
           </section>
         </main>
       </div>

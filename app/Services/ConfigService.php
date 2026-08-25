@@ -289,4 +289,21 @@ class ConfigService
             ),
         ];
     }
+
+    public static function userConfig(): array
+    {
+        $config = static::config();
+
+        return [
+            'disable_inactive_user' => (bool) (
+                $config?->auto_disable_inactive_users ?? false
+            ),
+            'allow_account_delete' => (bool) (
+                $config?->enable_delete_account ?? false
+            ),
+            'single_device_login' => (bool) (
+                $config?->force_single_device_login ?? false
+            ),
+        ];
+    }
 }
