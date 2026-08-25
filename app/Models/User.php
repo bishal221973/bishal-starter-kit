@@ -96,4 +96,8 @@ class User extends Authenticatable
     public function info(){
         return $this->belongsTo(OrganizationUser::class,'id','user_id');
     }
+
+    public function documents(){
+        return $this->hasMany(EmployeeDocument::class,'user_id','id');
+    }
 }

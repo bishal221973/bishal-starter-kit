@@ -4,6 +4,7 @@ use App\Ai\Agents\SupportAggent;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\EmailVerifyController;
+use App\Http\Controllers\EmployeeDocumentControlle;
 use App\Http\Controllers\MailSettingController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\PasswordChangeController;
@@ -57,6 +58,15 @@ Route::middleware(['has.organization'])->group(function () {
         Route::prefix('user')->group(function () {
             Route::get('profile', [UserController::class, 'profile'])->name('user.profile');
             Route::put('update-personal-info', [UserController::class, 'personalInfo'])->name('user.personal.info');
+
+            Route::resource(
+                'employee-documents',
+                EmployeeDocumentControlle::class
+            )->only([
+                'store',
+                'update',
+                'destroy',
+            ]);
         });
     });
 

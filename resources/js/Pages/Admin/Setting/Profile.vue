@@ -10,6 +10,7 @@ import { RisingSelect } from "rising-select";
 import ProfileMenu from "./Include/ProfileMenu.vue";
 import PersonalInfo from "./Include/PersonalInfo.vue";
 import Employeement from "./Include/Employeement.vue";
+import Document from "./Include/Document.vue";
 const props = defineProps({
   user: {
     type: Object,
@@ -39,19 +40,10 @@ const tabs = [
     label: "Employment",
     icon: "fa-solid fa-briefcase",
   },
+  
   {
-    key: "contact",
-    label: "Contact",
-    icon: "fa-solid fa-address-book",
-  },
-  {
-    key: "emergency",
-    label: "Emergency",
-    icon: "fa-solid fa-phone",
-  },
-  {
-    key: "identification",
-    label: "Identification",
+    key: "documents",
+    label: "Documents",
     icon: "fa-regular fa-id-card",
   },
 ];
@@ -207,7 +199,7 @@ const goToTab = (tab) => {
     <!-- HEADER -->
     <div class="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
       <PageHeader
-        description="Manage your personal information, employment details, contact information and identification."
+        description="Manage your personal information, employment details, contact information and documents."
         :breadcrumbs="[
           {
             label: 'User',
@@ -251,256 +243,10 @@ const goToTab = (tab) => {
             
           </section>
 
-          <!-- CONTACT -->
-          <section v-if="activeTab === 'contact'" class="space-y-6">
-            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div class="border-b border-slate-100 px-6 py-5">
-                <h2 class="font-semibold text-slate-900">Contact Information</h2>
-
-                <p class="mt-1 text-sm text-slate-500">
-                  Your personal contact details and address.
-                </p>
-              </div>
-
-              <div class="space-y-6 p-6">
-                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                  <div>
-                    <Label value="Personal Email" />
-
-                    <TextInput
-                      v-model="form.personal_email"
-                      type="email"
-                      class="mt-1.5 w-full"
-                      placeholder="personal@example.com"
-                    />
-                  </div>
-
-                  <div>
-                    <Label value="Personal Phone" />
-
-                    <TextInput
-                      v-model="form.personal_phone"
-                      class="mt-1.5 w-full"
-                      placeholder="+977 98XXXXXXXX"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label value="Address" />
-
-                  <textarea
-                    v-model="form.address"
-                    rows="3"
-                    class="mt-1.5 block w-full rounded-xl border-slate-300 text-sm shadow-sm focus:border-slate-500 focus:ring-slate-500"
-                    placeholder="Enter your address"
-                  ></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                  <div>
-                    <Label value="City" />
-
-                    <TextInput
-                      v-model="form.city"
-                      class="mt-1.5 w-full"
-                      placeholder="City"
-                    />
-                  </div>
-
-                  <div>
-                    <Label value="State" />
-
-                    <TextInput
-                      v-model="form.state"
-                      class="mt-1.5 w-full"
-                      placeholder="State"
-                    />
-                  </div>
-
-                  <div>
-                    <Label value="Country" />
-
-                    <TextInput
-                      v-model="form.country"
-                      class="mt-1.5 w-full"
-                      placeholder="Country"
-                    />
-                  </div>
-
-                  <div>
-                    <Label value="Postal Code" />
-
-                    <TextInput
-                      v-model="form.postal_code"
-                      class="mt-1.5 w-full"
-                      placeholder="Postal code"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- EMERGENCY -->
-          <section v-if="activeTab === 'emergency'" class="space-y-6">
-            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div class="border-b border-slate-100 px-6 py-5">
-                <h2 class="font-semibold text-slate-900">Emergency Contact</h2>
-
-                <p class="mt-1 text-sm text-slate-500">
-                  Someone your organization can contact in case of an emergency.
-                </p>
-              </div>
-
-              <div class="grid grid-cols-1 gap-5 p-6 md:grid-cols-2">
-                <div>
-                  <Label value="Contact Name" />
-
-                  <TextInput
-                    v-model="form.emergency_contact_name"
-                    class="mt-1.5 w-full"
-                    placeholder="Full name"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Phone Number" />
-
-                  <TextInput
-                    v-model="form.emergency_contact_phone"
-                    class="mt-1.5 w-full"
-                    placeholder="+977 98XXXXXXXX"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Relationship" />
-
-                  <TextInput
-                    v-model="form.emergency_contact_relation"
-                    class="mt-1.5 w-full"
-                    placeholder="e.g. Father, Mother, Spouse"
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- IDENTIFICATION -->
-          <section v-if="activeTab === 'identification'" class="space-y-6">
-            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div class="border-b border-slate-100 px-6 py-5">
-                <h2 class="font-semibold text-slate-900">Identification</h2>
-
-                <p class="mt-1 text-sm text-slate-500">
-                  Government and tax identification details.
-                </p>
-              </div>
-
-              <div class="grid grid-cols-1 gap-5 p-6 md:grid-cols-2">
-                <div>
-                  <Label value="National ID" />
-
-                  <TextInput
-                    v-model="form.national_id"
-                    class="mt-1.5 w-full"
-                    placeholder="National ID number"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Tax Number" />
-
-                  <TextInput
-                    v-model="form.tax_number"
-                    class="mt-1.5 w-full"
-                    placeholder="PAN / Tax number"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- DOCUMENTS -->
-            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div
-                class="flex items-center justify-between border-b border-slate-100 px-6 py-5"
-              >
-                <div>
-                  <h2 class="font-semibold text-slate-900">Documents</h2>
-
-                  <p class="mt-1 text-sm text-slate-500">
-                    Your uploaded employee documents.
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3.5 py-2 text-sm font-semibold text-white hover:bg-slate-800"
-                >
-                  <i class="fa-solid fa-plus text-xs"></i>
-                  Add Document
-                </button>
-              </div>
-
-              <div class="p-6">
-                <div v-if="documents.length" class="divide-y divide-slate-100">
-                  <div
-                    v-for="document in documents"
-                    :key="document.id"
-                    class="flex items-center gap-4 py-4 first:pt-0 last:pb-0"
-                  >
-                    <div
-                      class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500"
-                    >
-                      <i class="fa-regular fa-file-lines"></i>
-                    </div>
-
-                    <div class="min-w-0 flex-1">
-                      <p class="truncate text-sm font-semibold text-slate-800">
-                        {{ document.title }}
-                      </p>
-
-                      <p class="mt-0.5 text-xs text-slate-500">
-                        {{ document.document_type }}
-
-                        <span v-if="document.document_number">
-                          ·
-                          {{ document.document_number }}
-                        </span>
-                      </p>
-                    </div>
-
-                    <a
-                      :href="`/storage/${document.file_path}`"
-                      target="_blank"
-                      class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-                    >
-                      <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-                    </a>
-                  </div>
-                </div>
-
-                <div
-                  v-else
-                  class="rounded-xl border border-dashed border-slate-300 py-10 text-center"
-                >
-                  <div
-                    class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-400"
-                  >
-                    <i class="fa-regular fa-folder-open text-lg"></i>
-                  </div>
-
-                  <h3 class="mt-3 text-sm font-semibold text-slate-800">
-                    No documents yet
-                  </h3>
-
-                  <p class="mt-1 text-sm text-slate-500">
-                    Upload your citizenship, passport, qualification or other documents.
-                  </p>
-                </div>
-              </div>
-            </div>
+          <!-- documents -->
+          <section v-if="activeTab === 'documents'" class="space-y-6">
+          <Document :user="user"/>
+            
           </section>
         </main>
       </div>

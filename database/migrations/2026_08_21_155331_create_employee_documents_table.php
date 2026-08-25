@@ -31,10 +31,6 @@ return new class extends Migration
             $table->string('file_type')->nullable();
             $table->unsignedBigInteger('file_size')->nullable();
 
-            // Dates
-            $table->date('issued_at')->nullable();
-            $table->date('expires_at')->nullable();
-
 
             $table->text('notes')->nullable();
             $table->timestamps();

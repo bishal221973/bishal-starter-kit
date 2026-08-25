@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function profile()
     {
-        $user = Auth::user()->load('info');
+        $user = Auth::user()->load(['info','documents']);
         return Inertia::render('Admin/Setting/Profile', [
             'user' => $user,
         ]);
