@@ -9,6 +9,7 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupportController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -51,6 +52,12 @@ Route::middleware(['has.organization'])->group(function () {
             ->parameters([
                 'branches' => 'organization',
             ]);
+
+
+        Route::prefix('user')->group(function () {
+            Route::get('profile', [UserController::class, 'profile'])->name('user.profile');
+            Route::put('update-personal-info', [UserController::class, 'personalInfo'])->name('user.personal.info');
+        });
     });
 
 

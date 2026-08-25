@@ -80,6 +80,8 @@ class User extends Authenticatable
             && $this->password_expired_at->isPast();
     }
 
+
+
     public function organizations()
     {
         return $this->belongsToMany(Organization::class)
@@ -89,5 +91,9 @@ class User extends Authenticatable
                 'joined_at',
             ])
             ->withTimestamps();
+    }
+
+    public function info(){
+        return $this->belongsTo(OrganizationUser::class,'id','user_id');
     }
 }

@@ -34,7 +34,6 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
 
             // Contact
-            $table->string('personal_email')->nullable();
             $table->string('personal_phone')->nullable();
 
             // Address
@@ -60,13 +59,8 @@ return new class extends Migration
             $table->string('salary_type')->default('monthly');
             // monthly, yearly, hourly
 
-            // Emergency contact
-            $table->string('emergency_contact_name')->nullable();
-            $table->string('emergency_contact_phone')->nullable();
-            $table->string('emergency_contact_relation')->nullable();
 
             // Identification
-            $table->string('national_id')->nullable();
             $table->string('tax_number')->nullable();
 
             // Status

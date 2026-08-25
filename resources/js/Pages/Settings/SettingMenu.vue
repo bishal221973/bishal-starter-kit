@@ -20,6 +20,12 @@ const menuItems = [
     icon: "fa-sliders",
     route: "configuration.setting",
   },
+  {
+    label: "Profile",
+    description: "Change your profile",
+    icon: "fa-user",
+    route: "user.profile",
+  },
 ];
 
 const isActive = (routeName) => {
