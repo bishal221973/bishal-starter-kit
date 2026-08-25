@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, usePage } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PageHeader from "@/Components/PageHeader.vue";
 import TextInput from "@/Components/Elements/TextInput.vue";
@@ -12,6 +12,7 @@ import PersonalInfo from "./Include/PersonalInfo.vue";
 import Employeement from "./Include/Employeement.vue";
 import Document from "./Include/Document.vue";
 import PasswordChange from "./Include/PasswordChange.vue";
+import TwoFactor from "./Include/TwoFactor.vue";
 const props = defineProps({
   user: {
     type: Object,
@@ -27,36 +28,54 @@ const props = defineProps({
   },
 });
 
+const page=usePage()
 const activeTab = ref("personal");
+const twoFactorEnabled = computed(() => {
+    return page.props.registration?.two_factor ?? false;
+});
 
-const tabs = [
-  {
-    key: "personal",
-    label: "Personal",
-    icon: "fa-regular fa-user",
-  },
-  {
-    key: "employment",
-    label: "Employment",
-    icon: "fa-solid fa-briefcase",
-  },
+const tabs = computed(() => {
+    const items = [
+        {
+            key: "personal",
+            label: "Personal",
+            icon: "fa-regular fa-user",
+        },
+        {
+            key: "employment",
+            label: "Employment",
+            icon: "fa-solid fa-briefcase",
+        },
+        {
+            key: "documents",
+            label: "Documents",
+            icon: "fa-regular fa-id-card",
+        },
+        {
+            key: "passwordChange",
+            label: "Change Password",
+            icon: "fa-solid fa-lock",
+        },
+    ];
 
-  {
-    key: "documents",
-    label: "Documents",
-    icon: "fa-regular fa-id-card",
-  },
+    // Only show when registration.two_factor === true
+    if (twoFactorEnabled.value) {
+        items.push({
+            key: "twoFactor",
+            label: "Two-Factor Auth",
+            icon: "fa-solid fa-shield-halved",
+        });
+    }
 
-  {
-    key: "passwordChange",
-    label: "Change Password",
-    icon: "fa fa-lock",
-  },
-];
+    return items;
+});
+
+
 </script>
 
 <template>
   <AppLayout>
+  {{ twoFactorEnabled ? 'adas' : 'oo8' }}
     <!-- HEADER -->
     <div class="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
       <PageHeader
@@ -103,8 +122,11 @@ const tabs = [
           <section v-if="activeTab === 'documents'" class="space-y-6">
             <Document :user="user" />
           </section>
-           <section v-if="activeTab === 'passwordChange'" class="space-y-6">
+          <section v-if="activeTab === 'passwordChange'" class="space-y-6">
             <PasswordChange :user="user" />
+          </section>
+          <section v-if="activeTab === 'twoFactor'" class="space-y-6">
+            <TwoFactor :user="user" />
           </section>
         </main>
       </div>

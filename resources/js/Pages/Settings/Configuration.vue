@@ -53,32 +53,36 @@ const { theme } = useTheme();
               <ScreenSaverConfig :config="config" />
             </div>
             <div>
-              <BackupConfig :config="config" />
-            </div>
-            <div>
-              <DateTimeConfig :config="config" />
-            </div>
-            <div>
               <LoginLogoutConfig :config="config" />
             </div>
             <div>
               <IpConfig :config="config" />
             </div>
+            <div>
+              <FooterConfig :config="config" />
+            </div>
+            <MailConfig :config="mailConfig" />
+            <ToastConfig :config="config" />
+
+            <!-- ============= -->
+
+            <div>
+              <BackupConfig :config="config" />
+            </div>
+            <div>
+              <DateTimeConfig :config="config" />
+            </div>
 
             <div>
               <AppConfig :config="config" />
             </div>
-            <div>
-              <FooterConfig :config="config" />
-            </div>
+
             <div>
               <UserConfig :config="config" />
             </div>
             <div>
               <LicenceConfig :config="config" />
             </div>
-            <MailConfig :config="mailConfig" />
-            <ToastConfig :config="config"/>
           </div>
         </div>
       </div>
