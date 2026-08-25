@@ -35,9 +35,6 @@ return new class extends Migration
             $table->boolean('enable_2fa')->default(false);
             $table->boolean('enable_multiple_branch')->default(false);
 
-            // On password change===
-            $table->boolean('force_logout_on_password_change')->default(true);
-            $table->boolean('invalidate_other_sessions')->default(true);
             // 
             $table->string('cache_lifetime')->default(20);
             // $table->boolean('enable_2fa')->default(false); 

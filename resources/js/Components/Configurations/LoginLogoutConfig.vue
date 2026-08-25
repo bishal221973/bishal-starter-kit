@@ -51,10 +51,6 @@ const form = useForm({
 
   enable_multiple_branch: props.config?.enable_multiple_branch == 1,
 
-  // Password Change
-  force_logout_on_password_change: props.config?.force_logout_on_password_change == 1,
-
-  invalidate_other_sessions: props.config?.invalidate_other_sessions == 1,
 });
 
 /*
@@ -544,83 +540,7 @@ const save = () => {
             </div>
           </div>
 
-          <!-- =================================================
-               PASSWORD CHANGE SECURITY
-          ================================================== -->
-
-          <div class="mt-3">
-            <div class="flex items-center gap-2 mb-3">
-              <div
-                class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
-              >
-                <i class="fa-solid fa-key text-sm"></i>
-              </div>
-
-              <div>
-                <Label class="font-semibold text-base text-sm">
-                  Password Change Security
-                </Label>
-
-                <Label class="block text-xs opacity-60">
-                  Control active sessions when a password is changed.
-                </Label>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <!-- Force Logout -->
-
-              <label
-                class="flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all"
-                :class="
-                  form.force_logout_on_password_change
-                    ? 'border-primary/30 bg-primary/5'
-                    : 'border-slate-200 hover:bg-slate-50'
-                "
-              >
-                <input
-                  v-model="form.force_logout_on_password_change"
-                  type="checkbox"
-                  class="mt-0.5 w-5 h-5 rounded cursor-pointer accent-primary"
-                />
-
-                <div>
-                  <Label class="font-medium text-sm">
-                    Force Logout After Password Change
-                  </Label>
-
-                  <Label class="block text-xs opacity-60 mt-1">
-                    Log the current user out immediately after changing their password.
-                  </Label>
-                </div>
-              </label>
-
-              <!-- Invalidate Sessions -->
-
-              <label
-                class="flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all"
-                :class="
-                  form.invalidate_other_sessions
-                    ? 'border-primary/30 bg-primary/5'
-                    : 'border-slate-200 hover:bg-slate-50'
-                "
-              >
-                <input
-                  v-model="form.invalidate_other_sessions"
-                  type="checkbox"
-                  class="mt-0.5 w-5 h-5 rounded cursor-pointer accent-primary"
-                />
-
-                <div>
-                  <Label class="font-medium text-sm"> Invalidate Other Sessions </Label>
-
-                  <Label class="block text-xs opacity-60 mt-1">
-                    End all other active sessions when the password is changed.
-                  </Label>
-                </div>
-              </label>
-            </div>
-          </div>
+         
 
           <!-- =================================================
                SECURITY SUMMARY
