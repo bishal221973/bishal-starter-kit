@@ -56,7 +56,6 @@ class OrganizationController extends Controller
             OrganizationUser::create([
                 'organization_id' => $org->id,
                 'user_id' => $userId,
-                'employee_code'   => now()->format('Y_m_d') . '_' . $org->id . '_' . $userId,
             ]);
             return redirect()
                 ->route('dashboard')

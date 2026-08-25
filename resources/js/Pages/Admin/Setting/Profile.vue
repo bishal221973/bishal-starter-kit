@@ -9,6 +9,7 @@ import { RisingPicker } from "rising-picker";
 import { RisingSelect } from "rising-select";
 import ProfileMenu from "./Include/ProfileMenu.vue";
 import PersonalInfo from "./Include/PersonalInfo.vue";
+import Employeement from "./Include/Employeement.vue";
 const props = defineProps({
   user: {
     type: Object,
@@ -239,144 +240,15 @@ const goToTab = (tab) => {
         <main class="w-full">
           <!-- PERSONAL -->
           <section v-if="activeTab === 'personal'" class="space-y-6">
-            <PersonalInfo :user="user" :employee="employee" />
+            <PersonalInfo :user="user" />
 
-            <!-- PASSWORD INFO -->
-            <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-              <div class="flex gap-4">
-                <div
-                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700"
-                >
-                  <i class="fa-solid fa-shield-halved"></i>
-                </div>
-
-                <div>
-                  <h3 class="text-sm font-semibold text-amber-900">
-                    Keep your account secure
-                  </h3>
-
-                  <p class="mt-1 text-sm leading-6 text-amber-800">
-                    Your password and login security settings are managed separately from
-                    your profile information.
-                  </p>
-
-                  <button
-                    type="button"
-                    class="mt-3 text-sm font-semibold text-amber-900 hover:underline"
-                  >
-                    Change password
-                    <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
+           
           </section>
 
           <!-- EMPLOYMENT -->
           <section v-if="activeTab === 'employment'" class="space-y-6">
-            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div class="border-b border-slate-100 px-6 py-5">
-                <h2 class="font-semibold text-slate-900">Employment Information</h2>
-
-                <p class="mt-1 text-sm text-slate-500">
-                  Information about your position and employment.
-                </p>
-              </div>
-
-              <div class="grid grid-cols-1 gap-5 p-6 md:grid-cols-2">
-                <div>
-                  <Label value="Employee Code" />
-
-                  <TextInput
-                    v-model="form.employee_code"
-                    class="mt-1.5 w-full bg-slate-50"
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <Label value="Employee Type" />
-
-                  <RisingSelect
-                    v-model="form.employee_type"
-                    :options="employeeTypeOptions"
-                    placeholder="Select employee type"
-                    class="mt-1.5 w-full"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Department" />
-
-                  <TextInput
-                    v-model="form.department"
-                    class="mt-1.5 w-full"
-                    placeholder="e.g. Engineering"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Designation" />
-
-                  <TextInput
-                    v-model="form.designation"
-                    class="mt-1.5 w-full"
-                    placeholder="e.g. Senior Developer"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Joined Date" />
-
-                  <RisingPicker
-                    v-model="form.joined_at"
-                    type="date"
-                    class="mt-1.5 w-full"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Probation Ends" />
-
-                  <RisingPicker
-                    v-model="form.probation_ends_at"
-                    type="date"
-                    class="mt-1.5 w-full"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Employment Ends" />
-
-                  <RisingPicker
-                    v-model="form.employment_ends_at"
-                    type="date"
-                    class="mt-1.5 w-full"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Salary Type" />
-
-                  <RisingSelect
-                    v-model="form.salary_type"
-                    :options="salaryTypeOptions"
-                    class="mt-1.5 w-full"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Salary" />
-
-                  <TextInput
-                    v-model="form.salary"
-                    type="number"
-                    class="mt-1.5 w-full"
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-            </div>
+          <Employeement :user="user"/>
+            
           </section>
 
           <!-- CONTACT -->
