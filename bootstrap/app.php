@@ -4,6 +4,7 @@ use App\Http\Middleware\BlockIp;
 use App\Http\Middleware\CheckPasswordExpiration;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Middleware\EnsureUserHasOrganization;
+use App\Http\Middleware\SetApplicationConfig;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,7 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
-        $middleware->append(BlockIp::class);
+        $middleware->append([
+            BlockIp::class,
+            SetApplicationConfig::class
+            ]);
 
         $middleware->alias([
             'password.expired' => CheckPasswordExpiration::class,

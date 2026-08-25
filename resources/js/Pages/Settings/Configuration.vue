@@ -63,6 +63,9 @@ const { theme } = useTheme();
             </div>
             <MailConfig :config="mailConfig" />
             <ToastConfig :config="config" />
+            <div>
+              <AppConfig :config="config" />
+            </div>
 
             <!-- ============= -->
 
@@ -71,10 +74,6 @@ const { theme } = useTheme();
             </div>
             <div>
               <DateTimeConfig :config="config" />
-            </div>
-
-            <div>
-              <AppConfig :config="config" />
             </div>
 
             <div>
