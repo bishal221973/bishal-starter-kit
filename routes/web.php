@@ -67,7 +67,11 @@ Route::middleware(['has.organization'])->group(function () {
                 'update',
                 'destroy',
             ]);
+            Route::put('/profile/password', [UserController::class, 'updatePassword'])
+    ->name('profile.password.update');
         });
+
+
     });
 
 
