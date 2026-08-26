@@ -15,9 +15,19 @@ const columns = [
     {
         key: "name",
         label: "Name",
-        type: "text",
+        type: "stack",
         searchable: true,
         sortable: true,
+        items: [
+        {
+            label: "Name",
+            key: "name",
+        },
+        {
+            label: "Email",
+            key: "email",
+        },
+    ],
     },
    
     {

@@ -1897,11 +1897,35 @@ const exportScopeOptions = [
 */
 
 function getExportColumns() {
-    return visibleColumns.value.filter(
-        (column) =>
-            column.exportable !==
-            false
-    );
+    const columns = [];
+
+    visibleColumns.value.forEach((column) => {
+        if (column.exportable === false) {
+            return;
+        }
+
+        // Stack column
+        if (column.type === "stack" && Array.isArray(column.items)) {
+            column.items.forEach((item) => {
+                if (item.exportable === false) {
+                    return;
+                }
+
+                columns.push({
+                    key: item.key,
+                    label: item.exportLabel || item.label || item.key,
+                    sourceColumn: column,
+                    type: "stack-item",
+                });
+            });
+
+            return;
+        }
+
+        columns.push(column);
+    });
+
+    return columns;
 }
 
 /*
@@ -1911,79 +1935,24 @@ function getExportColumns() {
 */
 
 function getExportData(data) {
-    const columns =
-        getExportColumns();
+    const columns = getExportColumns();
 
     return data.map((row) => {
         const result = {};
 
-        columns.forEach(
-            (column) => {
-                let value =
-                    getValue(
-                        row,
-                        column.key
-                    );
+        columns.forEach((column) => {
+            let value = getValue(row, column.key);
 
-                if (
-                    value ===
-                        null ||
-                    value ===
-                        undefined
-                ) {
-                    value = "";
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Format exported values
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    column.type ===
-                    "boolean"
-                ) {
-                    value =
-                        booleanValue(
-                            value
-                        )
-                            ? "Yes"
-                            : "No";
-                }
-
-                if (
-                    column.type ===
-                    "date"
-                ) {
-                    value =
-                        formatDate(
-                            value,
-                            column
-                        );
-                }
-
-                if (
-                    column.type ===
-                    "datetime"
-                ) {
-                    value =
-                        formatDateTime(
-                            value
-                        );
-                }
-
-                result[
-                    column.label ||
-                        column.key
-                ] = value;
+            if (value === null || value === undefined) {
+                value = "";
             }
-        );
+
+            result[column.label || column.key] = value;
+        });
 
         return result;
     });
 }
-
 /*
 |--------------------------------------------------------------------------
 | Fetch server export data
