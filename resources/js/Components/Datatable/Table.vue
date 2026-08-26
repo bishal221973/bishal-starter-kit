@@ -1,11 +1,5 @@
 <script setup>
-import {
-    computed,
-    ref,
-    watch,
-    onBeforeUnmount,
-    nextTick,
-} from "vue";
+import { computed, ref, watch, onBeforeUnmount } from "vue";
 import { router } from "@inertiajs/vue3";
 
 /*
@@ -47,18 +41,6 @@ const props = defineProps({
     |--------------------------------------------------------------------------
     | Filters
     |--------------------------------------------------------------------------
-    |
-    | Example:
-    |
-    | filters: [
-    |   {
-    |      key: "status",
-    |      label: "Status",
-    |      type: "select",
-    |      options: [...]
-    |   }
-    | ]
-    |
     */
 
     filters: {
@@ -211,6 +193,61 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+
+    /*
+    |--------------------------------------------------------------------------
+    | Export
+    |--------------------------------------------------------------------------
+    */
+
+    exportable: {
+        type: Boolean,
+        default: true,
+    },
+
+    exportFilename: {
+        type: String,
+        default: "data-export",
+    },
+
+    exportOptions: {
+        type: Array,
+        default: () => [
+            "csv",
+            "excel",
+            "json",
+            "print",
+            "copy",
+        ],
+    },
+
+    /*
+    |--------------------------------------------------------------------------
+    | Export Scope
+    |--------------------------------------------------------------------------
+    |
+    | current:
+    |   Current displayed page.
+    |
+    | filtered:
+    |   All filtered rows in client mode.
+    |
+    | selected:
+    |   Selected rows.
+    |
+    */
+
+    defaultExportScope: {
+        type: String,
+        default: "filtered",
+        validator: (value) =>
+            ["current", "filtered", "selected"].includes(value),
+    },
+
+    showExportScope: {
+        type: Boolean,
+        default: true,
+    },
 });
 
 /*
@@ -228,6 +265,9 @@ const emit = defineEmits([
     "page-change",
     "page-size-change",
     "query-change",
+    "export",
+    "export-success",
+    "export-error",
 ]);
 
 /*
@@ -251,16 +291,30 @@ const currentPageSize = ref(
 );
 
 const sortBy = ref(props.defaultSort);
+
 const sortDirection = ref(props.defaultDirection);
 
 const selectedRows = ref([]);
 
 const showFilterModal = ref(false);
+
 const showColumnModal = ref(false);
 
 const viewMode = ref(props.defaultView);
 
 const pendingFilters = ref({});
+
+/*
+|--------------------------------------------------------------------------
+| Export State
+|--------------------------------------------------------------------------
+*/
+
+const exportMenuOpen = ref(false);
+
+const exportScope = ref(props.defaultExportScope);
+
+const exporting = ref(false);
 
 /*
 |--------------------------------------------------------------------------
@@ -307,7 +361,19 @@ const visibleColumns = computed(() => {
 
 /*
 |--------------------------------------------------------------------------
-| Initialize column visibility
+| Export columns
+|--------------------------------------------------------------------------
+*/
+
+const exportColumns = computed(() => {
+    return visibleColumns.value.filter(
+        (column) => column.exportable !== false
+    );
+});
+
+/*
+|--------------------------------------------------------------------------
+| Initialize columns
 |--------------------------------------------------------------------------
 */
 
@@ -394,31 +460,35 @@ const filterDefinitions = computed(() => {
 */
 
 const activeFilterCount = computed(() => {
-    return Object.entries(pendingFilters.value).filter(
-        ([, value]) => {
-            if (
-                value === null ||
-                value === undefined ||
-                value === ""
-            ) {
-                return false;
-            }
-
-            if (
-                typeof value === "object" &&
-                !Array.isArray(value)
-            ) {
-                return Object.values(value).some(
-                    (v) =>
-                        v !== "" &&
-                        v !== null &&
-                        v !== undefined
-                );
-            }
-
-            return true;
+    return Object.entries(
+        pendingFilters.value
+    ).filter(([, value]) => {
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return false;
         }
-    ).length;
+
+        if (
+            typeof value === "object" &&
+            !Array.isArray(value)
+        ) {
+            return Object.values(value).some(
+                (v) =>
+                    v !== "" &&
+                    v !== null &&
+                    v !== undefined
+            );
+        }
+
+        if (Array.isArray(value)) {
+            return value.length > 0;
+        }
+
+        return true;
+    }).length;
 });
 
 /*
@@ -459,9 +529,7 @@ const processedClientRows = computed(() => {
                         column.key
                     );
 
-                    return String(
-                        value ?? ""
-                    )
+                    return String(value ?? "")
                         .toLowerCase()
                         .includes(query);
                 }
@@ -475,203 +543,60 @@ const processedClientRows = computed(() => {
     |--------------------------------------------------------------------------
     */
 
-    Object.entries(pendingFilters.value).forEach(
-        ([key, filterValue]) => {
+    Object.entries(
+        pendingFilters.value
+    ).forEach(([key, filterValue]) => {
+        if (
+            filterValue === null ||
+            filterValue === undefined ||
+            filterValue === ""
+        ) {
+            return;
+        }
+
+        if (
+            Array.isArray(filterValue) &&
+            filterValue.length === 0
+        ) {
+            return;
+        }
+
+        const definition =
+            filterDefinitions.value.find(
+                (filter) =>
+                    filter.key === key
+            );
+
+        result = result.filter((row) => {
+            const value = getValue(row, key);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Text
+            |--------------------------------------------------------------------------
+            */
+
             if (
-                filterValue === null ||
-                filterValue === undefined ||
-                filterValue === ""
+                definition?.type === "text"
             ) {
-                return;
+                return String(value ?? "")
+                    .toLowerCase()
+                    .includes(
+                        String(
+                            filterValue
+                        ).toLowerCase()
+                    );
             }
 
-            const definition =
-                filterDefinitions.value.find(
-                    (filter) =>
-                        filter.key === key
-                );
+            /*
+            |--------------------------------------------------------------------------
+            | Select
+            |--------------------------------------------------------------------------
+            */
 
-            result = result.filter((row) => {
-                const value = getValue(
-                    row,
-                    key
-                );
-
-                /*
-                |--------------------------------------------------------------------------
-                | Text
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    definition?.type === "text"
-                ) {
-                    return String(
-                        value ?? ""
-                    )
-                        .toLowerCase()
-                        .includes(
-                            String(
-                                filterValue
-                            ).toLowerCase()
-                        );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Select
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    definition?.type ===
-                    "select"
-                ) {
-                    if (
-                        Array.isArray(
-                            filterValue
-                        )
-                    ) {
-                        return filterValue
-                            .map(String)
-                            .includes(
-                                String(value)
-                            );
-                    }
-
-                    return (
-                        String(value) ===
-                        String(filterValue)
-                    );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Boolean
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    definition?.type ===
-                    "boolean"
-                ) {
-                    return (
-                        String(value) ===
-                        String(filterValue)
-                    );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Number range
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    definition?.type ===
-                    "number-range"
-                ) {
-                    const number =
-                        Number(value);
-
-                    if (
-                        filterValue.min !==
-                            "" &&
-                        filterValue.min !==
-                            null &&
-                        filterValue.min !==
-                            undefined
-                    ) {
-                        if (
-                            number <
-                            Number(
-                                filterValue.min
-                            )
-                        ) {
-                            return false;
-                        }
-                    }
-
-                    if (
-                        filterValue.max !==
-                            "" &&
-                        filterValue.max !==
-                            null &&
-                        filterValue.max !==
-                            undefined
-                    ) {
-                        if (
-                            number >
-                            Number(
-                                filterValue.max
-                            )
-                        ) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Date range
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    definition?.type ===
-                    "date-range"
-                ) {
-                    if (!value) {
-                        return false;
-                    }
-
-                    const date =
-                        new Date(value);
-
-                    if (
-                        filterValue.from
-                    ) {
-                        const from =
-                            new Date(
-                                filterValue.from
-                            );
-
-                        if (date < from) {
-                            return false;
-                        }
-                    }
-
-                    if (
-                        filterValue.to
-                    ) {
-                        const to =
-                            new Date(
-                                filterValue.to
-                            );
-
-                        to.setHours(
-                            23,
-                            59,
-                            59,
-                            999
-                        );
-
-                        if (date > to) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Default
-                |--------------------------------------------------------------------------
-                */
-
+            if (
+                definition?.type === "select"
+            ) {
                 if (
                     Array.isArray(
                         filterValue
@@ -685,12 +610,191 @@ const processedClientRows = computed(() => {
                 }
 
                 return (
-                    String(value ?? "") ===
+                    String(value) ===
                     String(filterValue)
                 );
-            });
-        }
-    );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Multi select
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                definition?.type ===
+                "multiselect"
+            ) {
+                if (
+                    !Array.isArray(
+                        filterValue
+                    )
+                ) {
+                    return false;
+                }
+
+                return filterValue
+                    .map(String)
+                    .includes(
+                        String(value)
+                    );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Boolean
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                definition?.type ===
+                "boolean"
+            ) {
+                return (
+                    String(value) ===
+                    String(filterValue)
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Number range
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                definition?.type ===
+                "number-range"
+            ) {
+                const number =
+                    Number(value);
+
+                if (
+                    filterValue.min !==
+                        "" &&
+                    filterValue.min !==
+                        null &&
+                    filterValue.min !==
+                        undefined
+                ) {
+                    if (
+                        number <
+                        Number(
+                            filterValue.min
+                        )
+                    ) {
+                        return false;
+                    }
+                }
+
+                if (
+                    filterValue.max !==
+                        "" &&
+                    filterValue.max !==
+                        null &&
+                    filterValue.max !==
+                        undefined
+                ) {
+                    if (
+                        number >
+                        Number(
+                            filterValue.max
+                        )
+                    ) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Date range
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                definition?.type ===
+                "date-range"
+            ) {
+                if (!value) {
+                    return false;
+                }
+
+                const date =
+                    new Date(value);
+
+                if (
+                    Number.isNaN(
+                        date.getTime()
+                    )
+                ) {
+                    return false;
+                }
+
+                if (
+                    filterValue.from
+                ) {
+                    const from =
+                        new Date(
+                            filterValue.from
+                        );
+
+                    if (
+                        date < from
+                    ) {
+                        return false;
+                    }
+                }
+
+                if (filterValue.to) {
+                    const to =
+                        new Date(
+                            filterValue.to
+                        );
+
+                    to.setHours(
+                        23,
+                        59,
+                        59,
+                        999
+                    );
+
+                    if (
+                        date > to
+                    ) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Default
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                Array.isArray(
+                    filterValue
+                )
+            ) {
+                return filterValue
+                    .map(String)
+                    .includes(
+                        String(value)
+                    );
+            }
+
+            return (
+                String(value ?? "") ===
+                String(filterValue)
+            );
+        });
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -727,21 +831,26 @@ const processedClientRows = computed(() => {
                     );
 
                 if (
-                    aValue === null ||
-                    aValue === undefined
+                    aValue ===
+                        null ||
+                    aValue ===
+                        undefined
                 ) {
                     return 1;
                 }
 
                 if (
-                    bValue === null ||
-                    bValue === undefined
+                    bValue ===
+                        null ||
+                    bValue ===
+                        undefined
                 ) {
                     return -1;
                 }
 
                 if (
-                    aValue === bValue
+                    aValue ===
+                    bValue
                 ) {
                     return (
                         a.index -
@@ -771,7 +880,9 @@ const processedClientRows = computed(() => {
                 }
 
                 return (
-                    String(aValue).localeCompare(
+                    String(
+                        aValue
+                    ).localeCompare(
                         String(
                             bValue
                         ),
@@ -859,13 +970,14 @@ const displayRows = computed(() => {
 
     return processedClientRows.value.slice(
         start,
-        start + currentPageSize.value
+        start +
+            currentPageSize.value
     );
 });
 
 /*
 |--------------------------------------------------------------------------
-| Pagination information
+| Pagination info
 |--------------------------------------------------------------------------
 */
 
@@ -921,8 +1033,7 @@ const showingTo = computed(() => {
 */
 
 const paginationPages = computed(() => {
-    const last =
-        totalPages.value;
+    const last = totalPages.value;
 
     const current =
         currentPage.value;
@@ -961,7 +1072,10 @@ const paginationPages = computed(() => {
         pages.push(page);
     }
 
-    if (current < last - 3) {
+    if (
+        current <
+        last - 3
+    ) {
         pages.push("...");
     }
 
@@ -994,88 +1108,71 @@ function buildServerParams() {
             sortBy.value ||
             undefined,
 
-        direction: sortBy.value
-            ? sortDirection.value
-            : undefined,
+        direction:
+            sortBy.value
+                ? sortDirection.value
+                : undefined,
     };
-
-    /*
-    |--------------------------------------------------------------------------
-    | Filters
-    |--------------------------------------------------------------------------
-    */
 
     Object.entries(
         pendingFilters.value
-    ).forEach(
-        ([key, value]) => {
-            if (
-                value === null ||
-                value === undefined ||
-                value === ""
-            ) {
-                return;
-            }
-
-            /*
-            | Simple array
-            */
-
-            if (Array.isArray(value)) {
-                value.forEach(
-                    (item, index) => {
-                        params[
-                            `filters[${key}][${index}]`
-                        ] = item;
-                    }
-                );
-
-                return;
-            }
-
-            /*
-            | Range object
-            */
-
-            if (
-                typeof value ===
-                    "object" &&
-                value !== null
-            ) {
-                Object.entries(
-                    value
-                ).forEach(
-                    ([rangeKey, rangeValue]) => {
-                        if (
-                            rangeValue !==
-                                null &&
-                            rangeValue !==
-                                undefined &&
-                            rangeValue !==
-                                ""
-                        ) {
-                            params[
-                                `filters[${key}][${rangeKey}]`
-                            ] =
-                                rangeValue;
-                        }
-                    }
-                );
-
-                return;
-            }
-
-            params[
-                `filters[${key}]`
-            ] = value;
+    ).forEach(([key, value]) => {
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return;
         }
-    );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Remove empty
-    |--------------------------------------------------------------------------
-    */
+        if (
+            Array.isArray(value)
+        ) {
+            value.forEach(
+                (item, index) => {
+                    params[
+                        `filters[${key}][${index}]`
+                    ] = item;
+                }
+            );
+
+            return;
+        }
+
+        if (
+            typeof value ===
+                "object" &&
+            value !== null
+        ) {
+            Object.entries(
+                value
+            ).forEach(
+                ([
+                    rangeKey,
+                    rangeValue,
+                ]) => {
+                    if (
+                        rangeValue !==
+                            null &&
+                        rangeValue !==
+                            undefined &&
+                        rangeValue !== ""
+                    ) {
+                        params[
+                            `filters[${key}][${rangeKey}]`
+                        ] =
+                            rangeValue;
+                    }
+                }
+            );
+
+            return;
+        }
+
+        params[
+            `filters[${key}]`
+        ] = value;
+    });
 
     Object.keys(params).forEach(
         (key) => {
@@ -1157,12 +1254,14 @@ watch(search, (value) => {
 
     clearTimeout(searchTimer);
 
-    searchTimer =
-        setTimeout(() => {
+    searchTimer = setTimeout(
+        () => {
             currentPage.value = 1;
 
             loadServerData();
-        }, props.searchDebounce);
+        },
+        props.searchDebounce
+    );
 });
 
 /*
@@ -1208,7 +1307,8 @@ function sort(column) {
     });
 
     if (
-        props.mode === "server"
+        props.mode ===
+        "server"
     ) {
         loadServerData();
     }
@@ -1216,11 +1316,13 @@ function sort(column) {
 
 /*
 |--------------------------------------------------------------------------
-| Filter handling
+| Filter
 |--------------------------------------------------------------------------
 */
 
-function createEmptyFilter(filter) {
+function createEmptyFilter(
+    filter
+) {
     if (
         filter.type ===
         "number-range"
@@ -1243,19 +1345,13 @@ function createEmptyFilter(filter) {
 
     if (
         filter.type ===
-        "boolean"
+        "multiselect"
     ) {
-        return "";
+        return [];
     }
 
     return "";
 }
-
-/*
-|--------------------------------------------------------------------------
-| Open filter modal
-|--------------------------------------------------------------------------
-*/
 
 function openFilters() {
     const copy = {};
@@ -1274,6 +1370,12 @@ function openFilters() {
                     ];
 
                 if (
+                    Array.isArray(value)
+                ) {
+                    copy[
+                        filter.key
+                    ] = [...value];
+                } else if (
                     typeof value ===
                         "object" &&
                     value !== null
@@ -1283,14 +1385,6 @@ function openFilters() {
                     ] = {
                         ...value,
                     };
-                } else if (
-                    Array.isArray(
-                        value
-                    )
-                ) {
-                    copy[
-                        filter.key
-                    ] = [...value];
                 } else {
                     copy[
                         filter.key
@@ -1314,12 +1408,6 @@ function openFilters() {
         true;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Update pending filter
-|--------------------------------------------------------------------------
-*/
-
 function updatePendingFilter(
     key,
     value
@@ -1331,73 +1419,75 @@ function updatePendingFilter(
     };
 }
 
-/*
-|--------------------------------------------------------------------------
-| Apply filters
-|--------------------------------------------------------------------------
-*/
-
 function applyFilters() {
     const cleaned = {};
 
     Object.entries(
         pendingFilters.value
-    ).forEach(
-        ([key, value]) => {
-            if (
-                value === null ||
-                value === undefined ||
-                value === ""
-            ) {
-                return;
-            }
-
-            if (
-                typeof value ===
-                    "object" &&
-                !Array.isArray(value)
-            ) {
-                const cleanedObject =
-                    {};
-
-                Object.entries(
-                    value
-                ).forEach(
-                    ([
-                        objectKey,
-                        objectValue,
-                    ]) => {
-                        if (
-                            objectValue !==
-                                null &&
-                            objectValue !==
-                                undefined &&
-                            objectValue !==
-                                ""
-                        ) {
-                            cleanedObject[
-                                objectKey
-                            ] =
-                                objectValue;
-                        }
-                    }
-                );
-
-                if (
-                    Object.keys(
-                        cleanedObject
-                    ).length
-                ) {
-                    cleaned[key] =
-                        cleanedObject;
-                }
-
-                return;
-            }
-
-            cleaned[key] = value;
+    ).forEach(([key, value]) => {
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return;
         }
-    );
+
+        if (
+            Array.isArray(value)
+        ) {
+            if (value.length) {
+                cleaned[key] =
+                    value;
+            }
+
+            return;
+        }
+
+        if (
+            typeof value ===
+                "object" &&
+            value !== null
+        ) {
+            const cleanedObject =
+                {};
+
+            Object.entries(
+                value
+            ).forEach(
+                ([
+                    objectKey,
+                    objectValue,
+                ]) => {
+                    if (
+                        objectValue !==
+                            null &&
+                        objectValue !==
+                            undefined &&
+                        objectValue !== ""
+                    ) {
+                        cleanedObject[
+                            objectKey
+                        ] =
+                            objectValue;
+                    }
+                }
+            );
+
+            if (
+                Object.keys(
+                    cleanedObject
+                ).length
+            ) {
+                cleaned[key] =
+                    cleanedObject;
+            }
+
+            return;
+        }
+
+        cleaned[key] = value;
+    });
 
     pendingFilters.value =
         cleaned;
@@ -1413,20 +1503,16 @@ function applyFilters() {
         false;
 
     if (
-        props.mode === "server"
+        props.mode ===
+        "server"
     ) {
         loadServerData();
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| Clear filters
-|--------------------------------------------------------------------------
-*/
-
 function clearFilters() {
-    pendingFilters.value = {};
+    pendingFilters.value =
+        {};
 
     currentPage.value = 1;
 
@@ -1439,17 +1525,12 @@ function clearFilters() {
         false;
 
     if (
-        props.mode === "server"
+        props.mode ===
+        "server"
     ) {
         loadServerData();
     }
 }
-
-/*
-|--------------------------------------------------------------------------
-| Clear search
-|--------------------------------------------------------------------------
-*/
 
 function clearSearch() {
     search.value = "";
@@ -1457,7 +1538,8 @@ function clearSearch() {
     currentPage.value = 1;
 
     if (
-        props.mode === "server"
+        props.mode ===
+        "server"
     ) {
         loadServerData();
     }
@@ -1498,13 +1580,16 @@ function changePage(page) {
     );
 
     if (
-        props.mode === "server"
+        props.mode ===
+        "server"
     ) {
         loadServerData();
     }
 }
 
-function changePageSize(size) {
+function changePageSize(
+    size
+) {
     const nextSize =
         Number(size);
 
@@ -1528,7 +1613,8 @@ function changePageSize(size) {
     );
 
     if (
-        props.mode === "server"
+        props.mode ===
+        "server"
     ) {
         loadServerData();
     }
@@ -1540,28 +1626,33 @@ function changePageSize(size) {
 |--------------------------------------------------------------------------
 */
 
-const allSelected = computed(() => {
-    if (
-        !displayRows.value.length
-    ) {
-        return false;
-    }
+const allSelected =
+    computed(() => {
+        if (
+            !displayRows.value
+                .length
+        ) {
+            return false;
+        }
 
-    return displayRows.value.every(
-        (row) =>
-            selectedRows.value.includes(
-                row?.[props.rowKey]
-            )
-    );
-});
+        return displayRows.value.every(
+            (row) =>
+                selectedRows.value.includes(
+                    row?.[
+                        props.rowKey
+                    ]
+                )
+        );
+    });
 
-const someSelected = computed(() => {
-    return (
-        selectedRows.value.length >
-        0 &&
-        !allSelected.value
-    );
-});
+const someSelected =
+    computed(() => {
+        return (
+            selectedRows.value
+                .length > 0 &&
+            !allSelected.value
+        );
+    });
 
 function toggleSelectAll() {
     const ids =
@@ -1575,12 +1666,11 @@ function toggleSelectAll() {
             .filter(
                 (id) =>
                     id !== null &&
-                    id !== undefined
+                    id !==
+                        undefined
             );
 
-    if (
-        allSelected.value
-    ) {
+    if (allSelected.value) {
         selectedRows.value =
             selectedRows.value.filter(
                 (id) =>
@@ -1589,13 +1679,12 @@ function toggleSelectAll() {
                     )
             );
     } else {
-        selectedRows.value =
-            [
-                ...new Set([
-                    ...selectedRows.value,
-                    ...ids,
-                ]),
-            ];
+        selectedRows.value = [
+            ...new Set([
+                ...selectedRows.value,
+                ...ids,
+            ]),
+        ];
     }
 
     emit(
@@ -1627,7 +1716,8 @@ function toggleRow(row) {
         selectedRows.value =
             selectedRows.value.filter(
                 (selectedId) =>
-                    selectedId !== id
+                    selectedId !==
+                    id
             );
     } else {
         selectedRows.value.push(
@@ -1652,20 +1742,18 @@ function clearSelection() {
 
 /*
 |--------------------------------------------------------------------------
-| Server pagination synchronization
+| Server synchronization
 |--------------------------------------------------------------------------
 */
 
 watch(
     () =>
-        props.data
-            ?.current_page,
+        props.data?.current_page,
     (page) => {
         if (
             props.mode ===
                 "server" &&
-            page !==
-                undefined &&
+            page !== undefined &&
             page !== null
         ) {
             currentPage.value =
@@ -1701,20 +1789,6 @@ watch(
 
 /*
 |--------------------------------------------------------------------------
-| Server filters from backend
-|--------------------------------------------------------------------------
-*/
-
-watch(
-    () => props.filters,
-    () => {},
-    {
-        deep: true,
-    }
-);
-
-/*
-|--------------------------------------------------------------------------
 | Column helpers
 |--------------------------------------------------------------------------
 */
@@ -1724,7 +1798,8 @@ function isColumnSortable(
 ) {
     return (
         props.sortable &&
-        column.sortable !== false
+        column.sortable !==
+            false
     );
 }
 
@@ -1766,11 +1841,12 @@ function formatDate(
         return new Intl.DateTimeFormat(
             column.locale ||
                 undefined,
-            column.dateOptions || {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-            }
+            column.dateOptions ||
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                }
         ).format(date);
     } catch {
         return value;
@@ -1870,8 +1946,7 @@ function getBadgeClass(
     }
 
     const normalized =
-        String(value)
-            .toLowerCase();
+        String(value).toLowerCase();
 
     if (
         [
@@ -1879,9 +1954,7 @@ function getBadgeClass(
             "success",
             "approved",
             "completed",
-        ].includes(
-            normalized
-        )
+        ].includes(normalized)
     ) {
         return "bg-emerald-100 text-emerald-700";
     }
@@ -1892,9 +1965,7 @@ function getBadgeClass(
             "disabled",
             "failed",
             "rejected",
-        ].includes(
-            normalized
-        )
+        ].includes(normalized)
     ) {
         return "bg-red-100 text-red-700";
     }
@@ -1903,9 +1974,7 @@ function getBadgeClass(
         [
             "pending",
             "processing",
-        ].includes(
-            normalized
-        )
+        ].includes(normalized)
     ) {
         return "bg-amber-100 text-amber-700";
     }
@@ -1922,7 +1991,9 @@ function getBadgeClass(
 function toggleColumn(
     key
 ) {
-    columnVisibility.value[key] =
+    columnVisibility.value[
+        key
+    ] =
         !columnVisibility.value[
             key
         ];
@@ -1930,28 +2001,1030 @@ function toggleColumn(
 
 /*
 |--------------------------------------------------------------------------
-| Escape key
+| EXPORT
 |--------------------------------------------------------------------------
 */
 
-function handleEscape(
-    event
+/*
+|--------------------------------------------------------------------------
+| Export rows
+|--------------------------------------------------------------------------
+*/
+
+const exportRows = computed(
+    () => {
+        if (
+            exportScope.value ===
+            "selected"
+        ) {
+            if (
+                !selectedRows.value
+                    .length
+            ) {
+                return [];
+            }
+
+            const selectedSet =
+                new Set(
+                    selectedRows.value
+                );
+
+            /*
+             * Client mode:
+             * search all available rows.
+             *
+             * Server mode:
+             * only selected rows currently
+             * loaded in the browser.
+             */
+            const source =
+                props.mode ===
+                "client"
+                    ? rows.value
+                    : rows.value;
+
+            return source.filter(
+                (row) =>
+                    selectedSet.has(
+                        row?.[
+                            props.rowKey
+                        ]
+                    )
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Current page
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            exportScope.value ===
+            "current"
+        ) {
+            return displayRows.value;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Filtered
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            props.mode ===
+            "client"
+        ) {
+            return processedClientRows.value;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Server mode
+        |--------------------------------------------------------------------------
+        |
+        | Server mode only has the current
+        | page in browser memory.
+        |
+        */
+
+        return rows.value;
+    }
+);
+
+/*
+|--------------------------------------------------------------------------
+| Export value formatting
+|--------------------------------------------------------------------------
+*/
+
+function getExportValue(
+    row,
+    column
+) {
+    let value = getValue(
+        row,
+        column.key
+    );
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom export formatter
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        typeof column.exportValue ===
+        "function"
+    ) {
+        return column.exportValue(
+            value,
+            row,
+            column
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Boolean
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        column.type ===
+        "boolean"
+    ) {
+        return booleanValue(
+            value
+        )
+            ? "Yes"
+            : "No";
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Date
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        column.type === "date"
+    ) {
+        return formatDate(
+            value,
+            column
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Datetime
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        column.type ===
+        "datetime"
+    ) {
+        return formatDateTime(
+            value
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Array/Object
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        typeof value ===
+        "object"
+    ) {
+        try {
+            return JSON.stringify(
+                value
+            );
+        } catch {
+            return String(value);
+        }
+    }
+
+    return value;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Prepare export data
+|--------------------------------------------------------------------------
+*/
+
+function getExportData(
+    data
+) {
+    const columns =
+        exportColumns.value;
+
+    return data.map(
+        (row) => {
+            const result = {};
+
+            columns.forEach(
+                (column) => {
+                    result[
+                        column.label ||
+                            column.key
+                    ] =
+                        getExportValue(
+                            row,
+                            column
+                        );
+                }
+            );
+
+            return result;
+        }
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Export
+|--------------------------------------------------------------------------
+*/
+
+async function runExport(
+    type
 ) {
     if (
-        event.key === "Escape"
+        !props.exportOptions.includes(
+            type
+        )
+    ) {
+        return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Selected validation
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        exportScope.value ===
+            "selected" &&
+        !selectedRows.value
+            .length
+    ) {
+        emit(
+            "export-error",
+            {
+                type,
+                reason:
+                    "no-selection",
+            }
+        );
+
+        exportMenuOpen.value =
+            false;
+
+        return;
+    }
+
+    const data =
+        exportRows.value;
+
+    if (!data.length) {
+        emit(
+            "export-error",
+            {
+                type,
+                reason:
+                    "no-data",
+            }
+        );
+
+        exportMenuOpen.value =
+            false;
+
+        return;
+    }
+
+    exporting.value = true;
+
+    emit("export", {
+        type,
+        scope:
+            exportScope.value,
+        rows: data,
+    });
+
+    try {
+        switch (type) {
+            case "csv":
+                exportCSV(data);
+                break;
+
+            case "excel":
+                await exportExcel(
+                    data
+                );
+                break;
+
+            case "json":
+                exportJSON(data);
+                break;
+
+            case "print":
+                printData(data);
+                break;
+
+            case "copy":
+                await copyData(data);
+                break;
+        }
+
+        emit(
+            "export-success",
+            {
+                type,
+                scope:
+                    exportScope.value,
+                count: data.length,
+            }
+        );
+    } catch (error) {
+        console.error(
+            "DataTable export error:",
+            error
+        );
+
+        emit(
+            "export-error",
+            {
+                type,
+                scope:
+                    exportScope.value,
+                error,
+            }
+        );
+    } finally {
+        exporting.value =
+            false;
+
+        exportMenuOpen.value =
+            false;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| CSV
+|--------------------------------------------------------------------------
+*/
+
+function exportCSV(data) {
+    const rows =
+        getExportData(data);
+
+    if (!rows.length) {
+        return;
+    }
+
+    const headers =
+        Object.keys(
+            rows[0]
+        );
+
+    const csv = [
+        headers
+            .map(csvEscape)
+            .join(","),
+        ...rows.map(
+            (row) =>
+                headers
+                    .map(
+                        (header) =>
+                            csvEscape(
+                                row[
+                                    header
+                                ]
+                            )
+                    )
+                    .join(",")
+        ),
+    ].join("\n");
+
+    /*
+    |--------------------------------------------------------------------------
+    | UTF-8 BOM
+    |--------------------------------------------------------------------------
+    |
+    | Helps Excel correctly detect UTF-8
+    | including Nepali characters.
+    |
+    */
+
+    const content =
+        "\uFEFF" + csv;
+
+    downloadFile(
+        content,
+        `${props.exportFilename}.csv`,
+        "text/csv;charset=utf-8;"
+    );
+}
+
+function csvEscape(
+    value
+) {
+    const string =
+        String(value ?? "");
+
+    if (
+        string.includes(",") ||
+        string.includes('"') ||
+        string.includes("\n") ||
+        string.includes("\r")
+    ) {
+        return `"${string.replace(
+            /"/g,
+            '""'
+        )}"`;
+    }
+
+    return string;
+}
+
+/*
+|--------------------------------------------------------------------------
+| JSON
+|--------------------------------------------------------------------------
+*/
+
+function exportJSON(data) {
+    const exportData =
+        getExportData(data);
+
+    const json =
+        JSON.stringify(
+            exportData,
+            null,
+            2
+        );
+
+    downloadFile(
+        json,
+        `${props.exportFilename}.json`,
+        "application/json;charset=utf-8;"
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Excel
+|--------------------------------------------------------------------------
+*/
+
+async function exportExcel(
+    data
+) {
+    /*
+    |--------------------------------------------------------------------------
+    | Dynamic import
+    |--------------------------------------------------------------------------
+    |
+    | XLSX is loaded only when the user
+    | actually chooses Excel.
+    |
+    */
+
+    const XLSX =
+        await import("xlsx");
+
+    const exportData =
+        getExportData(data);
+
+    const worksheet =
+        XLSX.utils.json_to_sheet(
+            exportData
+        );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auto width
+    |--------------------------------------------------------------------------
+    */
+
+    const headers =
+        Object.keys(
+            exportData[0] || {}
+        );
+
+    worksheet["!cols"] =
+        headers.map(
+            (header) => {
+                const maxLength =
+                    Math.max(
+                        header.length,
+                        ...exportData.map(
+                            (row) =>
+                                String(
+                                    row[
+                                        header
+                                    ] ??
+                                        ""
+                                ).length
+                        )
+                    );
+
+                return {
+                    wch: Math.min(
+                        maxLength +
+                            2,
+                        50
+                    ),
+                };
+            }
+        );
+
+    const workbook =
+        XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Data"
+    );
+
+    XLSX.writeFile(
+        workbook,
+        `${props.exportFilename}.xlsx`
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Copy
+|--------------------------------------------------------------------------
+*/
+
+async function copyData(
+    data
+) {
+    const exportData =
+        getExportData(data);
+
+    if (!exportData.length) {
+        return;
+    }
+
+    const headers =
+        Object.keys(
+            exportData[0]
+        );
+
+    const text = [
+        headers.join("\t"),
+
+        ...exportData.map(
+            (row) =>
+                headers
+                    .map(
+                        (header) =>
+                            String(
+                                row[
+                                    header
+                                ] ??
+                                    ""
+                            ).replace(
+                                /\t/g,
+                                " "
+                            )
+                    )
+                    .join("\t")
+        ),
+    ].join("\n");
+
+    if (
+        navigator.clipboard &&
+        window.isSecureContext
+    ) {
+        await navigator.clipboard.writeText(
+            text
+        );
+
+        return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Fallback
+    |--------------------------------------------------------------------------
+    */
+
+    const textarea =
+        document.createElement(
+            "textarea"
+        );
+
+    textarea.value = text;
+
+    textarea.style.position =
+        "fixed";
+
+    textarea.style.opacity =
+        "0";
+
+    document.body.appendChild(
+        textarea
+    );
+
+    textarea.select();
+
+    document.execCommand(
+        "copy"
+    );
+
+    document.body.removeChild(
+        textarea
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Print
+|--------------------------------------------------------------------------
+*/
+
+function printData(data) {
+    const exportData =
+        getExportData(data);
+
+    if (!exportData.length) {
+        return;
+    }
+
+    const columns =
+        exportColumns.value;
+
+    const title =
+        escapeHTML(
+            props.exportFilename
+        );
+
+    const html = `
+        <!DOCTYPE html>
+
+        <html>
+        <head>
+            <meta charset="UTF-8">
+
+            <title>${title}</title>
+
+            <style>
+
+                * {
+                    box-sizing: border-box;
+                }
+
+                body {
+                    font-family:
+                        Arial,
+                        "Noto Sans",
+                        sans-serif;
+
+                    padding: 30px;
+
+                    color: #1e293b;
+                }
+
+                h2 {
+                    margin:
+                        0 0 20px;
+
+                    font-size: 20px;
+                }
+
+                table {
+                    width: 100%;
+
+                    border-collapse:
+                        collapse;
+                }
+
+                th,
+                td {
+                    border:
+                        1px solid #ddd;
+
+                    padding: 8px;
+
+                    text-align:
+                        left;
+
+                    font-size:
+                        12px;
+                }
+
+                th {
+                    background:
+                        #f8fafc;
+
+                    font-weight:
+                        600;
+                }
+
+                tr:nth-child(
+                    even
+                ) {
+                    background:
+                        #fafafa;
+                }
+
+                @media print {
+
+                    body {
+                        padding: 10px;
+                    }
+
+                    table {
+                        page-break-inside:
+                            auto;
+                    }
+
+                    tr {
+                        page-break-inside:
+                            avoid;
+                        page-break-after:
+                            auto;
+                    }
+
+                    thead {
+                        display:
+                            table-header-group;
+                    }
+                }
+
+            </style>
+        </head>
+
+        <body>
+
+            <h2>${title}</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        ${columns
+                            .map(
+                                (
+                                    column
+                                ) =>
+                                    `<th>${escapeHTML(
+                                        column.label ||
+                                            column.key
+                                    )}</th>`
+                            )
+                            .join(
+                                ""
+                            )}
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${exportData
+                        .map(
+                            (
+                                row
+                            ) => `
+                                <tr>
+
+                                    ${columns
+                                        .map(
+                                            (
+                                                column
+                                            ) => `
+                                                <td>
+                                                    ${escapeHTML(
+                                                        row[
+                                                            column.label ||
+                                                                column.key
+                                                        ]
+                                                    )}
+                                                </td>
+                                            `
+                                        )
+                                        .join(
+                                            ""
+                                        )}
+
+                                </tr>
+                            `
+                        )
+                        .join(
+                            ""
+                        )}
+
+                </tbody>
+
+            </table>
+
+        </body>
+
+        </html>
+    `;
+
+    const printWindow =
+        window.open(
+            "",
+            "_blank",
+            "width=1200,height=800"
+        );
+
+    if (!printWindow) {
+        throw new Error(
+            "Unable to open print window. Please allow popups."
+        );
+    }
+
+    printWindow.document.open();
+
+    printWindow.document.write(
+        html
+    );
+
+    printWindow.document.close();
+
+    printWindow.focus();
+
+    setTimeout(() => {
+        printWindow.print();
+    }, 250);
+}
+
+/*
+|--------------------------------------------------------------------------
+| HTML escape
+|--------------------------------------------------------------------------
+*/
+
+function escapeHTML(
+    value
+) {
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Download
+|--------------------------------------------------------------------------
+*/
+
+function downloadFile(
+    content,
+    filename,
+    mimeType
+) {
+    const blob =
+        new Blob(
+            [content],
+            {
+                type: mimeType,
+            }
+        );
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+    link.href = url;
+
+    link.download =
+        filename;
+
+    document.body.appendChild(
+        link
+    );
+
+    link.click();
+
+    document.body.removeChild(
+        link
+    );
+
+    setTimeout(() => {
+        URL.revokeObjectURL(
+            url
+        );
+    }, 100);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Export menu
+|--------------------------------------------------------------------------
+*/
+
+function toggleExportMenu() {
+    exportMenuOpen.value =
+        !exportMenuOpen.value;
+
+    if (
+        exportMenuOpen.value
+    ) {
+        showColumnModal.value =
+            false;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Click outside
+|--------------------------------------------------------------------------
+*/
+
+function handleDocumentClick(
+    event
+) {
+    const target =
+        event.target;
+
+    if (
+        !target.closest(
+            "[data-export-menu]"
+        )
+    ) {
+        exportMenuOpen.value =
+            false;
+    }
+
+    if (
+        !target.closest(
+            "[data-column-menu]"
+        )
+    ) {
+        showColumnModal.value =
+            false;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Escape
+|--------------------------------------------------------------------------
+*/
+
+function handleEscape(event) {
+    if (
+        event.key ===
+        "Escape"
     ) {
         showFilterModal.value =
             false;
 
         showColumnModal.value =
             false;
+
+        exportMenuOpen.value =
+            false;
     }
 }
 
-if (typeof window !== "undefined") {
+if (
+    typeof window !==
+    "undefined"
+) {
     window.addEventListener(
         "keydown",
         handleEscape
+    );
+
+    document.addEventListener(
+        "click",
+        handleDocumentClick
     );
 }
 
@@ -1974,6 +3047,11 @@ onBeforeUnmount(() => {
             "keydown",
             handleEscape
         );
+
+        document.removeEventListener(
+            "click",
+            handleDocumentClick
+        );
     }
 });
 
@@ -1988,6 +3066,7 @@ defineExpose({
     clearFilters,
     clearSelection,
     loadServerData,
+    exportData: runExport,
 });
 </script>
 
@@ -1998,9 +3077,9 @@ defineExpose({
             '--dt-primary': primaryColor,
         }"
     >
-        <!-- ========================================================= -->
+        <!-- ===================================================== -->
         <!-- TOOLBAR -->
-        <!-- ========================================================= -->
+        <!-- ===================================================== -->
 
         <div
             class="flex min-h-[68px] flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3"
@@ -2028,6 +3107,7 @@ defineExpose({
                             cy="11"
                             r="8"
                         />
+
                         <path
                             d="m21 21-4.3-4.3"
                         />
@@ -2036,9 +3116,7 @@ defineExpose({
                     <input
                         v-model="search"
                         type="search"
-                        :placeholder="
-                            searchPlaceholder
-                        "
+                        :placeholder="searchPlaceholder"
                         class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-9 text-sm text-slate-700 outline-none transition focus:border-[var(--dt-primary)] focus:bg-white focus:ring-1 focus:ring-[var(--dt-primary)]"
                     />
 
@@ -2046,9 +3124,7 @@ defineExpose({
                         v-if="search"
                         type="button"
                         class="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-                        @click="
-                            clearSearch
-                        "
+                        @click="clearSearch"
                     >
                         <svg
                             class="h-4 w-4"
@@ -2064,7 +3140,7 @@ defineExpose({
                     </button>
                 </div>
 
-                <!-- FILTER BUTTON -->
+                <!-- FILTER -->
 
                 <button
                     v-if="
@@ -2073,9 +3149,7 @@ defineExpose({
                     "
                     type="button"
                     class="relative inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-                    @click="
-                        openFilters
-                    "
+                    @click="openFilters"
                 >
                     <svg
                         class="h-4 w-4"
@@ -2101,34 +3175,408 @@ defineExpose({
                                 primaryColor,
                         }"
                     >
-                        {{
-                            activeFilterCount
-                        }}
+                        {{ activeFilterCount }}
                     </span>
                 </button>
 
-                <!-- CLEAR FILTER -->
+                <!-- CLEAR -->
 
                 <button
-                    v-if="
-                        activeFilterCount
-                    "
+                    v-if="activeFilterCount"
                     type="button"
                     class="inline-flex h-10 items-center gap-1 rounded-lg bg-red-50 px-3 text-sm font-medium text-red-600 hover:bg-red-100"
-                    @click="
-                        clearFilters
-                    "
+                    @click="clearFilters"
                 >
                     Clear
                 </button>
+
+                <!-- EXPORT -->
+
+                <div
+                    v-if="
+                        exportable &&
+                        exportOptions.length
+                    "
+                    class="relative"
+                    data-export-menu
+                >
+                    <button
+                        type="button"
+                        :disabled="exporting"
+                        class="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                        @click.stop="
+                            toggleExportMenu
+                        "
+                    >
+                        <!-- Download icon -->
+
+                        <svg
+                            v-if="!exporting"
+                            class="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"
+                            />
+                        </svg>
+
+                        <!-- Loading -->
+
+                        <svg
+                            v-else
+                            class="h-4 w-4 animate-spin"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                        >
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="9"
+                                class="opacity-25"
+                                stroke="currentColor"
+                                stroke-width="3"
+                            />
+
+                            <path
+                                d="M21 12a9 9 0 0 0-9-9"
+                                stroke="currentColor"
+                                stroke-width="3"
+                            />
+                        </svg>
+
+                        {{
+                            exporting
+                                ? "Exporting..."
+                                : "Export"
+                        }}
+
+                        <svg
+                            v-if="!exporting"
+                            class="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="m6 9 6 6 6-6"
+                            />
+                        </svg>
+                    </button>
+
+                    <!-- EXPORT MENU -->
+
+                    <div
+                        v-if="
+                            exportMenuOpen
+                        "
+                        class="absolute left-0 z-[100] mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-2xl"
+                        @click.stop
+                    >
+                        <!-- SCOPE -->
+
+                        <div
+                            v-if="
+                                showExportScope
+                            "
+                            class="border-b border-slate-100 px-2 pb-2 pt-1"
+                        >
+                            <p
+                                class="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
+                            >
+                                Export records
+                            </p>
+
+                            <label
+                                class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 hover:bg-slate-50"
+                            >
+                                <input
+                                    v-model="
+                                        exportScope
+                                    "
+                                    type="radio"
+                                    value="filtered"
+                                    :style="{
+                                        accentColor:
+                                            primaryColor,
+                                    }"
+                                />
+
+                                <span
+                                    class="text-sm text-slate-700"
+                                >
+                                    All filtered
+                                </span>
+                            </label>
+
+                            <label
+                                class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 hover:bg-slate-50"
+                            >
+                                <input
+                                    v-model="
+                                        exportScope
+                                    "
+                                    type="radio"
+                                    value="current"
+                                    :style="{
+                                        accentColor:
+                                            primaryColor,
+                                    }"
+                                />
+
+                                <span
+                                    class="text-sm text-slate-700"
+                                >
+                                    Current page
+                                </span>
+                            </label>
+
+                            <label
+                                class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 hover:bg-slate-50"
+                                :class="
+                                    selectedRows.length
+                                        ? ''
+                                        : 'opacity-50'
+                                "
+                            >
+                                <input
+                                    v-model="
+                                        exportScope
+                                    "
+                                    type="radio"
+                                    value="selected"
+                                    :disabled="
+                                        !selectedRows.length
+                                    "
+                                    :style="{
+                                        accentColor:
+                                            primaryColor,
+                                    }"
+                                />
+
+                                <span
+                                    class="text-sm text-slate-700"
+                                >
+                                    Selected
+                                    <span
+                                        v-if="
+                                            selectedRows.length
+                                        "
+                                        class="text-xs text-slate-400"
+                                    >
+                                        ({{
+                                            selectedRows.length
+                                        }})
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- CSV -->
+
+                        <button
+                            v-if="
+                                exportOptions.includes(
+                                    'csv'
+                                )
+                            "
+                            type="button"
+                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            @click="
+                                runExport('csv')
+                            "
+                        >
+                            <span
+                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600"
+                            >
+                                CSV
+                            </span>
+
+                            <span>
+                                <span
+                                    class="block font-medium"
+                                >
+                                    Export CSV
+                                </span>
+
+                                <span
+                                    class="block text-[11px] text-slate-400"
+                                >
+                                    Comma separated
+                                </span>
+                            </span>
+                        </button>
+
+                        <!-- EXCEL -->
+
+                        <button
+                            v-if="
+                                exportOptions.includes(
+                                    'excel'
+                                )
+                            "
+                            type="button"
+                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            @click="
+                                runExport(
+                                    'excel'
+                                )
+                            "
+                        >
+                            <span
+                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-50 text-green-600"
+                            >
+                                XLS
+                            </span>
+
+                            <span>
+                                <span
+                                    class="block font-medium"
+                                >
+                                    Export Excel
+                                </span>
+
+                                <span
+                                    class="block text-[11px] text-slate-400"
+                                >
+                                    Excel workbook
+                                </span>
+                            </span>
+                        </button>
+
+                        <!-- JSON -->
+
+                        <button
+                            v-if="
+                                exportOptions.includes(
+                                    'json'
+                                )
+                            "
+                            type="button"
+                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            @click="
+                                runExport(
+                                    'json'
+                                )
+                            "
+                        >
+                            <span
+                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600"
+                            >
+                                JSON
+                            </span>
+
+                            <span>
+                                <span
+                                    class="block font-medium"
+                                >
+                                    Export JSON
+                                </span>
+
+                                <span
+                                    class="block text-[11px] text-slate-400"
+                                >
+                                    Raw data
+                                </span>
+                            </span>
+                        </button>
+
+                        <div
+                            class="my-1 border-t border-slate-100"
+                        />
+
+                        <!-- COPY -->
+
+                        <button
+                            v-if="
+                                exportOptions.includes(
+                                    'copy'
+                                )
+                            "
+                            type="button"
+                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            @click="
+                                runExport(
+                                    'copy'
+                                )
+                            "
+                        >
+                            <svg
+                                class="h-4 w-4 text-slate-400"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <rect
+                                    x="9"
+                                    y="9"
+                                    width="12"
+                                    height="12"
+                                    rx="2"
+                                />
+
+                                <path
+                                    d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                                />
+                            </svg>
+
+                            Copy
+                        </button>
+
+                        <!-- PRINT -->
+
+                        <button
+                            v-if="
+                                exportOptions.includes(
+                                    'print'
+                                )
+                            "
+                            type="button"
+                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            @click="
+                                runExport(
+                                    'print'
+                                )
+                            "
+                        >
+                            <svg
+                                class="h-4 w-4 text-slate-400"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M6 9V2h12v7"
+                                />
+
+                                <path
+                                    d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+                                />
+
+                                <path
+                                    d="M6 14h12v8H6z"
+                                />
+                            </svg>
+
+                            Print
+                        </button>
+                    </div>
+                </div>
 
                 <!-- CUSTOM TOOLBAR -->
 
                 <slot
                     name="toolbar"
-                    :selected="
-                        selectedRows
-                    "
+                    :selected="selectedRows"
                 />
             </div>
 
@@ -2169,11 +3617,11 @@ defineExpose({
                                 ? 'bg-white text-slate-800 shadow-sm'
                                 : 'text-slate-400 hover:text-slate-700'
                         "
+                        title="Table view"
                         @click="
                             viewMode =
                                 'table'
                         "
-                        title="Table view"
                     >
                         <svg
                             class="h-4 w-4"
@@ -2189,6 +3637,7 @@ defineExpose({
                                 height="16"
                                 rx="2"
                             />
+
                             <path
                                 d="M3 10h18M9 4v16"
                             />
@@ -2204,11 +3653,11 @@ defineExpose({
                                 ? 'bg-white text-slate-800 shadow-sm'
                                 : 'text-slate-400 hover:text-slate-700'
                         "
+                        title="Compact view"
                         @click="
                             viewMode =
                                 'compact'
                         "
-                        title="Compact view"
                     >
                         <svg
                             class="h-4 w-4"
@@ -2231,11 +3680,12 @@ defineExpose({
                         showColumnManager
                     "
                     class="relative"
+                    data-column-menu
                 >
                     <button
                         type="button"
                         class="inline-flex h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 shadow-sm hover:bg-slate-50"
-                        @click="
+                        @click.stop="
                             showColumnModal =
                                 !showColumnModal
                         "
@@ -2250,18 +3700,21 @@ defineExpose({
                             <path
                                 d="M4 5h16M4 12h16M4 19h16"
                             />
+
                             <circle
                                 cx="8"
                                 cy="5"
                                 r="2"
                                 fill="currentColor"
                             />
+
                             <circle
                                 cx="15"
                                 cy="12"
                                 r="2"
                                 fill="currentColor"
                             />
+
                             <circle
                                 cx="10"
                                 cy="19"
@@ -2284,6 +3737,7 @@ defineExpose({
                             showColumnModal
                         "
                         class="absolute right-0 z-40 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-3 shadow-xl"
+                        @click.stop
                     >
                         <div
                             class="mb-2 flex items-center justify-between"
@@ -2348,20 +3802,18 @@ defineExpose({
                     </div>
                 </div>
 
-                <!-- CUSTOM RIGHT TOOLBAR -->
+                <!-- CUSTOM RIGHT -->
 
                 <slot
                     name="toolbar-right"
-                    :selected="
-                        selectedRows
-                    "
+                    :selected="selectedRows"
                 />
             </div>
         </div>
 
-        <!-- ========================================================= -->
+        <!-- ===================================================== -->
         <!-- TABLE -->
-        <!-- ========================================================= -->
+        <!-- ===================================================== -->
 
         <div
             class="w-full overflow-x-auto"
@@ -2381,8 +3833,7 @@ defineExpose({
                     :style="{
                         backgroundColor:
                             headerBgColor,
-                        color:
-                            headerTextColor,
+                        color: headerTextColor,
                     }"
                 >
                     <tr
@@ -2391,7 +3842,9 @@ defineExpose({
                         <!-- SELECT -->
 
                         <th
-                            v-if="selectable"
+                            v-if="
+                                selectable
+                            "
                             class="w-12 px-4 py-3"
                         >
                             <input
@@ -2428,9 +3881,7 @@ defineExpose({
                                     ),
                             }"
                             @click="
-                                sort(
-                                    column
-                                )
+                                sort(column)
                             "
                         >
                             <div
@@ -2530,11 +3981,7 @@ defineExpose({
                 >
                     <!-- LOADING -->
 
-                    <tr
-                        v-if="
-                            loading
-                        "
-                    >
+                    <tr v-if="loading">
                         <td
                             :colspan="
                                 visibleColumns.length +
@@ -2600,6 +4047,7 @@ defineExpose({
                                             cy="11"
                                             r="7"
                                         />
+
                                         <path
                                             d="m20 20-4-4"
                                         />
@@ -2630,8 +4078,8 @@ defineExpose({
                                         clearFilters();
                                     "
                                 >
-                                    Clear search
-                                    & filters
+                                    Clear search &
+                                    filters
                                 </button>
                             </div>
                         </td>
@@ -2643,9 +4091,7 @@ defineExpose({
                         v-for="row in displayRows"
                         v-else
                         :key="
-                            row[
-                                rowKey
-                            ]
+                            row[rowKey]
                         "
                         class="group transition hover:bg-slate-50"
                         @click="
@@ -2722,11 +4168,9 @@ defineExpose({
                                 "
                             />
 
-                            <!-- DEFAULT RENDERER -->
+                            <!-- DEFAULT -->
 
-                            <template
-                                v-else
-                            >
+                            <template v-else>
                                 <!-- TEXT -->
 
                                 <span
@@ -2827,6 +4271,7 @@ defineExpose({
                                         <span
                                             class="h-1.5 w-1.5 rounded-full bg-emerald-500"
                                         />
+
                                         Yes
                                     </span>
 
@@ -2837,6 +4282,7 @@ defineExpose({
                                         <span
                                             class="h-1.5 w-1.5 rounded-full bg-slate-400"
                                         />
+
                                         No
                                     </span>
                                 </span>
@@ -2870,9 +4316,7 @@ defineExpose({
 
                                 <!-- DEFAULT -->
 
-                                <span
-                                    v-else
-                                >
+                                <span v-else>
                                     {{
                                         getValue(
                                             row,
@@ -2903,16 +4347,14 @@ defineExpose({
             </table>
         </div>
 
-        <!-- ========================================================= -->
+        <!-- ===================================================== -->
         <!-- PAGINATION -->
-        <!-- ========================================================= -->
+        <!-- ===================================================== -->
 
         <div
             v-if="pagination"
             class="flex flex-col gap-3 border-t border-slate-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
         >
-            <!-- INFO -->
-
             <div
                 class="text-xs text-slate-500"
             >
@@ -2920,25 +4362,19 @@ defineExpose({
                 <span
                     class="font-medium text-slate-700"
                 >
-                    {{
-                        showingFrom
-                    }}
+                    {{ showingFrom }}
                 </span>
                 -
                 <span
                     class="font-medium text-slate-700"
                 >
-                    {{
-                        showingTo
-                    }}
+                    {{ showingTo }}
                 </span>
                 of
                 <span
                     class="font-medium text-slate-700"
                 >
-                    {{
-                        total
-                    }}
+                    {{ total }}
                 </span>
                 records
             </div>
@@ -2979,9 +4415,7 @@ defineExpose({
                         1
                     "
                     @click="
-                        changePage(
-                            1
-                        )
+                        changePage(1)
                     "
                 >
                     First
@@ -3012,9 +4446,7 @@ defineExpose({
                     v-for="(
                         page, index
                     ) in paginationPages"
-                    :key="
-                        `${page}-${index}`
-                    "
+                    :key="`${page}-${index}`"
                 >
                     <span
                         v-if="
@@ -3051,9 +4483,7 @@ defineExpose({
                             )
                         "
                     >
-                        {{
-                            page
-                        }}
+                        {{ page }}
                     </button>
                 </template>
 
@@ -3096,9 +4526,9 @@ defineExpose({
             </div>
         </div>
 
-        <!-- ========================================================= -->
+        <!-- ===================================================== -->
         <!-- FILTER MODAL -->
-        <!-- ========================================================= -->
+        <!-- ===================================================== -->
 
         <Teleport to="body">
             <div
@@ -3137,9 +4567,8 @@ defineExpose({
                             <p
                                 class="mt-0.5 text-xs text-slate-400"
                             >
-                                Refine your
-                                results using
-                                the filters
+                                Refine your results
+                                using the filters
                                 below.
                             </p>
                         </div>
@@ -3206,18 +4635,21 @@ defineExpose({
                                     :value="
                                         pendingFilters[
                                             filter.key
-                                        ] ?? ''
+                                        ] ??
+                                        ''
                                     "
                                     :placeholder="
                                         filter.placeholder ||
-                                        `Enter ${filter.label || filter.key}`
+                                        `Enter ${
+                                            filter.label ||
+                                            filter.key
+                                        }`
                                     "
                                     class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-[var(--dt-primary)] focus:ring-1 focus:ring-[var(--dt-primary)]"
                                     @input="
                                         updatePendingFilter(
                                             filter.key,
-                                            $event
-                                                .target
+                                            $event.target
                                                 .value
                                         )
                                     "
@@ -3233,21 +4665,19 @@ defineExpose({
                                     :value="
                                         pendingFilters[
                                             filter.key
-                                        ] ?? ''
+                                        ] ??
+                                        ''
                                     "
                                     class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
                                     @change="
                                         updatePendingFilter(
                                             filter.key,
-                                            $event
-                                                .target
+                                            $event.target
                                                 .value
                                         )
                                     "
                                 >
-                                    <option
-                                        value=""
-                                    >
+                                    <option value="">
                                         {{
                                             filter.placeholder ||
                                             `All ${
@@ -3283,33 +4713,27 @@ defineExpose({
                                     :value="
                                         pendingFilters[
                                             filter.key
-                                        ] ?? ''
+                                        ] ??
+                                        ''
                                     "
                                     class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
                                     @change="
                                         updatePendingFilter(
                                             filter.key,
-                                            $event
-                                                .target
+                                            $event.target
                                                 .value
                                         )
                                     "
                                 >
-                                    <option
-                                        value=""
-                                    >
+                                    <option value="">
                                         All
                                     </option>
 
-                                    <option
-                                        value="1"
-                                    >
+                                    <option value="1">
                                         Yes
                                     </option>
 
-                                    <option
-                                        value="0"
-                                    >
+                                    <option value="0">
                                         No
                                     </option>
                                 </select>
@@ -3448,7 +4872,8 @@ defineExpose({
                                     :value="
                                         pendingFilters[
                                             filter.key
-                                        ] || []
+                                        ] ||
+                                        []
                                     "
                                     @change="
                                         updatePendingFilter(
@@ -3482,7 +4907,7 @@ defineExpose({
                                     </option>
                                 </select>
 
-                                <!-- CUSTOM FILTER SLOT -->
+                                <!-- CUSTOM -->
 
                                 <slot
                                     v-else

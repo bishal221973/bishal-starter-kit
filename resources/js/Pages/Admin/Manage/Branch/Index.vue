@@ -1,8 +1,10 @@
 <script setup>
 import DataTable from "@/Components/Datatable/Table.vue";
-const props=defineProps({
-  branches:Object
-})
+
+const props = defineProps({
+    branches: Object,
+});
+
 const columns = [
     {
         key: "id",
@@ -10,7 +12,6 @@ const columns = [
         type: "number",
         sortable: true,
     },
-
     {
         key: "name",
         label: "Name",
@@ -18,27 +19,23 @@ const columns = [
         searchable: true,
         sortable: true,
     },
-
     {
         key: "email",
         label: "Email",
         type: "text",
         searchable: true,
     },
-
     {
         key: "status",
         label: "Status",
         type: "badge",
         sortable: true,
     },
-
     {
         key: "active",
         label: "Active",
         type: "boolean",
     },
-
     {
         key: "created_at",
         label: "Created",
@@ -96,21 +93,28 @@ const filters = [
 </script>
 
 <template>
-  <!-- {{ branches }} -->
     <DataTable
-    mode="server"
-    :data="branches"
-    :columns="columns"
-    :filters="filters"
-    :route="route('branches.index')"
-    :searchable="true"
-    :filterable="true"
-    :sortable="true"
-    :pagination="true"
-    :selectable="true"
-    :page-size="10"
-    :page-size-options="[10, 25, 50, 100]"
-    primary-color="#3D98AB"
-    header-bg-color="#F8FAFC"
-/>
+        mode="server"
+        :data="branches"
+        :columns="columns"
+        :filters="filters"
+        :searchable="true"
+        :filterable="true"
+        :sortable="true"
+        :pagination="true"
+        :selectable="true"
+        :page-size="10"
+        :page-size-options="[10, 25, 50, 100]"
+        :exportable="true"
+        export-filename="branches"
+        :export-options="[
+            'csv',
+            'excel',
+            'json',
+            'copy',
+            'print'
+        ]"
+        primary-color="#3D98AB"
+        header-bg-color="#F8FAFC"
+    />
 </template>
