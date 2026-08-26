@@ -1,11 +1,5 @@
 <script setup>
-import {
-    computed,
-    ref,
-    watch,
-    onMounted,
-    onBeforeUnmount,
-} from "vue";
+import { computed, ref, watch, onMounted, onBeforeUnmount } from "vue";
 
 import { router } from "@inertiajs/vue3";
 
@@ -16,216 +10,193 @@ import { router } from "@inertiajs/vue3";
 */
 
 const props = defineProps({
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Data
     |--------------------------------------------------------------------------
     */
 
-    mode: {
-        type: String,
-        default: "client",
-        validator: (value) => ["client", "server"].includes(value),
-    },
+  mode: {
+    type: String,
+    default: "client",
+    validator: (value) => ["client", "server"].includes(value),
+  },
 
-    data: {
-        type: [Array, Object],
-        default: () => [],
-    },
+  data: {
+    type: [Array, Object],
+    default: () => [],
+  },
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Columns
     |--------------------------------------------------------------------------
     */
 
-    columns: {
-        type: Array,
-        default: () => [],
-    },
+  columns: {
+    type: Array,
+    default: () => [],
+  },
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Filters
     |--------------------------------------------------------------------------
     */
 
-    filters: {
-        type: Array,
-        default: () => [],
-    },
+  filters: {
+    type: Array,
+    default: () => [],
+  },
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | General
     |--------------------------------------------------------------------------
     */
 
-    loading: {
-        type: Boolean,
-        default: false,
-    },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
 
-    searchable: {
-        type: Boolean,
-        default: true,
-    },
+  searchable: {
+    type: Boolean,
+    default: true,
+  },
 
-    searchPlaceholder: {
-        type: String,
-        default: "Search...",
-    },
+  searchPlaceholder: {
+    type: String,
+    default: "Search...",
+  },
 
-    searchDebounce: {
-        type: Number,
-        default: 400,
-    },
+  searchDebounce: {
+    type: Number,
+    default: 400,
+  },
 
-    sortable: {
-        type: Boolean,
-        default: true,
-    },
+  sortable: {
+    type: Boolean,
+    default: true,
+  },
 
-    defaultSort: {
-        type: String,
-        default: null,
-    },
+  defaultSort: {
+    type: String,
+    default: null,
+  },
 
-    defaultDirection: {
-        type: String,
-        default: "asc",
-    },
+  defaultDirection: {
+    type: String,
+    default: "asc",
+  },
 
-    filterable: {
-        type: Boolean,
-        default: true,
-    },
+  filterable: {
+    type: Boolean,
+    default: true,
+  },
 
-    pagination: {
-        type: Boolean,
-        default: true,
-    },
+  pagination: {
+    type: Boolean,
+    default: true,
+  },
 
-    pageSize: {
-        type: Number,
-        default: 10,
-    },
+  pageSize: {
+    type: Number,
+    default: 10,
+  },
 
-    pageSizeOptions: {
-        type: Array,
-        default: () => [10, 25, 50, 100],
-    },
+  pageSizeOptions: {
+    type: Array,
+    default: () => [10, 25, 50, 100],
+  },
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Selection
     |--------------------------------------------------------------------------
     */
 
-    selectable: {
-        type: Boolean,
-        default: false,
-    },
+  selectable: {
+    type: Boolean,
+    default: false,
+  },
 
-    rowKey: {
-        type: String,
-        default: "id",
-    },
+  rowKey: {
+    type: String,
+    default: "id",
+  },
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Server
     |--------------------------------------------------------------------------
     */
 
-    route: {
-        type: String,
-        default: null,
-    },
+  route: {
+    type: String,
+    default: null,
+  },
 
-    queryParams: {
-        type: Object,
-        default: () => ({}),
-    },
+  queryParams: {
+    type: Object,
+    default: () => ({}),
+  },
 
-    preserveState: {
-        type: Boolean,
-        default: true,
-    },
+  preserveState: {
+    type: Boolean,
+    default: true,
+  },
 
-    preserveScroll: {
-        type: Boolean,
-        default: true,
-    },
+  preserveScroll: {
+    type: Boolean,
+    default: true,
+  },
 
-    /*
-    |--------------------------------------------------------------------------
-    | Theme
-    |--------------------------------------------------------------------------
-    */
-
-    primaryColor: {
-        type: String,
-        default: "#3D98AB",
-    },
-
-    headerBgColor: {
-        type: String,
-        default: "#F8FAFC",
-    },
-
-    headerTextColor: {
-        type: String,
-        default: "#000000",
-    },
-
-    /*
+  /*
     |--------------------------------------------------------------------------
     | View
     |--------------------------------------------------------------------------
     */
 
-    defaultView: {
-        type: String,
-        default: "table",
-    },
+  defaultView: {
+    type: String,
+    default: "table",
+  },
 
-    showViewSwitcher: {
-        type: Boolean,
-        default: true,
-    },
+  showViewSwitcher: {
+    type: Boolean,
+    default: true,
+  },
 
-    showColumnManager: {
-        type: Boolean,
-        default: true,
-    },
+  showColumnManager: {
+    type: Boolean,
+    default: true,
+  },
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Export
     |--------------------------------------------------------------------------
     */
 
-    exportable: {
-        type: Boolean,
-        default: true,
-    },
+  exportable: {
+    type: Boolean,
+    default: true,
+  },
 
-    exportFilename: {
-        type: String,
-        default: "data-export",
-    },
+  exportFilename: {
+    type: String,
+    default: "data-export",
+  },
 
-    exportOptions: {
-        type: Array,
-        default: () => [
-            "csv",
-            "excel",
-            "json",
-            "print",
-            "copy",
-        ],
-    },
+  exportOptions: {
+    type: Array,
+    default: () => ["csv", "excel", "json", "print", "copy"],
+  },
+  theme: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
 /*
@@ -235,19 +206,146 @@ const props = defineProps({
 */
 
 const emit = defineEmits([
-    "row-click",
-    "selection-change",
-    "search",
-    "sort",
-    "filter-change",
-    "page-change",
-    "page-size-change",
-    "query-change",
-    "export",
-    "export-success",
-    "export-error",
+  "row-click",
+  "selection-change",
+  "search",
+  "sort",
+  "filter-change",
+  "page-change",
+  "page-size-change",
+  "query-change",
+  "export",
+  "export-success",
+  "export-error",
 ]);
 
+const dtTheme = computed(() => {
+  const theme = props.theme || {};
+
+  return {
+    container: {
+      class: theme.container?.class || "",
+      style: theme.container?.style || {},
+    },
+
+    toolbar: {
+      class: theme.toolbar?.class || "",
+      style: theme.toolbar?.style || {},
+    },
+
+    search: {
+      wrapperClass: theme.search?.wrapperClass || "",
+      inputClass: theme.search?.inputClass || "",
+      iconClass: theme.search?.iconClass || "",
+    },
+
+    buttons: {
+      base: theme.buttons?.base || "",
+      default: theme.buttons?.default || "",
+      primary: theme.buttons?.primary || "",
+      danger: theme.buttons?.danger || "",
+      filter: theme.buttons?.filter || "",
+      export: theme.buttons?.export || "",
+      column: theme.buttons?.column || "",
+    },
+
+    filter: {
+      badge: theme.filter?.badge || "",
+      modalOverlay: theme.filter?.modalOverlay || "",
+      modal: theme.filter?.modal || "",
+      header: theme.filter?.header || "",
+      body: theme.filter?.body || "",
+      footer: theme.filter?.footer || "",
+      input: theme.filter?.input || "",
+      select: theme.filter?.select || "",
+    },
+
+    table: {
+      class: theme.table?.class || "",
+      style: theme.table?.style || {},
+    },
+
+    thead: {
+      class: theme.thead?.class || "",
+      style: theme.thead?.style || {},
+      rowClass: theme.thead?.rowClass || "",
+      cellClass: theme.thead?.cellClass || "",
+    },
+
+    tbody: {
+      class: theme.tbody?.class || "",
+      style: theme.tbody?.style || {},
+    },
+
+    row: {
+      class: theme.row?.class || "",
+      style: theme.row?.style || {},
+    },
+
+    cell: {
+      class: theme.cell?.class || "",
+      style: theme.cell?.style || {},
+    },
+
+    selection: {
+      checkboxClass: theme.selection?.checkboxClass || "",
+    },
+
+    pagination: {
+      class: theme.pagination?.class || "",
+      infoClass: theme.pagination?.infoClass || "",
+      selectClass: theme.pagination?.selectClass || "",
+      buttonClass: theme.pagination?.buttonClass || "",
+      activeClass: theme.pagination?.activeClass || "",
+      disabledClass: theme.pagination?.disabledClass || "",
+    },
+
+    export: {
+      button: theme.export?.button || "",
+      menu: theme.export?.menu || "",
+      item: theme.export?.item || "",
+      scope: theme.export?.scope || "",
+    },
+
+    columnManager: {
+      button: theme.columnManager?.button || "",
+      menu: theme.columnManager?.menu || "",
+    },
+
+    loading: {
+      spinner: theme.loading?.spinner || "",
+      text: theme.loading?.text || "",
+    },
+
+    empty: {
+      icon: theme.empty?.icon || "",
+      iconClass: theme.empty?.iconClass || "",
+      text: theme.empty?.text || "",
+      action: theme.empty?.action || "",
+    },
+    export: {
+      menuBackground: "#ffffff",
+      menuBorderColor: "#e2e8f0",
+
+      itemColor: "#334155",
+      itemHoverBackground: "#f8fafc",
+
+      scopeBackground: "#ffffff",
+      scopeBorderColor: "#e2e8f0",
+
+      scopeItemColor: "#334155",
+      scopeItemHoverBackground: "#f8fafc",
+
+      scopeItemPadding: "8px",
+
+      radioColor: "#3D98AB",
+
+      selectedCountColor: "#94a3b8",
+
+      disabledColor: "#cbd5e1",
+    },
+  };
+});
 /*
 |--------------------------------------------------------------------------
 | State
@@ -257,15 +355,13 @@ const emit = defineEmits([
 const search = ref("");
 
 const currentPage = ref(
-    props.mode === "server"
-        ? Number(props.data?.current_page ?? 1)
-        : 1
+  props.mode === "server" ? Number(props.data?.current_page ?? 1) : 1
 );
 
 const currentPageSize = ref(
-    props.mode === "server"
-        ? Number(props.data?.per_page ?? props.pageSize)
-        : props.pageSize
+  props.mode === "server"
+    ? Number(props.data?.per_page ?? props.pageSize)
+    : props.pageSize
 );
 
 const sortBy = ref(props.defaultSort);
@@ -298,45 +394,36 @@ let searchTimer = null;
 */
 
 const tableColumns = computed(() => {
-    if (!Array.isArray(props.columns)) {
-        return [];
-    }
+  if (!Array.isArray(props.columns)) {
+    return [];
+  }
 
-    return props.columns.filter(
-        (column) =>
-            column &&
-            typeof column === "object" &&
-            column.key
-    );
+  return props.columns.filter(
+    (column) => column && typeof column === "object" && column.key
+  );
 });
 
 const visibleColumns = computed(() => {
-    return tableColumns.value.filter(
-        (column) =>
-            column.hidden !== true &&
-            columnVisibility.value[column.key] !== false
-    );
+  return tableColumns.value.filter(
+    (column) => column.hidden !== true && columnVisibility.value[column.key] !== false
+  );
 });
 
 function initializeColumns() {
-    const result = {};
+  const result = {};
 
-    tableColumns.value.forEach((column) => {
-        result[column.key] = column.hidden !== true;
-    });
+  tableColumns.value.forEach((column) => {
+    result[column.key] = column.hidden !== true;
+  });
 
-    columnVisibility.value = result;
+  columnVisibility.value = result;
 }
 
 initializeColumns();
 
-watch(
-    () => props.columns,
-    initializeColumns,
-    {
-        deep: true,
-    }
-);
+watch(() => props.columns, initializeColumns, {
+  deep: true,
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -345,15 +432,11 @@ watch(
 */
 
 const rows = computed(() => {
-    if (props.mode === "server") {
-        return Array.isArray(props.data?.data)
-            ? props.data.data
-            : [];
-    }
+  if (props.mode === "server") {
+    return Array.isArray(props.data?.data) ? props.data.data : [];
+  }
 
-    return Array.isArray(props.data)
-        ? props.data
-        : [];
+  return Array.isArray(props.data) ? props.data : [];
 });
 
 /*
@@ -363,16 +446,13 @@ const rows = computed(() => {
 */
 
 function getValue(row, key) {
-    if (!row || !key) {
-        return null;
-    }
+  if (!row || !key) {
+    return null;
+  }
 
-    return String(key)
-        .split(".")
-        .reduce(
-            (value, part) => value?.[part],
-            row
-        );
+  return String(key)
+    .split(".")
+    .reduce((value, part) => value?.[part], row);
 }
 
 /*
@@ -382,46 +462,27 @@ function getValue(row, key) {
 */
 
 const filterDefinitions = computed(() => {
-    return Array.isArray(props.filters)
-        ? props.filters.filter(
-              (filter) =>
-                  filter &&
-                  typeof filter === "object" &&
-                  filter.key
-          )
-        : [];
+  return Array.isArray(props.filters)
+    ? props.filters.filter((filter) => filter && typeof filter === "object" && filter.key)
+    : [];
 });
 
 const activeFilterCount = computed(() => {
-    return Object.entries(
-        pendingFilters.value
-    ).filter(([, value]) => {
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-            return false;
-        }
+  return Object.entries(pendingFilters.value).filter(([, value]) => {
+    if (value === null || value === undefined || value === "") {
+      return false;
+    }
 
-        if (
-            typeof value === "object" &&
-            !Array.isArray(value)
-        ) {
-            return Object.values(value).some(
-                (v) =>
-                    v !== "" &&
-                    v !== null &&
-                    v !== undefined
-            );
-        }
+    if (typeof value === "object" && !Array.isArray(value)) {
+      return Object.values(value).some((v) => v !== "" && v !== null && v !== undefined);
+    }
 
-        if (Array.isArray(value)) {
-            return value.length > 0;
-        }
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
 
-        return true;
-    }).length;
+    return true;
+  }).length;
 });
 
 /*
@@ -431,355 +492,214 @@ const activeFilterCount = computed(() => {
 */
 
 const processedClientRows = computed(() => {
-    if (props.mode !== "client") {
-        return rows.value;
-    }
+  if (props.mode !== "client") {
+    return rows.value;
+  }
 
-    let result = [...rows.value];
+  let result = [...rows.value];
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Search
     |--------------------------------------------------------------------------
     */
 
-    const query = search.value
-        .trim()
-        .toLowerCase();
+  const query = search.value.trim().toLowerCase();
 
-    if (query) {
-        result = result.filter((row) => {
-            return tableColumns.value.some(
-                (column) => {
-                    if (
-                        column.searchable === false
-                    ) {
-                        return false;
-                    }
+  if (query) {
+    result = result.filter((row) => {
+      return tableColumns.value.some((column) => {
+        if (column.searchable === false) {
+          return false;
+        }
 
-                    const value = getValue(
-                        row,
-                        column.key
-                    );
+        const value = getValue(row, column.key);
 
-                    return String(
-                        value ?? ""
-                    )
-                        .toLowerCase()
-                        .includes(query);
-                }
-            );
-        });
-    }
+        return String(value ?? "")
+          .toLowerCase()
+          .includes(query);
+      });
+    });
+  }
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Filters
     |--------------------------------------------------------------------------
     */
 
-    Object.entries(
-        pendingFilters.value
-    ).forEach(([key, filterValue]) => {
-        if (
-            filterValue === null ||
-            filterValue === undefined ||
-            filterValue === ""
-        ) {
-            return;
-        }
+  Object.entries(pendingFilters.value).forEach(([key, filterValue]) => {
+    if (filterValue === null || filterValue === undefined || filterValue === "") {
+      return;
+    }
 
-        const definition =
-            filterDefinitions.value.find(
-                (filter) =>
-                    filter.key === key
-            );
+    const definition = filterDefinitions.value.find((filter) => filter.key === key);
 
-        result = result.filter((row) => {
-            const value = getValue(row, key);
+    result = result.filter((row) => {
+      const value = getValue(row, key);
 
-            /*
+      /*
             |--------------------------------------------------------------------------
             | Text
             |--------------------------------------------------------------------------
             */
 
-            if (definition?.type === "text") {
-                return String(value ?? "")
-                    .toLowerCase()
-                    .includes(
-                        String(filterValue)
-                            .toLowerCase()
-                    );
-            }
+      if (definition?.type === "text") {
+        return String(value ?? "")
+          .toLowerCase()
+          .includes(String(filterValue).toLowerCase());
+      }
 
-            /*
+      /*
             |--------------------------------------------------------------------------
             | Select
             |--------------------------------------------------------------------------
             */
 
-            if (
-                definition?.type === "select" ||
-                definition?.type === "multiselect"
-            ) {
-                if (
-                    Array.isArray(
-                        filterValue
-                    )
-                ) {
-                    return filterValue
-                        .map(String)
-                        .includes(
-                            String(value)
-                        );
-                }
+      if (definition?.type === "select" || definition?.type === "multiselect") {
+        if (Array.isArray(filterValue)) {
+          return filterValue.map(String).includes(String(value));
+        }
 
-                return (
-                    String(value) ===
-                    String(filterValue)
-                );
-            }
+        return String(value) === String(filterValue);
+      }
 
-            /*
+      /*
             |--------------------------------------------------------------------------
             | Boolean
             |--------------------------------------------------------------------------
             */
 
-            if (
-                definition?.type ===
-                "boolean"
-            ) {
-                return (
-                    String(value) ===
-                    String(filterValue)
-                );
-            }
+      if (definition?.type === "boolean") {
+        return String(value) === String(filterValue);
+      }
 
-            /*
+      /*
             |--------------------------------------------------------------------------
             | Number Range
             |--------------------------------------------------------------------------
             */
 
-            if (
-                definition?.type ===
-                "number-range"
-            ) {
-                const number =
-                    Number(value);
+      if (definition?.type === "number-range") {
+        const number = Number(value);
 
-                if (
-                    filterValue.min !==
-                        "" &&
-                    filterValue.min !==
-                        null &&
-                    filterValue.min !==
-                        undefined
-                ) {
-                    if (
-                        number <
-                        Number(
-                            filterValue.min
-                        )
-                    ) {
-                        return false;
-                    }
-                }
+        if (
+          filterValue.min !== "" &&
+          filterValue.min !== null &&
+          filterValue.min !== undefined
+        ) {
+          if (number < Number(filterValue.min)) {
+            return false;
+          }
+        }
 
-                if (
-                    filterValue.max !==
-                        "" &&
-                    filterValue.max !==
-                        null &&
-                    filterValue.max !==
-                        undefined
-                ) {
-                    if (
-                        number >
-                        Number(
-                            filterValue.max
-                        )
-                    ) {
-                        return false;
-                    }
-                }
+        if (
+          filterValue.max !== "" &&
+          filterValue.max !== null &&
+          filterValue.max !== undefined
+        ) {
+          if (number > Number(filterValue.max)) {
+            return false;
+          }
+        }
 
-                return true;
-            }
+        return true;
+      }
 
-            /*
+      /*
             |--------------------------------------------------------------------------
             | Date Range
             |--------------------------------------------------------------------------
             */
 
-            if (
-                definition?.type ===
-                "date-range"
-            ) {
-                if (!value) {
-                    return false;
-                }
+      if (definition?.type === "date-range") {
+        if (!value) {
+          return false;
+        }
 
-                const date =
-                    new Date(value);
+        const date = new Date(value);
 
-                if (
-                    filterValue.from
-                ) {
-                    const from =
-                        new Date(
-                            filterValue.from
-                        );
+        if (filterValue.from) {
+          const from = new Date(filterValue.from);
 
-                    if (date < from) {
-                        return false;
-                    }
-                }
+          if (date < from) {
+            return false;
+          }
+        }
 
-                if (
-                    filterValue.to
-                ) {
-                    const to =
-                        new Date(
-                            filterValue.to
-                        );
+        if (filterValue.to) {
+          const to = new Date(filterValue.to);
 
-                    to.setHours(
-                        23,
-                        59,
-                        59,
-                        999
-                    );
+          to.setHours(23, 59, 59, 999);
 
-                    if (date > to) {
-                        return false;
-                    }
-                }
+          if (date > to) {
+            return false;
+          }
+        }
 
-                return true;
-            }
+        return true;
+      }
 
-            /*
+      /*
             |--------------------------------------------------------------------------
             | Default
             |--------------------------------------------------------------------------
             */
 
-            return (
-                String(value ?? "") ===
-                String(filterValue)
-            );
-        });
+      return String(value ?? "") === String(filterValue);
     });
+  });
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Sort
     |--------------------------------------------------------------------------
     */
 
-    if (
-        props.sortable &&
-        sortBy.value
-    ) {
-        const direction =
-            sortDirection.value ===
-            "asc"
-                ? 1
-                : -1;
+  if (props.sortable && sortBy.value) {
+    const direction = sortDirection.value === "asc" ? 1 : -1;
 
-        result = result
-            .map((row, index) => ({
-                row,
-                index,
-            }))
-            .sort((a, b) => {
-                const aValue =
-                    getValue(
-                        a.row,
-                        sortBy.value
-                    );
+    result = result
+      .map((row, index) => ({
+        row,
+        index,
+      }))
+      .sort((a, b) => {
+        const aValue = getValue(a.row, sortBy.value);
 
-                const bValue =
-                    getValue(
-                        b.row,
-                        sortBy.value
-                    );
+        const bValue = getValue(b.row, sortBy.value);
 
-                if (
-                    aValue ===
-                        null ||
-                    aValue ===
-                        undefined
-                ) {
-                    return 1;
-                }
+        if (aValue === null || aValue === undefined) {
+          return 1;
+        }
 
-                if (
-                    bValue ===
-                        null ||
-                    bValue ===
-                        undefined
-                ) {
-                    return -1;
-                }
+        if (bValue === null || bValue === undefined) {
+          return -1;
+        }
 
-                if (
-                    aValue === bValue
-                ) {
-                    return (
-                        a.index -
-                        b.index
-                    );
-                }
+        if (aValue === bValue) {
+          return a.index - b.index;
+        }
 
-                const aNumber =
-                    Number(aValue);
+        const aNumber = Number(aValue);
 
-                const bNumber =
-                    Number(bValue);
+        const bNumber = Number(bValue);
 
-                if (
-                    !Number.isNaN(
-                        aNumber
-                    ) &&
-                    !Number.isNaN(
-                        bNumber
-                    )
-                ) {
-                    return (
-                        (aNumber -
-                            bNumber) *
-                        direction
-                    );
-                }
+        if (!Number.isNaN(aNumber) && !Number.isNaN(bNumber)) {
+          return (aNumber - bNumber) * direction;
+        }
 
-                return (
-                    String(aValue)
-                        .localeCompare(
-                            String(
-                                bValue
-                            ),
-                            undefined,
-                            {
-                                numeric:
-                                    true,
-                                sensitivity:
-                                    "base",
-                            }
-                        ) *
-                        direction
-                );
-            })
-            .map(
-                (item) => item.row
-            );
-    }
+        return (
+          String(aValue).localeCompare(String(bValue), undefined, {
+            numeric: true,
+            sensitivity: "base",
+          }) * direction
+        );
+      })
+      .map((item) => item.row);
+  }
 
-    return result;
+  return result;
 });
 
 /*
@@ -789,39 +709,23 @@ const processedClientRows = computed(() => {
 */
 
 const total = computed(() => {
-    if (props.mode === "server") {
-        return Number(
-            props.data?.total ?? 0
-        );
-    }
+  if (props.mode === "server") {
+    return Number(props.data?.total ?? 0);
+  }
 
-    return processedClientRows.value
-        .length;
+  return processedClientRows.value.length;
 });
 
 const totalPages = computed(() => {
-    if (!props.pagination) {
-        return 1;
-    }
+  if (!props.pagination) {
+    return 1;
+  }
 
-    if (props.mode === "server") {
-        return Math.max(
-            1,
-            Number(
-                props.data?.last_page ??
-                    1
-            )
-        );
-    }
+  if (props.mode === "server") {
+    return Math.max(1, Number(props.data?.last_page ?? 1));
+  }
 
-    return Math.max(
-        1,
-        Math.ceil(
-            processedClientRows.value
-                .length /
-                currentPageSize.value
-        )
-    );
+  return Math.max(1, Math.ceil(processedClientRows.value.length / currentPageSize.value));
 });
 
 /*
@@ -831,22 +735,17 @@ const totalPages = computed(() => {
 */
 
 const displayRows = computed(() => {
-    if (props.mode === "server") {
-        return rows.value;
-    }
+  if (props.mode === "server") {
+    return rows.value;
+  }
 
-    if (!props.pagination) {
-        return processedClientRows.value;
-    }
+  if (!props.pagination) {
+    return processedClientRows.value;
+  }
 
-    const start =
-        (currentPage.value - 1) *
-        currentPageSize.value;
+  const start = (currentPage.value - 1) * currentPageSize.value;
 
-    return processedClientRows.value.slice(
-        start,
-        start + currentPageSize.value
-    );
+  return processedClientRows.value.slice(start, start + currentPageSize.value);
 });
 
 /*
@@ -856,42 +755,29 @@ const displayRows = computed(() => {
 */
 
 const showingFrom = computed(() => {
-    if (!total.value) {
-        return 0;
-    }
+  if (!total.value) {
+    return 0;
+  }
 
-    if (props.mode === "server") {
-        return Number(
-            props.data?.from ?? 1
-        );
-    }
+  if (props.mode === "server") {
+    return Number(props.data?.from ?? 1);
+  }
 
-    return props.pagination
-        ? (currentPage.value - 1) *
-              currentPageSize.value +
-              1
-        : 1;
+  return props.pagination ? (currentPage.value - 1) * currentPageSize.value + 1 : 1;
 });
 
 const showingTo = computed(() => {
-    if (!total.value) {
-        return 0;
-    }
+  if (!total.value) {
+    return 0;
+  }
 
-    if (props.mode === "server") {
-        return Number(
-            props.data?.to ??
-                total.value
-        );
-    }
+  if (props.mode === "server") {
+    return Number(props.data?.to ?? total.value);
+  }
 
-    return props.pagination
-        ? Math.min(
-              currentPage.value *
-                  currentPageSize.value,
-              total.value
-          )
-        : total.value;
+  return props.pagination
+    ? Math.min(currentPage.value * currentPageSize.value, total.value)
+    : total.value;
 });
 
 /*
@@ -901,53 +787,35 @@ const showingTo = computed(() => {
 */
 
 const paginationPages = computed(() => {
-    const last = totalPages.value;
+  const last = totalPages.value;
 
-    const current =
-        currentPage.value;
+  const current = currentPage.value;
 
-    if (last <= 7) {
-        return Array.from(
-            { length: last },
-            (_, index) =>
-                index + 1
-        );
-    }
+  if (last <= 7) {
+    return Array.from({ length: last }, (_, index) => index + 1);
+  }
 
-    const pages = [1];
+  const pages = [1];
 
-    if (current > 4) {
-        pages.push("...");
-    }
+  if (current > 4) {
+    pages.push("...");
+  }
 
-    const start = Math.max(
-        2,
-        current - 1
-    );
+  const start = Math.max(2, current - 1);
 
-    const end = Math.min(
-        last - 1,
-        current + 1
-    );
+  const end = Math.min(last - 1, current + 1);
 
-    for (
-        let page = start;
-        page <= end;
-        page++
-    ) {
-        pages.push(page);
-    }
+  for (let page = start; page <= end; page++) {
+    pages.push(page);
+  }
 
-    if (
-        current <
-        last - 3
-    ) {
-        pages.push("...");
-    }
+  if (current < last - 3) {
+    pages.push("...");
+  }
 
-    pages.push(last);
+  pages.push(last);
 
-    return pages;
+  return pages;
 });
 
 /*
@@ -956,114 +824,62 @@ const paginationPages = computed(() => {
 |--------------------------------------------------------------------------
 */
 
-function buildServerParams(
-    extra = {}
-) {
-    const params = {
-        ...props.queryParams,
+function buildServerParams(extra = {}) {
+  const params = {
+    ...props.queryParams,
 
-        search:
-            search.value.trim() ||
-            undefined,
+    search: search.value.trim() || undefined,
 
-        page:
-            currentPage.value,
+    page: currentPage.value,
 
-        per_page:
-            currentPageSize.value,
+    per_page: currentPageSize.value,
 
-        sort:
-            sortBy.value ||
-            undefined,
+    sort: sortBy.value || undefined,
 
-        direction:
-            sortBy.value
-                ? sortDirection.value
-                : undefined,
+    direction: sortBy.value ? sortDirection.value : undefined,
 
-        ...extra,
-    };
+    ...extra,
+  };
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Filters
     |--------------------------------------------------------------------------
     */
 
-    Object.entries(
-        pendingFilters.value
-    ).forEach(([key, value]) => {
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-            return;
+  Object.entries(pendingFilters.value).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === "") {
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        params[`filters[${key}][${index}]`] = item;
+      });
+
+      return;
+    }
+
+    if (typeof value === "object" && value !== null) {
+      Object.entries(value).forEach(([rangeKey, rangeValue]) => {
+        if (rangeValue !== null && rangeValue !== undefined && rangeValue !== "") {
+          params[`filters[${key}][${rangeKey}]`] = rangeValue;
         }
+      });
 
-        if (Array.isArray(value)) {
-            value.forEach(
-                (item, index) => {
-                    params[
-                        `filters[${key}][${index}]`
-                    ] = item;
-                }
-            );
+      return;
+    }
 
-            return;
-        }
+    params[`filters[${key}]`] = value;
+  });
 
-        if (
-            typeof value ===
-                "object" &&
-            value !== null
-        ) {
-            Object.entries(
-                value
-            ).forEach(
-                ([
-                    rangeKey,
-                    rangeValue,
-                ]) => {
-                    if (
-                        rangeValue !==
-                            null &&
-                        rangeValue !==
-                            undefined &&
-                        rangeValue !==
-                            ""
-                    ) {
-                        params[
-                            `filters[${key}][${rangeKey}]`
-                        ] =
-                            rangeValue;
-                    }
-                }
-            );
+  Object.keys(params).forEach((key) => {
+    if (params[key] === undefined || params[key] === null || params[key] === "") {
+      delete params[key];
+    }
+  });
 
-            return;
-        }
-
-        params[
-            `filters[${key}]`
-        ] = value;
-    });
-
-    Object.keys(params).forEach(
-        (key) => {
-            if (
-                params[key] ===
-                    undefined ||
-                params[key] ===
-                    null ||
-                params[key] === ""
-            ) {
-                delete params[key];
-            }
-        }
-    );
-
-    return params;
+  return params;
 }
 
 /*
@@ -1073,41 +889,29 @@ function buildServerParams(
 */
 
 function loadServerData() {
-    if (props.mode !== "server") {
-        return;
-    }
+  if (props.mode !== "server") {
+    return;
+  }
 
-    if (!props.route) {
-        console.warn(
-            "DataTable: route is required in server mode."
-        );
+  if (!props.route) {
+    console.warn("DataTable: route is required in server mode.");
 
-        return;
-    }
+    return;
+  }
 
-    const params =
-        buildServerParams();
+  const params = buildServerParams();
 
-    emit(
-        "query-change",
-        params
-    );
+  emit("query-change", params);
 
-    router.get(
-        props.route,
-        params,
-        {
-            preserveState:
-                props.preserveState,
+  router.get(props.route, params, {
+    preserveState: props.preserveState,
 
-            preserveScroll:
-                props.preserveScroll,
+    preserveScroll: props.preserveScroll,
 
-            replace: true,
+    replace: true,
 
-            showProgress: false,
-        }
-    );
+    showProgress: false,
+  });
 }
 
 /*
@@ -1117,29 +921,21 @@ function loadServerData() {
 */
 
 watch(search, (value) => {
-    if (
-        props.mode === "client"
-    ) {
-        currentPage.value = 1;
+  if (props.mode === "client") {
+    currentPage.value = 1;
 
-        emit(
-            "search",
-            value
-        );
+    emit("search", value);
 
-        return;
-    }
+    return;
+  }
 
-    clearTimeout(
-        searchTimer
-    );
+  clearTimeout(searchTimer);
 
-    searchTimer =
-        setTimeout(() => {
-            currentPage.value = 1;
+  searchTimer = setTimeout(() => {
+    currentPage.value = 1;
 
-            loadServerData();
-        }, props.searchDebounce);
+    loadServerData();
+  }, props.searchDebounce);
 });
 
 /*
@@ -1149,47 +945,29 @@ watch(search, (value) => {
 */
 
 function sort(column) {
-    if (
-        !props.sortable ||
-        !column ||
-        column.sortable === false
-    ) {
-        return;
-    }
+  if (!props.sortable || !column || column.sortable === false) {
+    return;
+  }
 
-    if (
-        sortBy.value ===
-        column.key
-    ) {
-        sortDirection.value =
-            sortDirection.value ===
-            "asc"
-                ? "desc"
-                : "asc";
-    } else {
-        sortBy.value =
-            column.key;
+  if (sortBy.value === column.key) {
+    sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+  } else {
+    sortBy.value = column.key;
 
-        sortDirection.value =
-            "asc";
-    }
+    sortDirection.value = "asc";
+  }
 
-    currentPage.value = 1;
+  currentPage.value = 1;
 
-    emit("sort", {
-        column:
-            sortBy.value,
+  emit("sort", {
+    column: sortBy.value,
 
-        direction:
-            sortDirection.value,
-    });
+    direction: sortDirection.value,
+  });
 
-    if (
-        props.mode ===
-        "server"
-    ) {
-        loadServerData();
-    }
+  if (props.mode === "server") {
+    loadServerData();
+  }
 }
 
 /*
@@ -1198,222 +976,124 @@ function sort(column) {
 |--------------------------------------------------------------------------
 */
 
-function createEmptyFilter(
-    filter
-) {
-    if (
-        filter.type ===
-        "number-range"
-    ) {
-        return {
-            min: "",
-            max: "",
-        };
-    }
+function createEmptyFilter(filter) {
+  if (filter.type === "number-range") {
+    return {
+      min: "",
+      max: "",
+    };
+  }
 
-    if (
-        filter.type ===
-        "date-range"
-    ) {
-        return {
-            from: "",
-            to: "",
-        };
-    }
+  if (filter.type === "date-range") {
+    return {
+      from: "",
+      to: "",
+    };
+  }
 
-    return "";
+  return "";
 }
 
 function openFilters() {
-    const copy = {};
+  const copy = {};
 
-    filterDefinitions.value.forEach(
-        (filter) => {
-            if (
-                Object.prototype.hasOwnProperty.call(
-                    pendingFilters.value,
-                    filter.key
-                )
-            ) {
-                const value =
-                    pendingFilters
-                        .value[
-                        filter.key
-                    ];
+  filterDefinitions.value.forEach((filter) => {
+    if (Object.prototype.hasOwnProperty.call(pendingFilters.value, filter.key)) {
+      const value = pendingFilters.value[filter.key];
 
-                if (
-                    Array.isArray(
-                        value
-                    )
-                ) {
-                    copy[
-                        filter.key
-                    ] = [
-                        ...value,
-                    ];
-                } else if (
-                    typeof value ===
-                        "object" &&
-                    value !== null
-                ) {
-                    copy[
-                        filter.key
-                    ] = {
-                        ...value,
-                    };
-                } else {
-                    copy[
-                        filter.key
-                    ] = value;
-                }
-            } else {
-                copy[
-                    filter.key
-                ] =
-                    createEmptyFilter(
-                        filter
-                    );
-            }
-        }
-    );
+      if (Array.isArray(value)) {
+        copy[filter.key] = [...value];
+      } else if (typeof value === "object" && value !== null) {
+        copy[filter.key] = {
+          ...value,
+        };
+      } else {
+        copy[filter.key] = value;
+      }
+    } else {
+      copy[filter.key] = createEmptyFilter(filter);
+    }
+  });
 
-    pendingFilters.value =
-        copy;
+  pendingFilters.value = copy;
 
-    showFilterModal.value =
-        true;
+  showFilterModal.value = true;
 }
 
-function updatePendingFilter(
-    key,
-    value
-) {
-    pendingFilters.value = {
-        ...pendingFilters.value,
+function updatePendingFilter(key, value) {
+  pendingFilters.value = {
+    ...pendingFilters.value,
 
-        [key]: value,
-    };
+    [key]: value,
+  };
 }
 
 function applyFilters() {
-    const cleaned = {};
+  const cleaned = {};
 
-    Object.entries(
-        pendingFilters.value
-    ).forEach(([key, value]) => {
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-            return;
-        }
-
-        if (
-            typeof value ===
-                "object" &&
-            !Array.isArray(value)
-        ) {
-            const object = {};
-
-            Object.entries(
-                value
-            ).forEach(
-                ([
-                    objectKey,
-                    objectValue,
-                ]) => {
-                    if (
-                        objectValue !==
-                            null &&
-                        objectValue !==
-                            undefined &&
-                        objectValue !==
-                            ""
-                    ) {
-                        object[
-                            objectKey
-                        ] =
-                            objectValue;
-                    }
-                }
-            );
-
-            if (
-                Object.keys(object)
-                    .length
-            ) {
-                cleaned[key] =
-                    object;
-            }
-
-            return;
-        }
-
-        if (
-            Array.isArray(value) &&
-            !value.length
-        ) {
-            return;
-        }
-
-        cleaned[key] =
-            value;
-    });
-
-    pendingFilters.value =
-        cleaned;
-
-    currentPage.value = 1;
-
-    emit(
-        "filter-change",
-        cleaned
-    );
-
-    showFilterModal.value =
-        false;
-
-    if (
-        props.mode ===
-        "server"
-    ) {
-        loadServerData();
+  Object.entries(pendingFilters.value).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === "") {
+      return;
     }
+
+    if (typeof value === "object" && !Array.isArray(value)) {
+      const object = {};
+
+      Object.entries(value).forEach(([objectKey, objectValue]) => {
+        if (objectValue !== null && objectValue !== undefined && objectValue !== "") {
+          object[objectKey] = objectValue;
+        }
+      });
+
+      if (Object.keys(object).length) {
+        cleaned[key] = object;
+      }
+
+      return;
+    }
+
+    if (Array.isArray(value) && !value.length) {
+      return;
+    }
+
+    cleaned[key] = value;
+  });
+
+  pendingFilters.value = cleaned;
+
+  currentPage.value = 1;
+
+  emit("filter-change", cleaned);
+
+  showFilterModal.value = false;
+
+  if (props.mode === "server") {
+    loadServerData();
+  }
 }
 
 function clearFilters() {
-    pendingFilters.value = {};
+  pendingFilters.value = {};
 
-    currentPage.value = 1;
+  currentPage.value = 1;
 
-    emit(
-        "filter-change",
-        {}
-    );
+  emit("filter-change", {});
 
-    showFilterModal.value =
-        false;
+  showFilterModal.value = false;
 
-    if (
-        props.mode ===
-        "server"
-    ) {
-        loadServerData();
-    }
+  if (props.mode === "server") {
+    loadServerData();
+  }
 }
 
 function clearSearch() {
-    search.value = "";
+  search.value = "";
 
-    currentPage.value = 1;
+  currentPage.value = 1;
 
-    if (
-        props.mode ===
-        "server"
-    ) {
-        loadServerData();
-    }
+  if (props.mode === "server") {
+    loadServerData();
+  }
 }
 
 /*
@@ -1423,72 +1103,41 @@ function clearSearch() {
 */
 
 function changePage(page) {
-    const next =
-        Number(page);
+  const next = Number(page);
 
-    if (
-        !Number.isFinite(
-            next
-        )
-    ) {
-        return;
-    }
+  if (!Number.isFinite(next)) {
+    return;
+  }
 
-    if (
-        next < 1 ||
-        next >
-            totalPages.value
-    ) {
-        return;
-    }
+  if (next < 1 || next > totalPages.value) {
+    return;
+  }
 
-    currentPage.value =
-        next;
+  currentPage.value = next;
 
-    emit(
-        "page-change",
-        next
-    );
+  emit("page-change", next);
 
-    if (
-        props.mode ===
-        "server"
-    ) {
-        loadServerData();
-    }
+  if (props.mode === "server") {
+    loadServerData();
+  }
 }
 
-function changePageSize(
-    size
-) {
-    const next =
-        Number(size);
+function changePageSize(size) {
+  const next = Number(size);
 
-    if (
-        !Number.isFinite(
-            next
-        ) ||
-        next <= 0
-    ) {
-        return;
-    }
+  if (!Number.isFinite(next) || next <= 0) {
+    return;
+  }
 
-    currentPageSize.value =
-        next;
+  currentPageSize.value = next;
 
-    currentPage.value = 1;
+  currentPage.value = 1;
 
-    emit(
-        "page-size-change",
-        next
-    );
+  emit("page-size-change", next);
 
-    if (
-        props.mode ===
-        "server"
-    ) {
-        loadServerData();
-    }
+  if (props.mode === "server") {
+    loadServerData();
+  }
 }
 
 /*
@@ -1498,120 +1147,57 @@ function changePageSize(
 */
 
 const allSelected = computed(() => {
-    if (
-        !displayRows.value
-            .length
-    ) {
-        return false;
-    }
+  if (!displayRows.value.length) {
+    return false;
+  }
 
-    return displayRows.value.every(
-        (row) =>
-            selectedRows.value.includes(
-                row?.[
-                    props.rowKey
-                ]
-            )
-    );
+  return displayRows.value.every((row) =>
+    selectedRows.value.includes(row?.[props.rowKey])
+  );
 });
 
 const someSelected = computed(() => {
-    return (
-        selectedRows.value
-            .length > 0 &&
-        !allSelected.value
-    );
+  return selectedRows.value.length > 0 && !allSelected.value;
 });
 
 function toggleSelectAll() {
-    const ids =
-        displayRows.value
-            .map(
-                (row) =>
-                    row?.[
-                        props.rowKey
-                    ]
-            )
-            .filter(
-                (id) =>
-                    id !==
-                        null &&
-                    id !==
-                        undefined
-            );
+  const ids = displayRows.value
+    .map((row) => row?.[props.rowKey])
+    .filter((id) => id !== null && id !== undefined);
 
-    if (
-        allSelected.value
-    ) {
-        selectedRows.value =
-            selectedRows.value.filter(
-                (id) =>
-                    !ids.includes(
-                        id
-                    )
-            );
-    } else {
-        selectedRows.value = [
-            ...new Set([
-                ...selectedRows.value,
-                ...ids,
-            ]),
-        ];
-    }
+  if (allSelected.value) {
+    selectedRows.value = selectedRows.value.filter((id) => !ids.includes(id));
+  } else {
+    selectedRows.value = [...new Set([...selectedRows.value, ...ids])];
+  }
 
-    emit(
-        "selection-change",
-        selectedRows.value
-    );
+  emit("selection-change", selectedRows.value);
 }
 
 function toggleRow(row) {
-    if (!row) {
-        return;
-    }
+  if (!row) {
+    return;
+  }
 
-    const id =
-        row[props.rowKey];
+  const id = row[props.rowKey];
 
-    if (
-        id === null ||
-        id === undefined
-    ) {
-        return;
-    }
+  if (id === null || id === undefined) {
+    return;
+  }
 
-    if (
-        selectedRows.value.includes(
-            id
-        )
-    ) {
-        selectedRows.value =
-            selectedRows.value.filter(
-                (
-                    selectedId
-                ) =>
-                    selectedId !==
-                    id
-            );
-    } else {
-        selectedRows.value.push(
-            id
-        );
-    }
+  if (selectedRows.value.includes(id)) {
+    selectedRows.value = selectedRows.value.filter((selectedId) => selectedId !== id);
+  } else {
+    selectedRows.value.push(id);
+  }
 
-    emit(
-        "selection-change",
-        selectedRows.value
-    );
+  emit("selection-change", selectedRows.value);
 }
 
 function clearSelection() {
-    selectedRows.value = [];
+  selectedRows.value = [];
 
-    emit(
-        "selection-change",
-        []
-    );
+  emit("selection-change", []);
 }
 
 /*
@@ -1621,43 +1207,27 @@ function clearSelection() {
 */
 
 watch(
-    () =>
-        props.data?.current_page,
-    (page) => {
-        if (
-            props.mode ===
-                "server" &&
-            page !==
-                undefined &&
-            page !== null
-        ) {
-            currentPage.value =
-                Number(page);
-        }
-    },
-    {
-        immediate: true,
+  () => props.data?.current_page,
+  (page) => {
+    if (props.mode === "server" && page !== undefined && page !== null) {
+      currentPage.value = Number(page);
     }
+  },
+  {
+    immediate: true,
+  }
 );
 
 watch(
-    () =>
-        props.data?.per_page,
-    (perPage) => {
-        if (
-            props.mode ===
-                "server" &&
-            perPage !==
-                undefined &&
-            perPage !== null
-        ) {
-            currentPageSize.value =
-                Number(perPage);
-        }
-    },
-    {
-        immediate: true,
+  () => props.data?.per_page,
+  (perPage) => {
+    if (props.mode === "server" && perPage !== undefined && perPage !== null) {
+      currentPageSize.value = Number(perPage);
     }
+  },
+  {
+    immediate: true,
+  }
 );
 
 /*
@@ -1666,169 +1236,96 @@ watch(
 |--------------------------------------------------------------------------
 */
 
-function formatDate(
-    value,
-    column
-) {
-    if (!value) {
-        return "—";
+function formatDate(value, column) {
+  if (!value) {
+    return "—";
+  }
+
+  try {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
     }
 
-    try {
-        const date =
-            new Date(value);
-
-        if (
-            Number.isNaN(
-                date.getTime()
-            )
-        ) {
-            return value;
-        }
-
-        return new Intl.DateTimeFormat(
-            column.locale ||
-                undefined,
-            column.dateOptions || {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-            }
-        ).format(date);
-    } catch {
-        return value;
-    }
+    return new Intl.DateTimeFormat(
+      column.locale || undefined,
+      column.dateOptions || {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }
+    ).format(date);
+  } catch {
+    return value;
+  }
 }
 
-function formatDateTime(
-    value
-) {
-    if (!value) {
-        return "—";
+function formatDateTime(value) {
+  if (!value) {
+    return "—";
+  }
+
+  try {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
     }
 
-    try {
-        const date =
-            new Date(value);
-
-        if (
-            Number.isNaN(
-                date.getTime()
-            )
-        ) {
-            return value;
-        }
-
-        return new Intl.DateTimeFormat(
-            undefined,
-            {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-            }
-        ).format(date);
-    } catch {
-        return value;
-    }
+    return new Intl.DateTimeFormat(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  } catch {
+    return value;
+  }
 }
 
-function formatNumber(
-    value,
-    column
-) {
-    if (
-        value === null ||
-        value === undefined ||
-        value === ""
-    ) {
-        return "—";
-    }
+function formatNumber(value, column) {
+  if (value === null || value === undefined || value === "") {
+    return "—";
+  }
 
-    return new Intl.NumberFormat(
-        column.locale ||
-            undefined,
-        column.numberOptions ||
-            {}
-    ).format(
-        Number(value)
-    );
+  return new Intl.NumberFormat(
+    column.locale || undefined,
+    column.numberOptions || {}
+  ).format(Number(value));
 }
 
-function booleanValue(
-    value
-) {
-    return (
-        value === true ||
-        value === 1 ||
-        value === "1" ||
-        value === "true" ||
-        value === "yes"
-    );
+function booleanValue(value) {
+  return (
+    value === true || value === 1 || value === "1" || value === "true" || value === "yes"
+  );
 }
 
-function getBadgeClass(
-    value,
-    column
-) {
-    if (
-        typeof column.badgeClass ===
-        "function"
-    ) {
-        return column.badgeClass(
-            value
-        );
-    }
+function getBadgeClass(value, column) {
+  if (typeof column.badgeClass === "function") {
+    return column.badgeClass(value);
+  }
 
-    if (
-        column.badgeClass &&
-        typeof column.badgeClass ===
-            "object"
-    ) {
-        return (
-            column.badgeClass[
-                value
-            ] ||
-            "bg-slate-100 text-slate-700"
-        );
-    }
+  if (column.badgeClass && typeof column.badgeClass === "object") {
+    return column.badgeClass[value] || "bg-slate-100 text-slate-700";
+  }
 
-    const normalized =
-        String(value).toLowerCase();
+  const normalized = String(value).toLowerCase();
 
-    if (
-        [
-            "active",
-            "success",
-            "approved",
-            "completed",
-        ].includes(normalized)
-    ) {
-        return "bg-emerald-100 text-emerald-700";
-    }
+  if (["active", "success", "approved", "completed"].includes(normalized)) {
+    return "bg-emerald-100 text-emerald-700";
+  }
 
-    if (
-        [
-            "inactive",
-            "disabled",
-            "failed",
-            "rejected",
-        ].includes(normalized)
-    ) {
-        return "bg-red-100 text-red-700";
-    }
+  if (["inactive", "disabled", "failed", "rejected"].includes(normalized)) {
+    return "bg-red-100 text-red-700";
+  }
 
-    if (
-        [
-            "pending",
-            "processing",
-        ].includes(normalized)
-    ) {
-        return "bg-amber-100 text-amber-700";
-    }
+  if (["pending", "processing"].includes(normalized)) {
+    return "bg-amber-100 text-amber-700";
+  }
 
-    return "bg-slate-100 text-slate-700";
+  return "bg-slate-100 text-slate-700";
 }
 
 /*
@@ -1838,28 +1335,15 @@ function getBadgeClass(
 */
 
 function toggleColumn(key) {
-    columnVisibility.value[key] =
-        !columnVisibility.value[
-            key
-        ];
+  columnVisibility.value[key] = !columnVisibility.value[key];
 }
 
-function columnLabel(
-    column
-) {
-    return (
-        column.label ||
-        column.key
-    );
+function columnLabel(column) {
+  return column.label || column.key;
 }
 
-function isColumnSortable(
-    column
-) {
-    return (
-        props.sortable &&
-        column.sortable !== false
-    );
+function isColumnSortable(column) {
+  return props.sortable && column.sortable !== false;
 }
 
 /*
@@ -1876,18 +1360,18 @@ function isColumnSortable(
 const exportRows = ref([]);
 
 const exportScopeOptions = [
-    {
-        value: "current",
-        label: "Current Page",
-    },
-    {
-        value: "selected",
-        label: "Selected",
-    },
-    {
-        value: "filtered",
-        label: "All Filtered",
-    },
+  {
+    value: "current",
+    label: "Current Page",
+  },
+  {
+    value: "selected",
+    label: "Selected",
+  },
+  {
+    value: "filtered",
+    label: "All Filtered",
+  },
 ];
 
 /*
@@ -1897,40 +1381,40 @@ const exportScopeOptions = [
 */
 
 function getExportColumns() {
-    const columns = [];
+  const columns = [];
 
-    visibleColumns.value.forEach((column) => {
-        if (column.exportable === false) {
-            return;
-        }
+  visibleColumns.value.forEach((column) => {
+    if (column.exportable === false) {
+      return;
+    }
 
-        // Main column
-        columns.push({
-            key: column.key,
-            label: column.exportLabel || column.label || column.key,
-        });
-
-        // Additional export fields
-        if (Array.isArray(column.items)) {
-            column.items.forEach((item) => {
-                if (!item || !item.key || item.exportable === false) {
-                    return;
-                }
-
-                // Don't duplicate the main column
-                if (item.key === column.key) {
-                    return;
-                }
-
-                columns.push({
-                    key: item.key,
-                    label: item.exportLabel || item.label || item.key,
-                });
-            });
-        }
+    // Main column
+    columns.push({
+      key: column.key,
+      label: column.exportLabel || column.label || column.key,
     });
 
-    return columns;
+    // Additional export fields
+    if (Array.isArray(column.items)) {
+      column.items.forEach((item) => {
+        if (!item || !item.key || item.exportable === false) {
+          return;
+        }
+
+        // Don't duplicate the main column
+        if (item.key === column.key) {
+          return;
+        }
+
+        columns.push({
+          key: item.key,
+          label: item.exportLabel || item.label || item.key,
+        });
+      });
+    }
+  });
+
+  return columns;
 }
 
 /*
@@ -1940,23 +1424,23 @@ function getExportColumns() {
 */
 
 function getExportData(data) {
-    const columns = getExportColumns();
+  const columns = getExportColumns();
 
-    return data.map((row) => {
-        const result = {};
+  return data.map((row) => {
+    const result = {};
 
-        columns.forEach((column) => {
-            let value = getValue(row, column.key);
+    columns.forEach((column) => {
+      let value = getValue(row, column.key);
 
-            if (value === null || value === undefined) {
-                value = "";
-            }
+      if (value === null || value === undefined) {
+        value = "";
+      }
 
-            result[column.label || column.key] = value;
-        });
-
-        return result;
+      result[column.label || column.key] = value;
     });
+
+    return result;
+  });
 }
 /*
 |--------------------------------------------------------------------------
@@ -1975,159 +1459,115 @@ function getExportData(data) {
 |
 */
 
-async function fetchServerExportRows(
-    scope
-) {
-    if (!props.route) {
-        throw new Error(
-            "DataTable: route is required for server export."
-        );
-    }
+async function fetchServerExportRows(scope) {
+  if (!props.route) {
+    throw new Error("DataTable: route is required for server export.");
+  }
 
-    let params = {};
+  let params = {};
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | All filtered
     |--------------------------------------------------------------------------
     */
 
-    if (
-        scope ===
-        "filtered"
-    ) {
-        params =
-            buildServerParams({
-                datatable_export: 1,
-                export_scope:
-                    "filtered",
-            });
-
-        /*
-         * Tell Laravel not to paginate.
-         */
-        params.page = 1;
-
-        params.per_page =
-            -1;
-    }
+  if (scope === "filtered") {
+    params = buildServerParams({
+      datatable_export: 1,
+      export_scope: "filtered",
+    });
 
     /*
+     * Tell Laravel not to paginate.
+     */
+    params.page = 1;
+
+    params.per_page = -1;
+  }
+
+  /*
     |--------------------------------------------------------------------------
     | Selected
     |--------------------------------------------------------------------------
     */
 
-    if (
-        scope ===
-        "selected"
-    ) {
-        params =
-            buildServerParams({
-                datatable_export: 1,
-                export_scope:
-                    "selected",
-            });
+  if (scope === "selected") {
+    params = buildServerParams({
+      datatable_export: 1,
+      export_scope: "selected",
+    });
 
-        params.page = 1;
+    params.page = 1;
 
-        params.per_page =
-            -1;
-
-        /*
-         * Send selected IDs.
-         */
-
-        selectedRows.value.forEach(
-            (id, index) => {
-                params[
-                    `selected_ids[${index}]`
-                ] = id;
-            }
-        );
-    }
+    params.per_page = -1;
 
     /*
+     * Send selected IDs.
+     */
+
+    selectedRows.value.forEach((id, index) => {
+      params[`selected_ids[${index}]`] = id;
+    });
+  }
+
+  /*
     |--------------------------------------------------------------------------
     | Build URL
     |--------------------------------------------------------------------------
     */
 
-    const query =
-        new URLSearchParams();
+  const query = new URLSearchParams();
 
-    Object.entries(params).forEach(
-        ([key, value]) => {
-            if (
-                value ===
-                    undefined ||
-                value === null
-            ) {
-                return;
-            }
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null) {
+      return;
+    }
 
-            query.append(
-                key,
-                String(value)
-            );
-        }
-    );
+    query.append(key, String(value));
+  });
 
-    const url =
-        `${props.route}?${query.toString()}`;
+  const url = `${props.route}?${query.toString()}`;
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Fetch
     |--------------------------------------------------------------------------
     */
 
-    const response =
-        await fetch(url, {
-            method: "GET",
+  const response = await fetch(url, {
+    method: "GET",
 
-            headers: {
-                Accept:
-                    "application/json",
+    headers: {
+      Accept: "application/json",
 
-                "X-Requested-With":
-                    "XMLHttpRequest",
-            },
+      "X-Requested-With": "XMLHttpRequest",
+    },
 
-            credentials:
-                "same-origin",
-        });
+    credentials: "same-origin",
+  });
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Content type
     |--------------------------------------------------------------------------
     */
 
-    const contentType =
-        response.headers.get(
-            "content-type"
-        ) || "";
+  const contentType = response.headers.get("content-type") || "";
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Error handling
     |--------------------------------------------------------------------------
     */
 
-    if (!response.ok) {
-        const text =
-            await response.text();
+  if (!response.ok) {
+    const text = await response.text();
 
-        throw new Error(
-            `Export request failed (${response.status}). ${text.slice(
-                0,
-                300
-            )}`
-        );
-    }
+    throw new Error(`Export request failed (${response.status}). ${text.slice(0, 300)}`);
+  }
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | HTML response
     |--------------------------------------------------------------------------
@@ -2138,63 +1578,41 @@ async function fetchServerExportRows(
     |
     */
 
-    if (
-        !contentType.includes(
-            "application/json"
-        )
-    ) {
-        const text =
-            await response.text();
+  if (!contentType.includes("application/json")) {
+    const text = await response.text();
 
-        if (
-            text.trim().startsWith(
-                "<"
-            )
-        ) {
-            throw new Error(
-                "The server returned an HTML/Inertia page instead of JSON. Add datatable_export handling to the existing controller route."
-            );
-        }
-
-        throw new Error(
-            `Expected JSON but received ${contentType || "unknown content type"}.`
-        );
+    if (text.trim().startsWith("<")) {
+      throw new Error(
+        "The server returned an HTML/Inertia page instead of JSON. Add datatable_export handling to the existing controller route."
+      );
     }
 
-    const result =
-        await response.json();
+    throw new Error(
+      `Expected JSON but received ${contentType || "unknown content type"}.`
+    );
+  }
 
-    /*
+  const result = await response.json();
+
+  /*
     |--------------------------------------------------------------------------
     | Normalize response
     |--------------------------------------------------------------------------
     */
 
-    if (
-        Array.isArray(result)
-    ) {
-        return result;
-    }
+  if (Array.isArray(result)) {
+    return result;
+  }
 
-    if (
-        Array.isArray(
-            result.data
-        )
-    ) {
-        return result.data;
-    }
+  if (Array.isArray(result.data)) {
+    return result.data;
+  }
 
-    if (
-        Array.isArray(
-            result.rows
-        )
-    ) {
-        return result.rows;
-    }
+  if (Array.isArray(result.rows)) {
+    return result.rows;
+  }
 
-    throw new Error(
-        "Export response does not contain a valid data array."
-    );
+  throw new Error("Export response does not contain a valid data array.");
 }
 
 /*
@@ -2203,64 +1621,42 @@ async function fetchServerExportRows(
 |--------------------------------------------------------------------------
 */
 
-async function getExportRows(
-    scope
-) {
-    /*
+async function getExportRows(scope) {
+  /*
     |--------------------------------------------------------------------------
     | Current page
     |--------------------------------------------------------------------------
     */
 
-    if (
-        scope ===
-        "current"
-    ) {
-        return displayRows.value;
-    }
+  if (scope === "current") {
+    return displayRows.value;
+  }
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Client mode
     |--------------------------------------------------------------------------
     */
 
-    if (
-        props.mode ===
-        "client"
-    ) {
-        if (
-            scope ===
-            "selected"
-        ) {
-            const selectedSet =
-                new Set(
-                    selectedRows.value
-                );
+  if (props.mode === "client") {
+    if (scope === "selected") {
+      const selectedSet = new Set(selectedRows.value);
 
-            return processedClientRows.value.filter(
-                (row) =>
-                    selectedSet.has(
-                        row?.[
-                            props
-                                .rowKey
-                        ]
-                    )
-            );
-        }
-
-        return processedClientRows.value;
+      return processedClientRows.value.filter((row) =>
+        selectedSet.has(row?.[props.rowKey])
+      );
     }
 
-    /*
+    return processedClientRows.value;
+  }
+
+  /*
     |--------------------------------------------------------------------------
     | Server mode
     |--------------------------------------------------------------------------
     */
 
-    return await fetchServerExportRows(
-        scope
-    );
+  return await fetchServerExportRows(scope);
 }
 
 /*
@@ -2269,169 +1665,128 @@ async function getExportRows(
 |--------------------------------------------------------------------------
 */
 
-async function runExport(
-    type
-) {
-    if (
-        !props.exportOptions.includes(
-            type
-        )
-    ) {
-        return;
-    }
+async function runExport(type) {
+  if (!props.exportOptions.includes(type)) {
+    return;
+  }
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Validate selected
     |--------------------------------------------------------------------------
     */
 
-    if (
-        exportScope.value ===
-            "selected" &&
-        !selectedRows.value
-            .length
-    ) {
-        emit(
-            "export-error",
-            {
-                type,
-                scope:
-                    exportScope.value,
-                reason:
-                    "no-selection",
-            }
-        );
+  if (exportScope.value === "selected" && !selectedRows.value.length) {
+    emit("export-error", {
+      type,
+      scope: exportScope.value,
+      reason: "no-selection",
+    });
 
-        return;
-    }
+    return;
+  }
 
-    exporting.value = true;
+  exporting.value = true;
 
-    try {
-        /*
+  try {
+    /*
         |--------------------------------------------------------------------------
         | Fetch
         |--------------------------------------------------------------------------
         */
 
-        const data =
-            await getExportRows(
-                exportScope.value
-            );
+    const data = await getExportRows(exportScope.value);
 
-        exportRows.value =
-            data;
+    exportRows.value = data;
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | No data
         |--------------------------------------------------------------------------
         */
 
-        if (!data.length) {
-            emit(
-                "export-error",
-                {
-                    type,
-                    scope:
-                        exportScope.value,
-                    reason:
-                        "no-data",
-                }
-            );
+    if (!data.length) {
+      emit("export-error", {
+        type,
+        scope: exportScope.value,
+        reason: "no-data",
+      });
 
-            return;
-        }
+      return;
+    }
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | Event
         |--------------------------------------------------------------------------
         */
 
-        emit("export", {
-            type,
+    emit("export", {
+      type,
 
-            scope:
-                exportScope.value,
+      scope: exportScope.value,
 
-            rows: data,
+      rows: data,
 
-            count: data.length,
-        });
+      count: data.length,
+    });
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | Export
         |--------------------------------------------------------------------------
         */
 
-        switch (type) {
-            case "csv":
-                exportCSV(data);
-                break;
+    switch (type) {
+      case "csv":
+        exportCSV(data);
+        break;
 
-            case "excel":
-                await exportExcel(
-                    data
-                );
-                break;
+      case "excel":
+        await exportExcel(data);
+        break;
 
-            case "json":
-                exportJSON(data);
-                break;
+      case "json":
+        exportJSON(data);
+        break;
 
-            case "print":
-                printData(data);
-                break;
+      case "print":
+        printData(data);
+        break;
 
-            case "copy":
-                await copyData(data);
-                break;
-        }
+      case "copy":
+        await copyData(data);
+        break;
+    }
 
-        /*
+    /*
         |--------------------------------------------------------------------------
         | Success
         |--------------------------------------------------------------------------
         */
 
-        emit(
-            "export-success",
-            {
-                type,
+    emit("export-success", {
+      type,
 
-                scope:
-                    exportScope.value,
+      scope: exportScope.value,
 
-                count: data.length,
-            }
-        );
-    } catch (error) {
-        console.error(
-            "DataTable export error:",
-            error
-        );
+      count: data.length,
+    });
+  } catch (error) {
+    console.error("DataTable export error:", error);
 
-        emit(
-            "export-error",
-            {
-                type,
+    emit("export-error", {
+      type,
 
-                scope:
-                    exportScope.value,
+      scope: exportScope.value,
 
-                error,
-            }
-        );
-    } finally {
-        exporting.value =
-            false;
+      error,
+    });
+  } finally {
+    exporting.value = false;
 
-        exportMenuOpen.value =
-            false;
-    }
+    exportMenuOpen.value = false;
+  }
 }
 
 /*
@@ -2441,58 +1796,36 @@ async function runExport(
 */
 
 function csvEscape(value) {
-    const string =
-        String(value ?? "");
+  const string = String(value ?? "");
 
-    if (
-        string.includes(",") ||
-        string.includes('"') ||
-        string.includes("\n") ||
-        string.includes("\r")
-    ) {
-        return `"${string.replace(
-            /"/g,
-            '""'
-        )}"`;
-    }
+  if (
+    string.includes(",") ||
+    string.includes('"') ||
+    string.includes("\n") ||
+    string.includes("\r")
+  ) {
+    return `"${string.replace(/"/g, '""')}"`;
+  }
 
-    return string;
+  return string;
 }
 
 function exportCSV(data) {
-    const exportData =
-        getExportData(data);
+  const exportData = getExportData(data);
 
-    if (!exportData.length) {
-        return;
-    }
+  if (!exportData.length) {
+    return;
+  }
 
-    const headers =
-        Object.keys(
-            exportData[0]
-        );
+  const headers = Object.keys(exportData[0]);
 
-    const csv = [
-        headers
-            .map(csvEscape)
-            .join(","),
+  const csv = [
+    headers.map(csvEscape).join(","),
 
-        ...exportData.map(
-            (row) =>
-                headers
-                    .map(
-                        (header) =>
-                            csvEscape(
-                                row[
-                                    header
-                                ]
-                            )
-                    )
-                    .join(",")
-        ),
-    ].join("\r\n");
+    ...exportData.map((row) => headers.map((header) => csvEscape(row[header])).join(",")),
+  ].join("\r\n");
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | UTF-8 BOM
     |--------------------------------------------------------------------------
@@ -2501,11 +1834,7 @@ function exportCSV(data) {
     |
     */
 
-    downloadFile(
-        "\uFEFF" + csv,
-        `${props.exportFilename}.csv`,
-        "text/csv;charset=utf-8;"
-    );
+  downloadFile("\uFEFF" + csv, `${props.exportFilename}.csv`, "text/csv;charset=utf-8;");
 }
 
 /*
@@ -2515,18 +1844,13 @@ function exportCSV(data) {
 */
 
 function exportJSON(data) {
-    const exportData =
-        getExportData(data);
+  const exportData = getExportData(data);
 
-    downloadFile(
-        JSON.stringify(
-            exportData,
-            null,
-            2
-        ),
-        `${props.exportFilename}.json`,
-        "application/json;charset=utf-8;"
-    );
+  downloadFile(
+    JSON.stringify(exportData, null, 2),
+    `${props.exportFilename}.json`,
+    "application/json;charset=utf-8;"
+  );
 }
 
 /*
@@ -2535,33 +1859,18 @@ function exportJSON(data) {
 |--------------------------------------------------------------------------
 */
 
-async function exportExcel(
-    data
-) {
-    const XLSX =
-        await import("xlsx");
+async function exportExcel(data) {
+  const XLSX = await import("xlsx");
 
-    const exportData =
-        getExportData(data);
+  const exportData = getExportData(data);
 
-    const worksheet =
-        XLSX.utils.json_to_sheet(
-            exportData
-        );
+  const worksheet = XLSX.utils.json_to_sheet(exportData);
 
-    const workbook =
-        XLSX.utils.book_new();
+  const workbook = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(
-        workbook,
-        worksheet,
-        "Data"
-    );
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
 
-    XLSX.writeFile(
-        workbook,
-        `${props.exportFilename}.xlsx`
-    );
+  XLSX.writeFile(workbook, `${props.exportFilename}.xlsx`);
 }
 
 /*
@@ -2571,74 +1880,47 @@ async function exportExcel(
 */
 
 async function copyData(data) {
-    const exportData =
-        getExportData(data);
+  const exportData = getExportData(data);
 
-    if (!exportData.length) {
-        return;
-    }
+  if (!exportData.length) {
+    return;
+  }
 
-    const headers =
-        Object.keys(
-            exportData[0]
-        );
+  const headers = Object.keys(exportData[0]);
 
-    const text = [
-        headers.join("\t"),
+  const text = [
+    headers.join("\t"),
 
-        ...exportData.map(
-            (row) =>
-                headers
-                    .map(
-                        (header) =>
-                            row[
-                                header
-                            ] ?? ""
-                    )
-                    .join("\t")
-        ),
-    ].join("\n");
+    ...exportData.map((row) => headers.map((header) => row[header] ?? "").join("\t")),
+  ].join("\n");
 
-    if (
-        navigator.clipboard
-    ) {
-        await navigator.clipboard.writeText(
-            text
-        );
+  if (navigator.clipboard) {
+    await navigator.clipboard.writeText(text);
 
-        return;
-    }
+    return;
+  }
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Fallback
     |--------------------------------------------------------------------------
     */
 
-    const textarea =
-        document.createElement(
-            "textarea"
-        );
+  const textarea = document.createElement("textarea");
 
-    textarea.value = text;
+  textarea.value = text;
 
-    textarea.style.position =
-        "fixed";
+  textarea.style.position = "fixed";
 
-    textarea.style.opacity =
-        "0";
+  textarea.style.opacity = "0";
 
-    document.body.appendChild(
-        textarea
-    );
+  document.body.appendChild(textarea);
 
-    textarea.select();
+  textarea.select();
 
-    document.execCommand(
-        "copy"
-    );
+  document.execCommand("copy");
 
-    textarea.remove();
+  textarea.remove();
 }
 
 /*
@@ -2648,26 +1930,22 @@ async function copyData(data) {
 */
 
 function printData(data) {
-    const exportData =
-        getExportData(data);
+  const exportData = getExportData(data);
 
-    if (!exportData.length) {
-        return;
-    }
+  if (!exportData.length) {
+    return;
+  }
 
-    const columns =
-        getExportColumns();
+  const columns = getExportColumns();
 
-    const html = `
+  const html = `
         <!DOCTYPE html>
         <html>
         <head>
             <meta charset="UTF-8">
 
             <title>
-                ${escapeHTML(
-                    props.exportFilename
-                )}
+                ${escapeHTML(props.exportFilename)}
             </title>
 
             <style>
@@ -2718,62 +1996,43 @@ function printData(data) {
         <body>
 
             <h2>
-                ${escapeHTML(
-                    props.exportFilename
-                )}
+                ${escapeHTML(props.exportFilename)}
             </h2>
 
             <table>
 
-                <thead>
+                <thead id="birta-table-head">
                     <tr>
                         ${columns
-                            .map(
-                                (
-                                    column
-                                ) =>
-                                    `<th>${escapeHTML(
-                                        column.label ||
-                                            column.key
-                                    )}</th>`
-                            )
-                            .join("")}
+                          .map(
+                            (column) =>
+                              `<th>${escapeHTML(column.label || column.key)}</th>`
+                          )
+                          .join("")}
                     </tr>
                 </thead>
 
                 <tbody>
 
                     ${exportData
-                        .map(
-                            (
-                                row
-                            ) => `
+                      .map(
+                        (row) => `
                                 <tr>
                                     ${columns
-                                        .map(
-                                            (
-                                                column
-                                            ) => {
-                                                const key =
-                                                    column.label ||
-                                                    column.key;
+                                      .map((column) => {
+                                        const key = column.label || column.key;
 
-                                                return `
+                                        return `
                                                     <td>
-                                                        ${escapeHTML(
-                                                            row[
-                                                                key
-                                                            ]
-                                                        )}
+                                                        ${escapeHTML(row[key])}
                                                     </td>
                                                 `;
-                                            }
-                                        )
-                                        .join("")}
+                                      })
+                                      .join("")}
                                 </tr>
                             `
-                        )
-                        .join("")}
+                      )
+                      .join("")}
 
                 </tbody>
 
@@ -2783,30 +2042,21 @@ function printData(data) {
         </html>
     `;
 
-    const printWindow =
-        window.open(
-            "",
-            "_blank",
-            "width=1200,height=800"
-        );
+  const printWindow = window.open("", "_blank", "width=1200,height=800");
 
-    if (!printWindow) {
-        throw new Error(
-            "Popup blocked. Please allow popups for printing."
-        );
-    }
+  if (!printWindow) {
+    throw new Error("Popup blocked. Please allow popups for printing.");
+  }
 
-    printWindow.document.write(
-        html
-    );
+  printWindow.document.write(html);
 
-    printWindow.document.close();
+  printWindow.document.close();
 
-    printWindow.focus();
+  printWindow.focus();
 
-    setTimeout(() => {
-        printWindow.print();
-    }, 250);
+  setTimeout(() => {
+    printWindow.print();
+  }, 250);
 }
 
 /*
@@ -2816,29 +2066,12 @@ function printData(data) {
 */
 
 function escapeHTML(value) {
-    return String(
-        value ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 /*
@@ -2847,47 +2080,28 @@ function escapeHTML(value) {
 |--------------------------------------------------------------------------
 */
 
-function downloadFile(
-    content,
-    filename,
-    mimeType
-) {
-    const blob =
-        new Blob(
-            [content],
-            {
-                type: mimeType,
-            }
-        );
+function downloadFile(content, filename, mimeType) {
+  const blob = new Blob([content], {
+    type: mimeType,
+  });
 
-    const url =
-        URL.createObjectURL(
-            blob
-        );
+  const url = URL.createObjectURL(blob);
 
-    const link =
-        document.createElement(
-            "a"
-        );
+  const link = document.createElement("a");
 
-    link.href = url;
+  link.href = url;
 
-    link.download =
-        filename;
+  link.download = filename;
 
-    document.body.appendChild(
-        link
-    );
+  document.body.appendChild(link);
 
-    link.click();
+  link.click();
 
-    link.remove();
+  link.remove();
 
-    setTimeout(() => {
-        URL.revokeObjectURL(
-            url
-        );
-    }, 100);
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 100);
 }
 
 /*
@@ -2896,40 +2110,24 @@ function downloadFile(
 |--------------------------------------------------------------------------
 */
 
-function handleEscape(
-    event
-) {
-    if (
-        event.key ===
-        "Escape"
-    ) {
-        showFilterModal.value =
-            false;
+function handleEscape(event) {
+  if (event.key === "Escape") {
+    showFilterModal.value = false;
 
-        showColumnModal.value =
-            false;
+    showColumnModal.value = false;
 
-        exportMenuOpen.value =
-            false;
-    }
+    exportMenuOpen.value = false;
+  }
 }
 
 onMounted(() => {
-    window.addEventListener(
-        "keydown",
-        handleEscape
-    );
+  window.addEventListener("keydown", handleEscape);
 });
 
 onBeforeUnmount(() => {
-    clearTimeout(
-        searchTimer
-    );
+  clearTimeout(searchTimer);
 
-    window.removeEventListener(
-        "keydown",
-        handleEscape
-    );
+  window.removeEventListener("keydown", handleEscape);
 });
 
 /*
@@ -2939,1516 +2137,865 @@ onBeforeUnmount(() => {
 */
 
 defineExpose({
-    clearSearch,
-    clearFilters,
-    clearSelection,
-    loadServerData,
-    runExport,
+  clearSearch,
+  clearFilters,
+  clearSelection,
+  loadServerData,
+  runExport,
 });
 </script>
 
 <template>
-    <div
-        class="w-full overflow-hidden rounded-xl border border-slate-200 bg-white"
-        :style="{
-            '--dt-primary': primaryColor,
-        }"
-    >
+  <div
+    class="w-full overflow-hidden rounded-xl border border-slate-200 bg-white"
+    :class="dtTheme.container.class"
+    :style="{
+      ...dtTheme.container.style,
+    }"
+  >
+    <!-- ===================================================== -->
+    <!-- TOOLBAR -->
+    <!-- ===================================================== -->
 
-        <!-- ===================================================== -->
-        <!-- TOOLBAR -->
-        <!-- ===================================================== -->
+    <div
+      class="flex min-h-[68px] flex-wrap items-center justify-between gap-3"
+      :class="dtTheme.toolbar.class"
+      :style="dtTheme.toolbar.style"
+    >
+      <!-- LEFT -->
+
+      <div class="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+        <!-- SEARCH -->
 
         <div
-            class="flex min-h-[68px] flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3"
+          v-if="searchable"
+          class="relative w-full sm:w-[300px]"
+          :class="dtTheme.search.wrapperClass"
         >
+          <svg
+            class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+            :class="dtTheme.search.iconClass"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="11" cy="11" r="8" />
 
-            <!-- LEFT -->
+            <path d="m21 21-4.3-4.3" />
+          </svg>
 
-            <div
-                class="flex min-w-0 flex-1 flex-wrap items-center gap-2"
-            >
+          <input
+            v-model="search"
+            type="search"
+            :placeholder="searchPlaceholder"
+            class="w-full"
+            :class="dtTheme.search.inputClass"
+          />
 
-                <!-- SEARCH -->
+          <button
+            v-if="search"
+            type="button"
+            class="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 hover:bg-slate-100"
+            :class="[dtTheme.buttons.base, dtTheme.buttons.export]"
+            @click="clearSearch"
+          >
+            ×
+          </button>
+        </div>
 
-                <div
-                    v-if="searchable"
-                    class="relative w-full sm:w-[300px]"
-                >
-                    <svg
-                        class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
-                        <circle
-                            cx="11"
-                            cy="11"
-                            r="8"
-                        />
+        <!-- FILTER -->
 
-                        <path
-                            d="m21 21-4.3-4.3"
-                        />
-                    </svg>
+        <button
+          v-if="filterable && filterDefinitions.length"
+          type="button"
+          :class="[dtTheme.buttons.base, dtTheme.buttons.filter]"
+          @click="openFilters"
+        >
+          Filters
 
-                    <input
-                        v-model="search"
-                        type="search"
-                        :placeholder="
-                            searchPlaceholder
-                        "
-                        class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-9 text-sm text-slate-700 outline-none transition focus:border-[var(--dt-primary)] focus:bg-white focus:ring-1 focus:ring-[var(--dt-primary)]"
-                    />
+          <span v-if="activeFilterCount" :class="dtTheme.filter.badge">
+            {{ activeFilterCount }}
+          </span>
+        </button>
 
-                    <button
-                        v-if="search"
-                        type="button"
-                        class="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 hover:bg-slate-100"
-                        @click="clearSearch"
-                    >
-                        ×
-                    </button>
-                </div>
+        <!-- CLEAR -->
 
-                <!-- FILTER -->
+        <button
+          v-if="activeFilterCount"
+          type="button"
+          class="inline-flex h-10 items-center rounded-lg bg-red-50 px-3 text-sm font-medium text-red-600 hover:bg-red-100"
+          @click="clearFilters"
+        >
+          Clear
+        </button>
 
-                <button
-                    v-if="
-                        filterable &&
-                        filterDefinitions.length
-                    "
-                    type="button"
-                    class="relative inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-                    @click="openFilters"
-                >
-                    <span>☷</span>
+        <!-- CUSTOM TOOLBAR -->
 
-                    Filters
+        <slot name="toolbar" :selected="selectedRows" />
+      </div>
 
-                    <span
-                        v-if="
-                            activeFilterCount
-                        "
-                        class="inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] font-bold text-white"
-                        :style="{
-                            backgroundColor:
-                                primaryColor,
-                        }"
-                    >
-                        {{
-                            activeFilterCount
-                        }}
-                    </span>
-                </button>
+      <!-- RIGHT -->
 
-                <!-- CLEAR -->
+      <div class="flex shrink-0 flex-wrap items-center gap-2">
+        <!-- SELECTION -->
 
-                <button
-                    v-if="
-                        activeFilterCount
-                    "
-                    type="button"
-                    class="inline-flex h-10 items-center rounded-lg bg-red-50 px-3 text-sm font-medium text-red-600 hover:bg-red-100"
-                    @click="clearFilters"
-                >
-                    Clear
-                </button>
+        <div v-if="selectable && selectedRows.length" class="text-sm text-slate-500">
+          {{ selectedRows.length }}
+          selected
+        </div>
 
-                <!-- CUSTOM TOOLBAR -->
+        <!-- EXPORT -->
 
-                <slot
-                    name="toolbar"
-                    :selected="
-                        selectedRows
-                    "
+        <div v-if="exportable" class="relative">
+          <button
+            type="button"
+            :class="[dtTheme.buttons.base, dtTheme.buttons.export]"
+            :disabled="exporting"
+            @click="exportMenuOpen = !exportMenuOpen"
+          >
+            <span
+              v-if="exporting"
+              class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
+            />
+
+            <span v-else> ↓ </span>
+
+            {{ exporting ? "Exporting..." : "Export" }}
+
+            <span v-if="!exporting"> ▾ </span>
+          </button>
+
+          <!-- EXPORT MENU -->
+
+          <div
+            v-if="exportMenuOpen"
+            class="absolute right-0 z-50 mt-2 w-56 overflow-hidden"
+            :class="dtTheme.export.menu"
+          >
+            <!-- SCOPE -->
+
+            <div class="mb-2 border-b border-slate-100 pb-2">
+              <p
+                class="px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
+              >
+                Export scope
+              </p>
+
+              <label
+                v-for="option in exportScopeOptions"
+                :key="option.value"
+                class="flex cursor-pointer items-center gap-2 rounded-lg transition"
+                :style="{
+                  color:
+                    option.value === 'selected' && !selectedRows.length
+                      ? theme.export.disabledColor
+                      : theme.export.scopeItemColor,
+
+                  backgroundColor:
+                    exportScope === option.value
+                      ? theme.export.scopeItemHoverBackground
+                      : 'transparent',
+
+                  padding: theme.export.scopeItemPadding || '8px',
+                }"
+                @mouseenter="
+                  if (!(option.value === 'selected' && !selectedRows.length)) {
+                    $event.currentTarget.style.backgroundColor =
+                      theme.export.scopeItemHoverBackground;
+                  }
+                "
+                @mouseleave="
+                  if (exportScope !== option.value) {
+                    $event.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                "
+              >
+                <input
+                  v-model="exportScope"
+                  type="radio"
+                  :value="option.value"
+                  :disabled="option.value === 'selected' && !selectedRows.length"
+                  :style="{
+                    accentColor: theme.export.radioColor,
+                  }"
                 />
+
+                <span>
+                  {{ option.label }}
+                </span>
+
+                <span
+                  v-if="option.value === 'selected'"
+                  class="ml-auto text-xs"
+                  :style="{
+                    color: theme.export.selectedCountColor,
+                  }"
+                >
+                  {{ selectedRows.length }}
+                </span>
+              </label>
             </div>
 
-            <!-- RIGHT -->
+            <!-- FORMATS -->
 
-            <div
-                class="flex shrink-0 flex-wrap items-center gap-2"
+            <p
+              class="px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
             >
+              Format
+            </p>
 
-                <!-- SELECTION -->
+            <button
+              v-if="exportOptions.includes('csv')"
+              type="button"
+              :class="dtTheme.export.item"
+              @click="runExport('csv')"
+            >
+              CSV
+            </button>
+
+            <button
+              v-if="exportOptions.includes('excel')"
+              type="button"
+              :class="dtTheme.export.item"
+              @click="runExport('excel')"
+            >
+              Excel
+            </button>
+
+            <button
+              v-if="exportOptions.includes('json')"
+              type="button"
+              :class="dtTheme.export.item"
+              @click="runExport('json')"
+            >
+              JSON
+            </button>
+
+            <button
+              v-if="exportOptions.includes('copy')"
+              type="button"
+              :class="dtTheme.export.item"
+              @click="runExport('copy')"
+            >
+              Copy
+            </button>
+
+            <button
+              v-if="exportOptions.includes('print')"
+              type="button"
+              :class="dtTheme.export.item"
+              @click="runExport('print')"
+            >
+              Print
+            </button>
+          </div>
+        </div>
+
+        <!-- COLUMN MANAGER -->
+
+        <div v-if="showColumnManager" class="relative">
+          <!-- BUTTON -->
+
+          <button
+            type="button"
+            :class="[dtTheme.buttons.base, dtTheme.columnManager.button]"
+            @click="showColumnModal = !showColumnModal"
+          >
+            Columns
+          </button>
+
+          <!-- DROPDOWN -->
+
+          <div
+            v-if="showColumnModal"
+            class="absolute right-0 z-50 mt-2"
+            :class="dtTheme.columnManager.menu"
+          >
+            <!-- HEADER -->
+
+            <div :class="dtTheme.columnManager.menuHeader">
+              <span :class="dtTheme.columnManager.title"> Columns </span>
+
+              <button
+                type="button"
+                :class="dtTheme.columnManager.resetButton"
+                @click="initializeColumns"
+              >
+                Reset
+              </button>
+            </div>
+
+            <!-- COLUMNS -->
+
+            <div :class="dtTheme.columnManager.list">
+              <label
+                v-for="column in tableColumns"
+                :key="column.key"
+                :class="dtTheme.columnManager.item"
+              >
+                <input
+                  type="checkbox"
+                  :checked="columnVisibility[column.key]"
+                  :class="dtTheme.columnManager.checkbox"
+                  
+                  @change="toggleColumn(column.key)"
+                />
+
+                <span :class="dtTheme.columnManager.label">
+                  {{ columnLabel(column) }}
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- CUSTOM -->
+
+        <slot name="toolbar-right" :selected="selectedRows" />
+      </div>
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- TABLE -->
+    <!-- ===================================================== -->
+
+    <div class="w-full overflow-x-auto">
+      <table
+        class="text-left text-sm"
+        :class="dtTheme.table.class"
+        :style="dtTheme.table.style"
+      >
+        <thead
+          :class="dtTheme.thead.class"
+          :style="{
+            ...dtTheme.thead.style,
+
+            // fallback when theme does not define colors
+            backgroundColor: dtTheme.thead.class ?? undefined,
+
+            color: dtTheme.thead.class ?? undefined,
+          }"
+        >
+          <tr :class="['border-b', dtTheme.thead.rowClass]">
+            <!-- SELECT -->
+
+            <th v-if="selectable" class="w-12 px-4 py-3">
+              <input
+                type="checkbox"
+                :checked="allSelected"
+                :indeterminate="someSelected"
+                :class="dtTheme.selection.checkboxClass"
+                @change="toggleSelectAll"
+              />
+            </th>
+
+            <!-- COLUMNS -->
+
+            <th
+              v-for="column in visibleColumns"
+              :key="column.key"
+              :class="[
+                dtTheme.thead.cellClass,
+                {
+                  'cursor-pointer select-none': isColumnSortable(column),
+                },
+              ]"
+              @click="sort(column)"
+            >
+              <div class="flex items-center gap-1">
+                {{ columnLabel(column) }}
+
+                <span v-if="isColumnSortable(column)">
+                  {{
+                    sortBy === column.key ? (sortDirection === "asc" ? "↑" : "↓") : "↕"
+                  }}
+                </span>
+              </div>
+            </th>
+
+            <!-- ACTIONS -->
+
+            <th v-if="$slots.actions" class="px-4 py-3 text-right text-xs uppercase">
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody :class="dtTheme.tbody.class" :style="dtTheme.tbody.style">
+          <!-- LOADING -->
+
+          <tr v-if="loading">
+            <td
+              :colspan="
+                visibleColumns.length + (selectable ? 1 : 0) + ($slots.actions ? 1 : 0)
+              "
+              class="px-4 py-14 text-center"
+            >
+              <div class="flex justify-center">
+                <div
+                  class="h-7 w-7 animate-spin rounded-full border-2 border-slate-200 border-t-[var(--dt-primary)]"
+                />
+              </div>
+            </td>
+          </tr>
+
+          <!-- EMPTY -->
+
+          <tr v-else-if="!displayRows.length">
+            <td
+              :colspan="
+                visibleColumns.length + (selectable ? 1 : 0) + ($slots.actions ? 1 : 0)
+              "
+              class="px-4 py-14 text-center text-sm text-slate-500"
+            >
+              {{ emptyText }}
+            </td>
+          </tr>
+
+          <!-- ROW -->
+
+          <tr
+            v-for="row in displayRows"
+            v-else
+            :key="row[rowKey]"
+            :class="dtTheme.row.class"
+            :style="dtTheme.row.style"
+            @click="emit('row-click', row)"
+          >
+            <!-- SELECT -->
+
+            <td v-if="selectable" class="px-4 py-3" @click.stop>
+              <input
+                type="checkbox"
+                :checked="allSelected"
+                :indeterminate="someSelected"
+                :class="dtTheme.selection.checkboxClass"
+                @change="toggleSelectAll"
+              />
+            </td>
+
+            <!-- CELLS -->
+
+            <td
+              v-for="column in visibleColumns"
+              :key="column.key"
+              :class="[dtTheme.cell.class, viewMode === 'compact' ? 'py-2' : '']"
+              :style="dtTheme.cell.style"
+            >
+              <!-- SLOT -->
+
+              <slot
+                v-if="$slots[`cell-${column.key}`]"
+                :name="`cell-${column.key}`"
+                :row="row"
+                :value="getValue(row, column.key)"
+                :column="column"
+              />
+
+              <!-- TEXT -->
+
+              <span
+                v-else-if="!column.type || column.type === 'text'"
+                :class="column.class"
+              >
+                {{ getValue(row, column.key) ?? "—" }}
+              </span>
+
+              <!-- NUMBER -->
+
+              <span v-else-if="column.type === 'number'">
+                {{ formatNumber(getValue(row, column.key), column) }}
+              </span>
+
+              <!-- DATE -->
+
+              <span v-else-if="column.type === 'date'">
+                {{ formatDate(getValue(row, column.key), column) }}
+              </span>
+
+              <!-- DATETIME -->
+
+              <span v-else-if="column.type === 'datetime'">
+                {{ formatDateTime(getValue(row, column.key)) }}
+              </span>
+
+              <!-- BOOLEAN -->
+
+              <span v-else-if="column.type === 'boolean'">
+                <span
+                  v-if="booleanValue(getValue(row, column.key))"
+                  class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700"
+                >
+                  Yes
+                </span>
+
+                <span
+                  v-else
+                  class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-500"
+                >
+                  No
+                </span>
+              </span>
+
+              <!-- BADGE -->
+
+              <span
+                v-else-if="column.type === 'badge'"
+                class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+                :class="getBadgeClass(getValue(row, column.key), column)"
+              >
+                {{ getValue(row, column.key) ?? "—" }}
+              </span>
+
+              <!-- DEFAULT -->
+
+              <span v-else>
+                {{ getValue(row, column.key) ?? "—" }}
+              </span>
+            </td>
+
+            <!-- ACTIONS -->
+
+            <td v-if="$slots.actions" class="px-4 py-3 text-right" @click.stop>
+              <slot name="actions" :row="row" />
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <slot name="footer" />
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- PAGINATION -->
+    <!-- ===================================================== -->
+
+    <div v-if="pagination" :class="['flex flex-col gap-3', dtTheme.pagination.class]">
+      <div :class="dtTheme.pagination.infoClass">
+        Showing
+        <span class="font-medium">
+          {{ showingFrom }}
+        </span>
+        -
+        <span class="font-medium">
+          {{ showingTo }}
+        </span>
+        of
+        <span class="font-medium">
+          {{ total }}
+        </span>
+        records
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <select
+          :value="currentPageSize"
+          :class="dtTheme.pagination.selectClass"
+          @change="changePageSize($event.target.value)"
+        >
+          <option v-for="size in pageSizeOptions" :key="size" :value="size">
+            {{ size }} / page
+          </option>
+        </select>
+
+        <button
+          type="button"
+          class="h-9 rounded-lg border px-3 text-xs disabled:opacity-40"
+          :disabled="currentPage <= 1"
+          @click="changePage(1)"
+        >
+          First
+        </button>
+
+        <button
+          type="button"
+          :class="[
+            dtTheme.pagination.buttonClass,
+            {
+              [dtTheme.pagination.disabledClass]: currentPage <= 1,
+            },
+          ]"
+          :disabled="currentPage <= 1"
+          @click="changePage(currentPage - 1)"
+        >
+          ‹
+        </button>
+
+        <template v-for="(page, index) in paginationPages" :key="`${page}-${index}`">
+          <span v-if="page === '...'" class="px-1"> … </span>
+
+          <button
+            v-else
+            type="button"
+            :class="[
+              dtTheme.pagination.buttonClass,
+              currentPage === page ? dtTheme.pagination.activeClass : '',
+            ]"
+            @click="changePage(page)"
+          >
+            {{ page }}
+          </button>
+        </template>
+
+        <button
+          type="button"
+          class="h-9 w-9 rounded-lg border"
+          :disabled="currentPage >= totalPages"
+          @click="changePage(currentPage + 1)"
+        >
+          ›
+        </button>
+
+        <button
+          type="button"
+          class="h-9 rounded-lg border px-3 text-xs disabled:opacity-40"
+          :disabled="currentPage >= totalPages"
+          @click="changePage(totalPages)"
+        >
+          Last
+        </button>
+      </div>
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- FILTER MODAL -->
+    <!-- ===================================================== -->
+
+    <Teleport to="body">
+      <div
+        v-if="showFilterModal"
+        class="fixed inset-0 z-[999] flex items-center justify-center p-4"
+      >
+        <div
+          class="absolute inset-0"
+          :class="dtTheme.filter.modalOverlay"
+          @click="showFilterModal = false"
+        />
+
+        <div
+          class="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden"
+          :class="dtTheme.filter.modal"
+        >
+          <!-- HEADER -->
+
+          <div :class="dtTheme.filter.header">
+            <div>
+              <h3 class="font-semibold text-slate-800">Filter Records</h3>
+
+              <p class="text-xs text-slate-400">Refine your results.</p>
+            </div>
+
+            <button
+              type="button"
+              class="text-xl text-slate-400"
+              @click="showFilterModal = false"
+            >
+              ×
+            </button>
+          </div>
+
+          <!-- BODY -->
+
+          <div class="overflow-y-auto" :class="dtTheme.filter.body">
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div
+                v-for="filter in filterDefinitions"
+                :key="filter.key"
+                class="space-y-2"
+                :class="filter.fullWidth ? 'sm:col-span-2' : ''"
+              >
+                <label class="block text-sm font-medium text-slate-700">
+                  {{ filter.label || filter.key }}
+                </label>
+
+                <!-- TEXT -->
+
+                <input
+                  v-if="filter.type === 'text'"
+                  type="text"
+                  :value="pendingFilters[filter.key] ?? ''"
+                  class="h-10 w-full rounded-lg border px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
+                  @input="updatePendingFilter(filter.key, $event.target.value)"
+                  :class="dtTheme.filter.input"
+                />
+
+                <!-- SELECT -->
+
+                <select
+                  v-else-if="filter.type === 'select'"
+                  :value="pendingFilters[filter.key] ?? ''"
+                  class="h-10 w-full rounded-lg border px-3 text-sm outline-none"
+                  @change="updatePendingFilter(filter.key, $event.target.value)"
+                  :class="dtTheme.filter.select"
+                >
+                  <option value="">All</option>
+
+                  <option
+                    v-for="option in filter.options || []"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </option>
+                </select>
+
+                <!-- BOOLEAN -->
+
+                <select
+                  v-else-if="filter.type === 'boolean'"
+                  :value="pendingFilters[filter.key] ?? ''"
+                  class="h-10 w-full rounded-lg border px-3 text-sm outline-none"
+                  @change="updatePendingFilter(filter.key, $event.target.value)"
+                  :class="dtTheme.filter.select"
+                >
+                  <option value="">All</option>
+
+                  <option value="1">Yes</option>
+
+                  <option value="0">No</option>
+                </select>
+
+                <!-- NUMBER RANGE -->
 
                 <div
-                    v-if="
-                        selectable &&
-                        selectedRows.length
+                  v-else-if="filter.type === 'number-range'"
+                  class="grid grid-cols-2 gap-2"
+                >
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    :value="pendingFilters[filter.key]?.min ?? ''"
+                    class="h-10 rounded-lg border px-3 text-sm"
+                    @input="
+                      updatePendingFilter(filter.key, {
+                        ...(pendingFilters[filter.key] || {}),
+                        min: $event.target.value,
+                      })
                     "
-                    class="text-sm text-slate-500"
-                >
-                    {{
-                        selectedRows.length
-                    }}
-                    selected
-                </div>
+                    :class="dtTheme.filter.input"
+                  />
 
-                <!-- EXPORT -->
-
-                <div
-                    v-if="exportable"
-                    class="relative"
-                >
-                    <button
-                        type="button"
-                        class="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-                        :disabled="
-                            exporting
-                        "
-                        @click="
-                            exportMenuOpen =
-                                !exportMenuOpen
-                        "
-                    >
-                        <span
-                            v-if="
-                                exporting
-                            "
-                            class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
-                        />
-
-                        <span
-                            v-else
-                        >
-                            ↓
-                        </span>
-
-                        {{
-                            exporting
-                                ? "Exporting..."
-                                : "Export"
-                        }}
-
-                        <span
-                            v-if="
-                                !exporting
-                            "
-                        >
-                            ▾
-                        </span>
-                    </button>
-
-                    <!-- EXPORT MENU -->
-
-                    <div
-                        v-if="
-                            exportMenuOpen
-                        "
-                        class="absolute right-0 z-[100] mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-2xl"
-                    >
-
-                        <!-- SCOPE -->
-
-                        <div
-                            class="mb-2 border-b border-slate-100 pb-2"
-                        >
-                            <p
-                                class="px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
-                            >
-                                Export scope
-                            </p>
-
-                            <label
-                                v-for="
-                                    option in exportScopeOptions
-                                "
-                                :key="
-                                    option.value
-                                "
-                                class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                            >
-                                <input
-                                    v-model="
-                                        exportScope
-                                    "
-                                    type="radio"
-                                    :value="
-                                        option.value
-                                    "
-                                    :disabled="
-                                        option.value ===
-                                            'selected' &&
-                                        !selectedRows.length
-                                    "
-                                    :style="{
-                                        accentColor:
-                                            primaryColor,
-                                    }"
-                                />
-
-                                <span>
-                                    {{
-                                        option.label
-                                    }}
-                                </span>
-
-                                <span
-                                    v-if="
-                                        option.value ===
-                                        'selected'
-                                    "
-                                    class="ml-auto text-xs text-slate-400"
-                                >
-                                    {{
-                                        selectedRows.length
-                                    }}
-                                </span>
-                            </label>
-                        </div>
-
-                        <!-- FORMATS -->
-
-                        <p
-                            class="px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
-                        >
-                            Format
-                        </p>
-
-                        <button
-                            v-if="
-                                exportOptions.includes(
-                                    'csv'
-                                )
-                            "
-                            type="button"
-                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
-                            @click="
-                                runExport(
-                                    'csv'
-                                )
-                            "
-                        >
-                            CSV
-                        </button>
-
-                        <button
-                            v-if="
-                                exportOptions.includes(
-                                    'excel'
-                                )
-                            "
-                            type="button"
-                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
-                            @click="
-                                runExport(
-                                    'excel'
-                                )
-                            "
-                        >
-                            Excel
-                        </button>
-
-                        <button
-                            v-if="
-                                exportOptions.includes(
-                                    'json'
-                                )
-                            "
-                            type="button"
-                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
-                            @click="
-                                runExport(
-                                    'json'
-                                )
-                            "
-                        >
-                            JSON
-                        </button>
-
-                        <button
-                            v-if="
-                                exportOptions.includes(
-                                    'copy'
-                                )
-                            "
-                            type="button"
-                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
-                            @click="
-                                runExport(
-                                    'copy'
-                                )
-                            "
-                        >
-                            Copy
-                        </button>
-
-                        <button
-                            v-if="
-                                exportOptions.includes(
-                                    'print'
-                                )
-                            "
-                            type="button"
-                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
-                            @click="
-                                runExport(
-                                    'print'
-                                )
-                            "
-                        >
-                            Print
-                        </button>
-                    </div>
-                </div>
-
-                <!-- COLUMN MANAGER -->
-
-                <div
-                    v-if="
-                        showColumnManager
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    :value="pendingFilters[filter.key]?.max ?? ''"
+                    class="h-10 rounded-lg border px-3 text-sm"
+                    @input="
+                      updatePendingFilter(filter.key, {
+                        ...(pendingFilters[filter.key] || {}),
+                        max: $event.target.value,
+                      })
                     "
-                    class="relative"
-                >
-                    <button
-                        type="button"
-                        class="inline-flex h-10 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 shadow-sm hover:bg-slate-50"
-                        @click="
-                            showColumnModal =
-                                !showColumnModal
-                        "
-                    >
-                        Columns
-                    </button>
-
-                    <div
-                        v-if="
-                            showColumnModal
-                        "
-                        class="absolute right-0 z-50 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-3 shadow-xl"
-                    >
-                        <div
-                            class="mb-2 flex items-center justify-between"
-                        >
-                            <span
-                                class="text-sm font-semibold text-slate-800"
-                            >
-                                Columns
-                            </span>
-
-                            <button
-                                type="button"
-                                class="text-xs text-slate-400"
-                                @click="
-                                    initializeColumns
-                                "
-                            >
-                                Reset
-                            </button>
-                        </div>
-
-                        <div
-                            class="max-h-64 space-y-1 overflow-y-auto"
-                        >
-                            <label
-                                v-for="
-                                    column in tableColumns
-                                "
-                                :key="
-                                    column.key
-                                "
-                                class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 hover:bg-slate-50"
-                            >
-                                <input
-                                    type="checkbox"
-                                    :checked="
-                                        columnVisibility[
-                                            column.key
-                                        ]
-                                    "
-                                    :style="{
-                                        accentColor:
-                                            primaryColor,
-                                    }"
-                                    @change="
-                                        toggleColumn(
-                                            column.key
-                                        )
-                                    "
-                                />
-
-                                <span
-                                    class="text-sm text-slate-600"
-                                >
-                                    {{
-                                        columnLabel(
-                                            column
-                                        )
-                                    }}
-                                </span>
-                            </label>
-                        </div>
-                    </div>
+                    :class="dtTheme.filter.input"
+                  />
                 </div>
+
+                <!-- DATE RANGE -->
+
+                <div
+                  v-else-if="filter.type === 'date-range'"
+                  class="grid grid-cols-2 gap-2"
+                >
+                  <input
+                    type="date"
+                    :value="pendingFilters[filter.key]?.from ?? ''"
+                    class="h-10 rounded-lg border px-3 text-sm"
+                    @change="
+                      updatePendingFilter(filter.key, {
+                        ...(pendingFilters[filter.key] || {}),
+                        from: $event.target.value,
+                      })
+                    "
+                    :class="dtTheme.filter.input"
+                  />
+
+                  <input
+                    type="date"
+                    :value="pendingFilters[filter.key]?.to ?? ''"
+                    class="h-10 rounded-lg border px-3 text-sm"
+                    @change="
+                      updatePendingFilter(filter.key, {
+                        ...(pendingFilters[filter.key] || {}),
+                        to: $event.target.value,
+                      })
+                    "
+                    :class="dtTheme.filter.input"
+                  />
+                </div>
+
+                <!-- MULTISELECT -->
+
+                <select
+                  v-else-if="filter.type === 'multiselect'"
+                  multiple
+                  class="min-h-24 w-full rounded-lg border px-3 py-2 text-sm"
+                  :value="pendingFilters[filter.key] || []"
+                  @change="
+                    updatePendingFilter(
+                      filter.key,
+                      Array.from($event.target.selectedOptions).map(
+                        (option) => option.value
+                      )
+                    )
+                  "
+                  :class="dtTheme.filter.select"
+                >
+                  <option
+                    v-for="option in filter.options || []"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </option>
+                </select>
 
                 <!-- CUSTOM -->
 
                 <slot
-                    name="toolbar-right"
-                    :selected="
-                        selectedRows
-                    "
+                  v-else
+                  name="filter"
+                  :filter="filter"
+                  :value="pendingFilters[filter.key]"
+                  :update="(value) => updatePendingFilter(filter.key, value)"
                 />
+              </div>
             </div>
+          </div>
+
+          <!-- FOOTER -->
+
+          <div :class="dtTheme.filter.footer">
+            <button type="button" class="text-sm text-red-500" @click="clearFilters">
+              Clear all
+            </button>
+
+            <div class="flex gap-2">
+              <button
+                type="button"
+                class="rounded-lg border bg-white px-4 py-2 text-sm"
+                @click="showFilterModal = false"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                :class="[dtTheme.buttons.base, dtTheme.buttons.primary]"
+                @click="applyFilters"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
         </div>
-
-        <!-- ===================================================== -->
-        <!-- TABLE -->
-        <!-- ===================================================== -->
-
-        <div
-            class="w-full overflow-x-auto"
-        >
-            <table
-                class="w-full min-w-[760px] text-left text-sm"
-            >
-                <thead
-                    :style="{
-                        backgroundColor:
-                            headerBgColor,
-                        color:
-                            headerTextColor,
-                    }"
-                >
-                    <tr
-                        class="border-b border-slate-200"
-                    >
-                        <!-- SELECT -->
-
-                        <th
-                            v-if="selectable"
-                            class="w-12 px-4 py-3"
-                        >
-                            <input
-                                type="checkbox"
-                                :checked="
-                                    allSelected
-                                "
-                                :indeterminate="
-                                    someSelected
-                                "
-                                :style="{
-                                    accentColor:
-                                        primaryColor,
-                                }"
-                                @change="
-                                    toggleSelectAll
-                                "
-                            />
-                        </th>
-
-                        <!-- COLUMNS -->
-
-                        <th
-                            v-for="
-                                column in visibleColumns
-                            "
-                            :key="
-                                column.key
-                            "
-                            class="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wide"
-                            :class="{
-                                'cursor-pointer select-none':
-                                    isColumnSortable(
-                                        column
-                                    ),
-                            }"
-                            @click="
-                                sort(column)
-                            "
-                        >
-                            <div
-                                class="flex items-center gap-1"
-                            >
-                                {{
-                                    columnLabel(
-                                        column
-                                    )
-                                }}
-
-                                <span
-                                    v-if="
-                                        isColumnSortable(
-                                            column
-                                        )
-                                    "
-                                >
-                                    {{
-                                        sortBy ===
-                                        column.key
-                                            ? sortDirection ===
-                                              "asc"
-                                                ? "↑"
-                                                : "↓"
-                                            : "↕"
-                                    }}
-                                </span>
-                            </div>
-                        </th>
-
-                        <!-- ACTIONS -->
-
-                        <th
-                            v-if="
-                                $slots.actions
-                            "
-                            class="px-4 py-3 text-right text-xs uppercase"
-                        >
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody
-                    class="divide-y divide-slate-100"
-                >
-
-                    <!-- LOADING -->
-
-                    <tr
-                        v-if="loading"
-                    >
-                        <td
-                            :colspan="
-                                visibleColumns.length +
-                                (selectable
-                                    ? 1
-                                    : 0) +
-                                ($slots.actions
-                                    ? 1
-                                    : 0)
-                            "
-                            class="px-4 py-14 text-center"
-                        >
-                            <div
-                                class="flex justify-center"
-                            >
-                                <div
-                                    class="h-7 w-7 animate-spin rounded-full border-2 border-slate-200 border-t-[var(--dt-primary)]"
-                                />
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- EMPTY -->
-
-                    <tr
-                        v-else-if="
-                            !displayRows.length
-                        "
-                    >
-                        <td
-                            :colspan="
-                                visibleColumns.length +
-                                (selectable
-                                    ? 1
-                                    : 0) +
-                                ($slots.actions
-                                    ? 1
-                                    : 0)
-                            "
-                            class="px-4 py-14 text-center text-sm text-slate-500"
-                        >
-                            {{
-                                emptyText
-                            }}
-                        </td>
-                    </tr>
-
-                    <!-- ROW -->
-
-                    <tr
-                        v-for="
-                            row in displayRows
-                        "
-                        v-else
-                        :key="
-                            row[
-                                rowKey
-                            ]
-                        "
-                        class="group transition hover:bg-slate-50"
-                        @click="
-                            emit(
-                                'row-click',
-                                row
-                            )
-                        "
-                    >
-
-                        <!-- SELECT -->
-
-                        <td
-                            v-if="
-                                selectable
-                            "
-                            class="px-4 py-3"
-                            @click.stop
-                        >
-                            <input
-                                type="checkbox"
-                                :checked="
-                                    selectedRows.includes(
-                                        row[
-                                            rowKey
-                                        ]
-                                    )
-                                "
-                                :style="{
-                                    accentColor:
-                                        primaryColor,
-                                }"
-                                @change="
-                                    toggleRow(
-                                        row
-                                    )
-                                "
-                            />
-                        </td>
-
-                        <!-- CELLS -->
-
-                        <td
-                            v-for="
-                                column in visibleColumns
-                            "
-                            :key="
-                                column.key
-                            "
-                            class="px-4 py-3 text-slate-600"
-                        >
-
-                            <!-- SLOT -->
-
-                            <slot
-                                v-if="
-                                    $slots[
-                                        `cell-${column.key}`
-                                    ]
-                                "
-                                :name="`cell-${column.key}`"
-                                :row="
-                                    row
-                                "
-                                :value="
-                                    getValue(
-                                        row,
-                                        column.key
-                                    )
-                                "
-                                :column="
-                                    column
-                                "
-                            />
-
-                            <!-- TEXT -->
-
-                            <span
-                                v-else-if="
-                                    !column.type ||
-                                    column.type ===
-                                        'text'
-                                "
-                                :class="
-                                    column.class
-                                "
-                            >
-                                {{
-                                    getValue(
-                                        row,
-                                        column.key
-                                    ) ??
-                                    "—"
-                                }}
-                            </span>
-
-                            <!-- NUMBER -->
-
-                            <span
-                                v-else-if="
-                                    column.type ===
-                                    'number'
-                                "
-                            >
-                                {{
-                                    formatNumber(
-                                        getValue(
-                                            row,
-                                            column.key
-                                        ),
-                                        column
-                                    )
-                                }}
-                            </span>
-
-                            <!-- DATE -->
-
-                            <span
-                                v-else-if="
-                                    column.type ===
-                                    'date'
-                                "
-                            >
-                                {{
-                                    formatDate(
-                                        getValue(
-                                            row,
-                                            column.key
-                                        ),
-                                        column
-                                    )
-                                }}
-                            </span>
-
-                            <!-- DATETIME -->
-
-                            <span
-                                v-else-if="
-                                    column.type ===
-                                    'datetime'
-                                "
-                            >
-                                {{
-                                    formatDateTime(
-                                        getValue(
-                                            row,
-                                            column.key
-                                        )
-                                    )
-                                }}
-                            </span>
-
-                            <!-- BOOLEAN -->
-
-                            <span
-                                v-else-if="
-                                    column.type ===
-                                    'boolean'
-                                "
-                            >
-                                <span
-                                    v-if="
-                                        booleanValue(
-                                            getValue(
-                                                row,
-                                                column.key
-                                            )
-                                        )
-                                    "
-                                    class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700"
-                                >
-                                    Yes
-                                </span>
-
-                                <span
-                                    v-else
-                                    class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-500"
-                                >
-                                    No
-                                </span>
-                            </span>
-
-                            <!-- BADGE -->
-
-                            <span
-                                v-else-if="
-                                    column.type ===
-                                    'badge'
-                                "
-                                class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
-                                :class="
-                                    getBadgeClass(
-                                        getValue(
-                                            row,
-                                            column.key
-                                        ),
-                                        column
-                                    )
-                                "
-                            >
-                                {{
-                                    getValue(
-                                        row,
-                                        column.key
-                                    ) ??
-                                    "—"
-                                }}
-                            </span>
-
-                            <!-- DEFAULT -->
-
-                            <span
-                                v-else
-                            >
-                                {{
-                                    getValue(
-                                        row,
-                                        column.key
-                                    ) ??
-                                    "—"
-                                }}
-                            </span>
-                        </td>
-
-                        <!-- ACTIONS -->
-
-                        <td
-                            v-if="
-                                $slots.actions
-                            "
-                            class="px-4 py-3 text-right"
-                            @click.stop
-                        >
-                            <slot
-                                name="actions"
-                                :row="row"
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- ===================================================== -->
-        <!-- PAGINATION -->
-        <!-- ===================================================== -->
-
-        <div
-            v-if="pagination"
-            class="flex flex-col gap-3 border-t border-slate-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-        >
-            <div
-                class="text-xs text-slate-500"
-            >
-                Showing
-                <span
-                    class="font-medium text-slate-700"
-                >
-                    {{
-                        showingFrom
-                    }}
-                </span>
-                -
-                <span
-                    class="font-medium text-slate-700"
-                >
-                    {{
-                        showingTo
-                    }}
-                </span>
-                of
-                <span
-                    class="font-medium text-slate-700"
-                >
-                    {{
-                        total
-                    }}
-                </span>
-                records
-            </div>
-
-            <div
-                class="flex flex-wrap items-center gap-2"
-            >
-                <select
-                    :value="
-                        currentPageSize
-                    "
-                    class="h-9 rounded-lg border border-slate-200 bg-white px-2 text-xs"
-                    @change="
-                        changePageSize(
-                            $event.target
-                                .value
-                        )
-                    "
-                >
-                    <option
-                        v-for="
-                            size in pageSizeOptions
-                        "
-                        :key="size"
-                        :value="size"
-                    >
-                        {{ size }} / page
-                    </option>
-                </select>
-
-                <button
-                    type="button"
-                    class="h-9 rounded-lg border px-3 text-xs disabled:opacity-40"
-                    :disabled="
-                        currentPage <=
-                        1
-                    "
-                    @click="
-                        changePage(
-                            1
-                        )
-                    "
-                >
-                    First
-                </button>
-
-                <button
-                    type="button"
-                    class="h-9 w-9 rounded-lg border"
-                    :disabled="
-                        currentPage <=
-                        1
-                    "
-                    @click="
-                        changePage(
-                            currentPage -
-                                1
-                        )
-                    "
-                >
-                    ‹
-                </button>
-
-                <template
-                    v-for="
-                        (
-                            page,
-                            index
-                        ) in paginationPages
-                    "
-                    :key="
-                        `${page}-${index}`
-                    "
-                >
-                    <span
-                        v-if="
-                            page ===
-                            '...'
-                        "
-                        class="px-1"
-                    >
-                        …
-                    </span>
-
-                    <button
-                        v-else
-                        type="button"
-                        class="flex h-9 min-w-9 items-center justify-center rounded-lg px-2 text-xs"
-                        :class="
-                            currentPage ===
-                            page
-                                ? 'text-white'
-                                : 'border text-slate-600'
-                        "
-                        :style="
-                            currentPage ===
-                            page
-                                ? {
-                                      backgroundColor:
-                                          primaryColor,
-                                  }
-                                : {}
-                        "
-                        @click="
-                            changePage(
-                                page
-                            )
-                        "
-                    >
-                        {{
-                            page
-                        }}
-                    </button>
-                </template>
-
-                <button
-                    type="button"
-                    class="h-9 w-9 rounded-lg border"
-                    :disabled="
-                        currentPage >=
-                        totalPages
-                    "
-                    @click="
-                        changePage(
-                            currentPage +
-                                1
-                        )
-                    "
-                >
-                    ›
-                </button>
-
-                <button
-                    type="button"
-                    class="h-9 rounded-lg border px-3 text-xs disabled:opacity-40"
-                    :disabled="
-                        currentPage >=
-                        totalPages
-                    "
-                    @click="
-                        changePage(
-                            totalPages
-                        )
-                    "
-                >
-                    Last
-                </button>
-            </div>
-        </div>
-
-        <!-- ===================================================== -->
-        <!-- FILTER MODAL -->
-        <!-- ===================================================== -->
-
-        <Teleport to="body">
-            <div
-                v-if="
-                    showFilterModal
-                "
-                class="fixed inset-0 z-[999] flex items-center justify-center p-4"
-            >
-                <div
-                    class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-                    @click="
-                        showFilterModal =
-                            false
-                    "
-                />
-
-                <div
-                    class="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
-                >
-                    <!-- HEADER -->
-
-                    <div
-                        class="flex items-center justify-between border-b px-5 py-4"
-                    >
-                        <div>
-                            <h3
-                                class="font-semibold text-slate-800"
-                            >
-                                Filter Records
-                            </h3>
-
-                            <p
-                                class="text-xs text-slate-400"
-                            >
-                                Refine your
-                                results.
-                            </p>
-                        </div>
-
-                        <button
-                            type="button"
-                            class="text-xl text-slate-400"
-                            @click="
-                                showFilterModal =
-                                    false
-                            "
-                        >
-                            ×
-                        </button>
-                    </div>
-
-                    <!-- BODY -->
-
-                    <div
-                        class="overflow-y-auto p-5"
-                    >
-                        <div
-                            class="grid grid-cols-1 gap-5 sm:grid-cols-2"
-                        >
-                            <div
-                                v-for="
-                                    filter in filterDefinitions
-                                "
-                                :key="
-                                    filter.key
-                                "
-                                class="space-y-2"
-                                :class="
-                                    filter.fullWidth
-                                        ? 'sm:col-span-2'
-                                        : ''
-                                "
-                            >
-                                <label
-                                    class="block text-sm font-medium text-slate-700"
-                                >
-                                    {{
-                                        filter.label ||
-                                        filter.key
-                                    }}
-                                </label>
-
-                                <!-- TEXT -->
-
-                                <input
-                                    v-if="
-                                        filter.type ===
-                                        'text'
-                                    "
-                                    type="text"
-                                    :value="
-                                        pendingFilters[
-                                            filter.key
-                                        ] ??
-                                        ''
-                                    "
-                                    class="h-10 w-full rounded-lg border px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
-                                    @input="
-                                        updatePendingFilter(
-                                            filter.key,
-                                            $event
-                                                .target
-                                                .value
-                                        )
-                                    "
-                                />
-
-                                <!-- SELECT -->
-
-                                <select
-                                    v-else-if="
-                                        filter.type ===
-                                        'select'
-                                    "
-                                    :value="
-                                        pendingFilters[
-                                            filter.key
-                                        ] ??
-                                        ''
-                                    "
-                                    class="h-10 w-full rounded-lg border px-3 text-sm outline-none"
-                                    @change="
-                                        updatePendingFilter(
-                                            filter.key,
-                                            $event
-                                                .target
-                                                .value
-                                        )
-                                    "
-                                >
-                                    <option
-                                        value=""
-                                    >
-                                        All
-                                    </option>
-
-                                    <option
-                                        v-for="
-                                            option in filter.options ||
-                                            []
-                                        "
-                                        :key="
-                                            option.value
-                                        "
-                                        :value="
-                                            option.value
-                                        "
-                                    >
-                                        {{
-                                            option.label
-                                        }}
-                                    </option>
-                                </select>
-
-                                <!-- BOOLEAN -->
-
-                                <select
-                                    v-else-if="
-                                        filter.type ===
-                                        'boolean'
-                                    "
-                                    :value="
-                                        pendingFilters[
-                                            filter.key
-                                        ] ??
-                                        ''
-                                    "
-                                    class="h-10 w-full rounded-lg border px-3 text-sm outline-none"
-                                    @change="
-                                        updatePendingFilter(
-                                            filter.key,
-                                            $event
-                                                .target
-                                                .value
-                                        )
-                                    "
-                                >
-                                    <option
-                                        value=""
-                                    >
-                                        All
-                                    </option>
-
-                                    <option
-                                        value="1"
-                                    >
-                                        Yes
-                                    </option>
-
-                                    <option
-                                        value="0"
-                                    >
-                                        No
-                                    </option>
-                                </select>
-
-                                <!-- NUMBER RANGE -->
-
-                                <div
-                                    v-else-if="
-                                        filter.type ===
-                                        'number-range'
-                                    "
-                                    class="grid grid-cols-2 gap-2"
-                                >
-                                    <input
-                                        type="number"
-                                        placeholder="Min"
-                                        :value="
-                                            pendingFilters[
-                                                filter.key
-                                            ]?.min ??
-                                            ''
-                                        "
-                                        class="h-10 rounded-lg border px-3 text-sm"
-                                        @input="
-                                            updatePendingFilter(
-                                                filter.key,
-                                                {
-                                                    ...(pendingFilters[
-                                                        filter
-                                                            .key
-                                                    ] ||
-                                                        {}),
-                                                    min: $event
-                                                        .target
-                                                        .value,
-                                                }
-                                            )
-                                        "
-                                    />
-
-                                    <input
-                                        type="number"
-                                        placeholder="Max"
-                                        :value="
-                                            pendingFilters[
-                                                filter.key
-                                            ]?.max ??
-                                            ''
-                                        "
-                                        class="h-10 rounded-lg border px-3 text-sm"
-                                        @input="
-                                            updatePendingFilter(
-                                                filter.key,
-                                                {
-                                                    ...(pendingFilters[
-                                                        filter
-                                                            .key
-                                                    ] ||
-                                                        {}),
-                                                    max: $event
-                                                        .target
-                                                        .value,
-                                                }
-                                            )
-                                        "
-                                    />
-                                </div>
-
-                                <!-- DATE RANGE -->
-
-                                <div
-                                    v-else-if="
-                                        filter.type ===
-                                        'date-range'
-                                    "
-                                    class="grid grid-cols-2 gap-2"
-                                >
-                                    <input
-                                        type="date"
-                                        :value="
-                                            pendingFilters[
-                                                filter.key
-                                            ]?.from ??
-                                            ''
-                                        "
-                                        class="h-10 rounded-lg border px-3 text-sm"
-                                        @change="
-                                            updatePendingFilter(
-                                                filter.key,
-                                                {
-                                                    ...(pendingFilters[
-                                                        filter
-                                                            .key
-                                                    ] ||
-                                                        {}),
-                                                    from: $event
-                                                        .target
-                                                        .value,
-                                                }
-                                            )
-                                        "
-                                    />
-
-                                    <input
-                                        type="date"
-                                        :value="
-                                            pendingFilters[
-                                                filter.key
-                                            ]?.to ??
-                                            ''
-                                        "
-                                        class="h-10 rounded-lg border px-3 text-sm"
-                                        @change="
-                                            updatePendingFilter(
-                                                filter.key,
-                                                {
-                                                    ...(pendingFilters[
-                                                        filter
-                                                            .key
-                                                    ] ||
-                                                        {}),
-                                                    to: $event
-                                                        .target
-                                                        .value,
-                                                }
-                                            )
-                                        "
-                                    />
-                                </div>
-
-                                <!-- MULTISELECT -->
-
-                                <select
-                                    v-else-if="
-                                        filter.type ===
-                                        'multiselect'
-                                    "
-                                    multiple
-                                    class="min-h-24 w-full rounded-lg border px-3 py-2 text-sm"
-                                    :value="
-                                        pendingFilters[
-                                            filter.key
-                                        ] ||
-                                        []
-                                    "
-                                    @change="
-                                        updatePendingFilter(
-                                            filter.key,
-                                            Array.from(
-                                                $event
-                                                    .target
-                                                    .selectedOptions
-                                            ).map(
-                                                (
-                                                    option
-                                                ) =>
-                                                    option.value
-                                            )
-                                        )
-                                    "
-                                >
-                                    <option
-                                        v-for="
-                                            option in filter.options ||
-                                            []
-                                        "
-                                        :key="
-                                            option.value
-                                        "
-                                        :value="
-                                            option.value
-                                        "
-                                    >
-                                        {{
-                                            option.label
-                                        }}
-                                    </option>
-                                </select>
-
-                                <!-- CUSTOM -->
-
-                                <slot
-                                    v-else
-                                    name="filter"
-                                    :filter="
-                                        filter
-                                    "
-                                    :value="
-                                        pendingFilters[
-                                            filter.key
-                                        ]
-                                    "
-                                    :update="
-                                        (
-                                            value
-                                        ) =>
-                                            updatePendingFilter(
-                                                filter.key,
-                                                value
-                                            )
-                                    "
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FOOTER -->
-
-                    <div
-                        class="flex items-center justify-between border-t bg-slate-50 px-5 py-4"
-                    >
-                        <button
-                            type="button"
-                            class="text-sm text-red-500"
-                            @click="
-                                clearFilters
-                            "
-                        >
-                            Clear all
-                        </button>
-
-                        <div
-                            class="flex gap-2"
-                        >
-                            <button
-                                type="button"
-                                class="rounded-lg border bg-white px-4 py-2 text-sm"
-                                @click="
-                                    showFilterModal =
-                                        false
-                                "
-                            >
-                                Cancel
-                            </button>
-
-                            <button
-                                type="button"
-                                class="rounded-lg px-4 py-2 text-sm font-medium text-white"
-                                :style="{
-                                    backgroundColor:
-                                        primaryColor,
-                                }"
-                                @click="
-                                    applyFilters
-                                "
-                            >
-                                Apply Filters
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </Teleport>
-    </div>
+      </div>
+    </Teleport>
+  </div>
 </template>
 
 <style scoped>
 input[type="search"]::-webkit-search-cancel-button {
-    display: none;
+  display: none;
 }
 </style>
