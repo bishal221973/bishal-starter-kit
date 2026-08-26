@@ -197,6 +197,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  showSerialNo: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 /*
@@ -343,6 +347,24 @@ const dtTheme = computed(() => {
       selectedCountColor: "#94a3b8",
 
       disabledColor: "#cbd5e1",
+    },
+    columnManager: {
+      button:
+        "border-slate-200 bg-white px-3 text-sm font-medium text-[#041124] shadow-sm hover:border-[#628891] hover:bg-[#628891]/5",
+      menu:
+        "w-64 rounded-xl border border-slate-200/80 bg-white p-3 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 duration-200",
+      menuHeader:
+        "mb-2.5 flex items-center justify-between border-b border-slate-100 pb-2",
+      title: "text-xs font-bold uppercase tracking-wider text-slate-400",
+      resetButton:
+        "text-xs font-semibold text-[#628891] transition-colors duration-150 hover:text-[#041124]",
+      list: "max-h-60 space-y-0.5 overflow-y-auto pr-1 scrollbar-thin",
+      item:
+        "flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-[#041124] transition-colors duration-150 hover:bg-slate-50",
+      itemActive: "bg-slate-50/50",
+      label: "text-sm font-medium text-[#041124]/90",
+      checkbox:
+        "h-4 w-4 cursor-pointer rounded border-slate-300 text-[#628891] focus:ring-[#628891]/20 transition-all duration-150",
     },
   };
 });
@@ -2003,6 +2025,7 @@ function printData(data) {
 
                 <thead id="birta-table-head">
                     <tr>
+                      
                         ${columns
                           .map(
                             (column) =>
@@ -2212,6 +2235,7 @@ defineExpose({
           :class="[dtTheme.buttons.base, dtTheme.buttons.filter]"
           @click="openFilters"
         >
+          <i class="fa fa-filter text-[12px]"></i>
           Filters
 
           <span v-if="activeFilterCount" :class="dtTheme.filter.badge">
@@ -2270,7 +2294,7 @@ defineExpose({
 
           <div
             v-if="exportMenuOpen"
-            class="absolute right-0 z-50 mt-2 w-56 overflow-hidden"
+            class="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200/80 z-[999999] p-1.5 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 duration-200 bg-white"
             :class="dtTheme.export.menu"
           >
             <!-- SCOPE -->
@@ -2348,46 +2372,46 @@ defineExpose({
             <button
               v-if="exportOptions.includes('csv')"
               type="button"
-              :class="dtTheme.export.item"
+              class="flex w-full block items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#041124] transition-colors duration-150 hover:bg-slate-50 hover:text-[#041124]"
               @click="runExport('csv')"
             >
-              CSV
+              <i class="fa-solid fa-file-csv"></i> CSV
             </button>
 
             <button
               v-if="exportOptions.includes('excel')"
               type="button"
-              :class="dtTheme.export.item"
+              class="flex w-full block items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#041124] transition-colors duration-150 hover:bg-slate-50 hover:text-[#041124]"
               @click="runExport('excel')"
             >
-              Excel
+              <i class="fa-solid fa-file-excel"></i>Excel
             </button>
 
             <button
               v-if="exportOptions.includes('json')"
               type="button"
-              :class="dtTheme.export.item"
+              class="flex w-full block items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#041124] transition-colors duration-150 hover:bg-slate-50 hover:text-[#041124]"
               @click="runExport('json')"
             >
-              JSON
+              <i class="fa-solid fa-file-code"></i>JSON
             </button>
 
             <button
               v-if="exportOptions.includes('copy')"
               type="button"
-              :class="dtTheme.export.item"
+              class="flex w-full block items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#041124] transition-colors duration-150 hover:bg-slate-50 hover:text-[#041124]"
               @click="runExport('copy')"
             >
-              Copy
+              <i class="fa-solid fa-copy"></i> Copy
             </button>
 
             <button
               v-if="exportOptions.includes('print')"
               type="button"
-              :class="dtTheme.export.item"
+              class="flex w-full block items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#041124] transition-colors duration-150 hover:bg-slate-50 hover:text-[#041124]"
               @click="runExport('print')"
             >
-              Print
+              <i class="fa-solid fa-print"></i>Print
             </button>
           </div>
         </div>
@@ -2401,7 +2425,9 @@ defineExpose({
             type="button"
             :class="[dtTheme.buttons.base, dtTheme.columnManager.button]"
             @click="showColumnModal = !showColumnModal"
+            class="items-center"
           >
+          <i class="fa fa-columns relative mt-[2px]"></i>
             Columns
           </button>
 
@@ -2438,7 +2464,6 @@ defineExpose({
                   type="checkbox"
                   :checked="columnVisibility[column.key]"
                   :class="dtTheme.columnManager.checkbox"
-                  
                   @change="toggleColumn(column.key)"
                 />
 
@@ -2488,6 +2513,8 @@ defineExpose({
                 @change="toggleSelectAll"
               />
             </th>
+
+            <th v-if="showSerialNo" :class="[dtTheme.thead.cellClass]">#</th>
 
             <!-- COLUMNS -->
 
@@ -2555,7 +2582,7 @@ defineExpose({
           <!-- ROW -->
 
           <tr
-            v-for="row in displayRows"
+            v-for="(row, index) in displayRows"
             v-else
             :key="row[rowKey]"
             :class="dtTheme.row.class"
@@ -2575,7 +2602,12 @@ defineExpose({
             </td>
 
             <!-- CELLS -->
-
+            <td
+              :class="[dtTheme.cell.class, viewMode === 'compact' ? 'py-2' : '']"
+              :style="dtTheme.cell.style"
+            >
+              {{ index + 1 }}
+            </td>
             <td
               v-for="column in visibleColumns"
               :key="column.key"
