@@ -192,19 +192,15 @@ const tableTheme = {
   columnManager: {
     button:
       "border-slate-200 bg-white px-3 text-sm font-medium text-[#041124] shadow-sm hover:border-[#628891] hover:bg-[#628891]/5",
-    menu:
-      "",
+    menu: "",
     menuHeader: "",
     title: "",
-    resetButton:
-      "",
+    resetButton: "",
     list: "",
-    item:
-      "",
+    item: "",
     itemActive: "",
     label: "",
-    checkbox:
-      "",
+    checkbox: "",
   },
   loading: {
     spinner:
@@ -218,6 +214,23 @@ const tableTheme = {
     text: "text-sm font-medium text-slate-400 mt-2",
     action:
       "rounded-xl bg-[#041124] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[#628891] active:scale-[0.98]",
+  },
+  pagination: {
+    class:
+      "flex flex-col gap-4 border-t border-slate-200 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between",
+
+    infoClass: "text-sm text-slate-500",
+
+    selectClass:
+      "h-9 rounded-lg border border-slate-200 bg-white px-3 pr-5 text-sm text-[#628891] outline-none transition focus:border-[#628891] focus:ring-2 focus:ring-[#628891]/20",
+
+    buttonClass:
+      "inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-[#041124] transition hover:border-[#628891] hover:bg-[#628891]/10 disabled:cursor-not-allowed disabled:opacity-40",
+
+    activeClass:
+      "!border-[#628891] !bg-[#628891] !text-white hover:!border-[#628891] hover:!bg-[#628891]",
+
+    disabledClass: "cursor-not-allowed opacity-40",
   },
 };
 
