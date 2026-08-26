@@ -111,3 +111,6 @@ Route::get('/support-test', function () {
     return (new SupportAggent)
         ->stream("How to install it ?");
 })->name('support');
+
+
+Route::get('branches/export',[BranchController::class,'export'])->name('test');

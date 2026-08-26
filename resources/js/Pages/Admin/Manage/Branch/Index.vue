@@ -1,7 +1,7 @@
 <script setup>
 import DataTable from "@/Components/Datatable/Table.vue";
 
-const props = defineProps({
+defineProps({
     branches: Object,
 });
 
@@ -98,22 +98,20 @@ const filters = [
         :data="branches"
         :columns="columns"
         :filters="filters"
-        :searchable="true"
-        :filterable="true"
-        :sortable="true"
-        :pagination="true"
-        :selectable="true"
+
+        route="/branches"
+
+        :export-route="route('test')"
+
+        searchable
+        filterable
+        sortable
+        pagination
+        selectable
+
         :page-size="10"
         :page-size-options="[10, 25, 50, 100]"
-        :exportable="true"
-        export-filename="branches"
-        :export-options="[
-            'csv',
-            'excel',
-            'json',
-            'copy',
-            'print'
-        ]"
+
         primary-color="#3D98AB"
         header-bg-color="#F8FAFC"
     />

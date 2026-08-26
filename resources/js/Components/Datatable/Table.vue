@@ -1,5 +1,12 @@
 <script setup>
-import { computed, ref, watch, onBeforeUnmount } from "vue";
+import {
+    computed,
+    ref,
+    watch,
+    onMounted,
+    onBeforeUnmount,
+} from "vue";
+
 import { router } from "@inertiajs/vue3";
 
 /*
@@ -87,7 +94,6 @@ const props = defineProps({
     defaultDirection: {
         type: String,
         default: "asc",
-        validator: (value) => ["asc", "desc"].includes(value),
     },
 
     filterable: {
@@ -110,6 +116,12 @@ const props = defineProps({
         default: () => [10, 25, 50, 100],
     },
 
+    /*
+    |--------------------------------------------------------------------------
+    | Selection
+    |--------------------------------------------------------------------------
+    */
+
     selectable: {
         type: Boolean,
         default: false,
@@ -118,11 +130,6 @@ const props = defineProps({
     rowKey: {
         type: String,
         default: "id",
-    },
-
-    emptyText: {
-        type: String,
-        default: "No records found.",
     },
 
     /*
@@ -181,7 +188,6 @@ const props = defineProps({
     defaultView: {
         type: String,
         default: "table",
-        validator: (value) => ["table", "compact"].includes(value),
     },
 
     showViewSwitcher: {
@@ -219,34 +225,6 @@ const props = defineProps({
             "print",
             "copy",
         ],
-    },
-
-    /*
-    |--------------------------------------------------------------------------
-    | Export Scope
-    |--------------------------------------------------------------------------
-    |
-    | current:
-    |   Current displayed page.
-    |
-    | filtered:
-    |   All filtered rows in client mode.
-    |
-    | selected:
-    |   Selected rows.
-    |
-    */
-
-    defaultExportScope: {
-        type: String,
-        default: "filtered",
-        validator: (value) =>
-            ["current", "filtered", "selected"].includes(value),
-    },
-
-    showExportScope: {
-        type: Boolean,
-        default: true,
     },
 });
 
@@ -291,50 +269,31 @@ const currentPageSize = ref(
 );
 
 const sortBy = ref(props.defaultSort);
-
 const sortDirection = ref(props.defaultDirection);
 
 const selectedRows = ref([]);
+
+const pendingFilters = ref({});
+
+const columnVisibility = ref({});
 
 const showFilterModal = ref(false);
 
 const showColumnModal = ref(false);
 
-const viewMode = ref(props.defaultView);
-
-const pendingFilters = ref({});
-
-/*
-|--------------------------------------------------------------------------
-| Export State
-|--------------------------------------------------------------------------
-*/
-
 const exportMenuOpen = ref(false);
 
-const exportScope = ref(props.defaultExportScope);
+const exportScope = ref("current");
 
 const exporting = ref(false);
 
-/*
-|--------------------------------------------------------------------------
-| Column visibility
-|--------------------------------------------------------------------------
-*/
-
-const columnVisibility = ref({});
-
-/*
-|--------------------------------------------------------------------------
-| Search timer
-|--------------------------------------------------------------------------
-*/
+const viewMode = ref(props.defaultView);
 
 let searchTimer = null;
 
 /*
 |--------------------------------------------------------------------------
-| Normalize columns
+| Columns
 |--------------------------------------------------------------------------
 */
 
@@ -359,24 +318,6 @@ const visibleColumns = computed(() => {
     );
 });
 
-/*
-|--------------------------------------------------------------------------
-| Export columns
-|--------------------------------------------------------------------------
-*/
-
-const exportColumns = computed(() => {
-    return visibleColumns.value.filter(
-        (column) => column.exportable !== false
-    );
-});
-
-/*
-|--------------------------------------------------------------------------
-| Initialize columns
-|--------------------------------------------------------------------------
-*/
-
 function initializeColumns() {
     const result = {};
 
@@ -391,9 +332,7 @@ initializeColumns();
 
 watch(
     () => props.columns,
-    () => {
-        initializeColumns();
-    },
+    initializeColumns,
     {
         deep: true,
     }
@@ -419,7 +358,7 @@ const rows = computed(() => {
 
 /*
 |--------------------------------------------------------------------------
-| Value helper
+| Get nested value
 |--------------------------------------------------------------------------
 */
 
@@ -438,7 +377,7 @@ function getValue(row, key) {
 
 /*
 |--------------------------------------------------------------------------
-| Filter definitions
+| Filters
 |--------------------------------------------------------------------------
 */
 
@@ -452,12 +391,6 @@ const filterDefinitions = computed(() => {
           )
         : [];
 });
-
-/*
-|--------------------------------------------------------------------------
-| Active filter count
-|--------------------------------------------------------------------------
-*/
 
 const activeFilterCount = computed(() => {
     return Object.entries(
@@ -493,7 +426,7 @@ const activeFilterCount = computed(() => {
 
 /*
 |--------------------------------------------------------------------------
-| Client filtering
+| Client processing
 |--------------------------------------------------------------------------
 */
 
@@ -529,7 +462,9 @@ const processedClientRows = computed(() => {
                         column.key
                     );
 
-                    return String(value ?? "")
+                    return String(
+                        value ?? ""
+                    )
                         .toLowerCase()
                         .includes(query);
                 }
@@ -554,13 +489,6 @@ const processedClientRows = computed(() => {
             return;
         }
 
-        if (
-            Array.isArray(filterValue) &&
-            filterValue.length === 0
-        ) {
-            return;
-        }
-
         const definition =
             filterDefinitions.value.find(
                 (filter) =>
@@ -576,15 +504,12 @@ const processedClientRows = computed(() => {
             |--------------------------------------------------------------------------
             */
 
-            if (
-                definition?.type === "text"
-            ) {
+            if (definition?.type === "text") {
                 return String(value ?? "")
                     .toLowerCase()
                     .includes(
-                        String(
-                            filterValue
-                        ).toLowerCase()
+                        String(filterValue)
+                            .toLowerCase()
                     );
             }
 
@@ -595,7 +520,8 @@ const processedClientRows = computed(() => {
             */
 
             if (
-                definition?.type === "select"
+                definition?.type === "select" ||
+                definition?.type === "multiselect"
             ) {
                 if (
                     Array.isArray(
@@ -617,31 +543,6 @@ const processedClientRows = computed(() => {
 
             /*
             |--------------------------------------------------------------------------
-            | Multi select
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                definition?.type ===
-                "multiselect"
-            ) {
-                if (
-                    !Array.isArray(
-                        filterValue
-                    )
-                ) {
-                    return false;
-                }
-
-                return filterValue
-                    .map(String)
-                    .includes(
-                        String(value)
-                    );
-            }
-
-            /*
-            |--------------------------------------------------------------------------
             | Boolean
             |--------------------------------------------------------------------------
             */
@@ -658,7 +559,7 @@ const processedClientRows = computed(() => {
 
             /*
             |--------------------------------------------------------------------------
-            | Number range
+            | Number Range
             |--------------------------------------------------------------------------
             */
 
@@ -710,7 +611,7 @@ const processedClientRows = computed(() => {
 
             /*
             |--------------------------------------------------------------------------
-            | Date range
+            | Date Range
             |--------------------------------------------------------------------------
             */
 
@@ -726,14 +627,6 @@ const processedClientRows = computed(() => {
                     new Date(value);
 
                 if (
-                    Number.isNaN(
-                        date.getTime()
-                    )
-                ) {
-                    return false;
-                }
-
-                if (
                     filterValue.from
                 ) {
                     const from =
@@ -741,14 +634,14 @@ const processedClientRows = computed(() => {
                             filterValue.from
                         );
 
-                    if (
-                        date < from
-                    ) {
+                    if (date < from) {
                         return false;
                     }
                 }
 
-                if (filterValue.to) {
+                if (
+                    filterValue.to
+                ) {
                     const to =
                         new Date(
                             filterValue.to
@@ -761,9 +654,7 @@ const processedClientRows = computed(() => {
                         999
                     );
 
-                    if (
-                        date > to
-                    ) {
+                    if (date > to) {
                         return false;
                     }
                 }
@@ -777,18 +668,6 @@ const processedClientRows = computed(() => {
             |--------------------------------------------------------------------------
             */
 
-            if (
-                Array.isArray(
-                    filterValue
-                )
-            ) {
-                return filterValue
-                    .map(String)
-                    .includes(
-                        String(value)
-                    );
-            }
-
             return (
                 String(value ?? "") ===
                 String(filterValue)
@@ -798,7 +677,7 @@ const processedClientRows = computed(() => {
 
     /*
     |--------------------------------------------------------------------------
-    | Sorting
+    | Sort
     |--------------------------------------------------------------------------
     */
 
@@ -849,8 +728,7 @@ const processedClientRows = computed(() => {
                 }
 
                 if (
-                    aValue ===
-                    bValue
+                    aValue === bValue
                 ) {
                     return (
                         a.index -
@@ -880,24 +758,24 @@ const processedClientRows = computed(() => {
                 }
 
                 return (
-                    String(
-                        aValue
-                    ).localeCompare(
-                        String(
-                            bValue
-                        ),
-                        undefined,
-                        {
-                            numeric: true,
-                            sensitivity:
-                                "base",
-                        }
-                    ) * direction
+                    String(aValue)
+                        .localeCompare(
+                            String(
+                                bValue
+                            ),
+                            undefined,
+                            {
+                                numeric:
+                                    true,
+                                sensitivity:
+                                    "base",
+                            }
+                        ) *
+                        direction
                 );
             })
             .map(
-                (item) =>
-                    item.row
+                (item) => item.row
             );
     }
 
@@ -906,17 +784,14 @@ const processedClientRows = computed(() => {
 
 /*
 |--------------------------------------------------------------------------
-| Totals
+| Pagination
 |--------------------------------------------------------------------------
 */
 
 const total = computed(() => {
     if (props.mode === "server") {
-        return Math.max(
-            0,
-            Number(
-                props.data?.total ?? 0
-            )
+        return Number(
+            props.data?.total ?? 0
         );
     }
 
@@ -970,8 +845,7 @@ const displayRows = computed(() => {
 
     return processedClientRows.value.slice(
         start,
-        start +
-            currentPageSize.value
+        start + currentPageSize.value
     );
 });
 
@@ -992,15 +866,11 @@ const showingFrom = computed(() => {
         );
     }
 
-    if (!props.pagination) {
-        return 1;
-    }
-
-    return (
-        (currentPage.value - 1) *
-            currentPageSize.value +
-        1
-    );
+    return props.pagination
+        ? (currentPage.value - 1) *
+              currentPageSize.value +
+              1
+        : 1;
 });
 
 const showingTo = computed(() => {
@@ -1015,20 +885,18 @@ const showingTo = computed(() => {
         );
     }
 
-    if (!props.pagination) {
-        return total.value;
-    }
-
-    return Math.min(
-        currentPage.value *
-            currentPageSize.value,
-        total.value
-    );
+    return props.pagination
+        ? Math.min(
+              currentPage.value *
+                  currentPageSize.value,
+              total.value
+          )
+        : total.value;
 });
 
 /*
 |--------------------------------------------------------------------------
-| Pagination pages
+| Pagination buttons
 |--------------------------------------------------------------------------
 */
 
@@ -1040,9 +908,7 @@ const paginationPages = computed(() => {
 
     if (last <= 7) {
         return Array.from(
-            {
-                length: last,
-            },
+            { length: last },
             (_, index) =>
                 index + 1
         );
@@ -1086,11 +952,13 @@ const paginationPages = computed(() => {
 
 /*
 |--------------------------------------------------------------------------
-| Server params
+| Server query
 |--------------------------------------------------------------------------
 */
 
-function buildServerParams() {
+function buildServerParams(
+    extra = {}
+) {
     const params = {
         ...props.queryParams,
 
@@ -1112,7 +980,15 @@ function buildServerParams() {
             sortBy.value
                 ? sortDirection.value
                 : undefined,
+
+        ...extra,
     };
+
+    /*
+    |--------------------------------------------------------------------------
+    | Filters
+    |--------------------------------------------------------------------------
+    */
 
     Object.entries(
         pendingFilters.value
@@ -1125,9 +1001,7 @@ function buildServerParams() {
             return;
         }
 
-        if (
-            Array.isArray(value)
-        ) {
+        if (Array.isArray(value)) {
             value.forEach(
                 (item, index) => {
                     params[
@@ -1156,7 +1030,8 @@ function buildServerParams() {
                             null &&
                         rangeValue !==
                             undefined &&
-                        rangeValue !== ""
+                        rangeValue !==
+                            ""
                     ) {
                         params[
                             `filters[${key}][${rangeKey}]`
@@ -1179,7 +1054,8 @@ function buildServerParams() {
             if (
                 params[key] ===
                     undefined ||
-                params[key] === null ||
+                params[key] ===
+                    null ||
                 params[key] === ""
             ) {
                 delete params[key];
@@ -1192,7 +1068,7 @@ function buildServerParams() {
 
 /*
 |--------------------------------------------------------------------------
-| Server request
+| Server loading
 |--------------------------------------------------------------------------
 */
 
@@ -1203,7 +1079,7 @@ function loadServerData() {
 
     if (!props.route) {
         console.warn(
-            "DataTable: `route` is required in server mode."
+            "DataTable: route is required in server mode."
         );
 
         return;
@@ -1241,7 +1117,9 @@ function loadServerData() {
 */
 
 watch(search, (value) => {
-    if (props.mode === "client") {
+    if (
+        props.mode === "client"
+    ) {
         currentPage.value = 1;
 
         emit(
@@ -1252,21 +1130,21 @@ watch(search, (value) => {
         return;
     }
 
-    clearTimeout(searchTimer);
+    clearTimeout(
+        searchTimer
+    );
 
-    searchTimer = setTimeout(
-        () => {
+    searchTimer =
+        setTimeout(() => {
             currentPage.value = 1;
 
             loadServerData();
-        },
-        props.searchDebounce
-    );
+        }, props.searchDebounce);
 });
 
 /*
 |--------------------------------------------------------------------------
-| Sorting
+| Sort
 |--------------------------------------------------------------------------
 */
 
@@ -1316,7 +1194,7 @@ function sort(column) {
 
 /*
 |--------------------------------------------------------------------------
-| Filter
+| Filter helpers
 |--------------------------------------------------------------------------
 */
 
@@ -1343,13 +1221,6 @@ function createEmptyFilter(
         };
     }
 
-    if (
-        filter.type ===
-        "multiselect"
-    ) {
-        return [];
-    }
-
     return "";
 }
 
@@ -1365,16 +1236,21 @@ function openFilters() {
                 )
             ) {
                 const value =
-                    pendingFilters.value[
+                    pendingFilters
+                        .value[
                         filter.key
                     ];
 
                 if (
-                    Array.isArray(value)
+                    Array.isArray(
+                        value
+                    )
                 ) {
                     copy[
                         filter.key
-                    ] = [...value];
+                    ] = [
+                        ...value,
+                    ];
                 } else if (
                     typeof value ===
                         "object" &&
@@ -1434,23 +1310,11 @@ function applyFilters() {
         }
 
         if (
-            Array.isArray(value)
-        ) {
-            if (value.length) {
-                cleaned[key] =
-                    value;
-            }
-
-            return;
-        }
-
-        if (
             typeof value ===
                 "object" &&
-            value !== null
+            !Array.isArray(value)
         ) {
-            const cleanedObject =
-                {};
+            const object = {};
 
             Object.entries(
                 value
@@ -1464,9 +1328,10 @@ function applyFilters() {
                             null &&
                         objectValue !==
                             undefined &&
-                        objectValue !== ""
+                        objectValue !==
+                            ""
                     ) {
-                        cleanedObject[
+                        object[
                             objectKey
                         ] =
                             objectValue;
@@ -1475,18 +1340,25 @@ function applyFilters() {
             );
 
             if (
-                Object.keys(
-                    cleanedObject
-                ).length
+                Object.keys(object)
+                    .length
             ) {
                 cleaned[key] =
-                    cleanedObject;
+                    object;
             }
 
             return;
         }
 
-        cleaned[key] = value;
+        if (
+            Array.isArray(value) &&
+            !value.length
+        ) {
+            return;
+        }
+
+        cleaned[key] =
+            value;
     });
 
     pendingFilters.value =
@@ -1511,8 +1383,7 @@ function applyFilters() {
 }
 
 function clearFilters() {
-    pendingFilters.value =
-        {};
+    pendingFilters.value = {};
 
     currentPage.value = 1;
 
@@ -1552,31 +1423,31 @@ function clearSearch() {
 */
 
 function changePage(page) {
-    const nextPage =
+    const next =
         Number(page);
 
     if (
         !Number.isFinite(
-            nextPage
+            next
         )
     ) {
         return;
     }
 
     if (
-        nextPage < 1 ||
-        nextPage >
+        next < 1 ||
+        next >
             totalPages.value
     ) {
         return;
     }
 
     currentPage.value =
-        nextPage;
+        next;
 
     emit(
         "page-change",
-        nextPage
+        next
     );
 
     if (
@@ -1590,26 +1461,26 @@ function changePage(page) {
 function changePageSize(
     size
 ) {
-    const nextSize =
+    const next =
         Number(size);
 
     if (
         !Number.isFinite(
-            nextSize
+            next
         ) ||
-        nextSize <= 0
+        next <= 0
     ) {
         return;
     }
 
     currentPageSize.value =
-        nextSize;
+        next;
 
     currentPage.value = 1;
 
     emit(
         "page-size-change",
-        nextSize
+        next
     );
 
     if (
@@ -1626,33 +1497,31 @@ function changePageSize(
 |--------------------------------------------------------------------------
 */
 
-const allSelected =
-    computed(() => {
-        if (
-            !displayRows.value
-                .length
-        ) {
-            return false;
-        }
+const allSelected = computed(() => {
+    if (
+        !displayRows.value
+            .length
+    ) {
+        return false;
+    }
 
-        return displayRows.value.every(
-            (row) =>
-                selectedRows.value.includes(
-                    row?.[
-                        props.rowKey
-                    ]
-                )
-        );
-    });
+    return displayRows.value.every(
+        (row) =>
+            selectedRows.value.includes(
+                row?.[
+                    props.rowKey
+                ]
+            )
+    );
+});
 
-const someSelected =
-    computed(() => {
-        return (
-            selectedRows.value
-                .length > 0 &&
-            !allSelected.value
-        );
-    });
+const someSelected = computed(() => {
+    return (
+        selectedRows.value
+            .length > 0 &&
+        !allSelected.value
+    );
+});
 
 function toggleSelectAll() {
     const ids =
@@ -1665,12 +1534,15 @@ function toggleSelectAll() {
             )
             .filter(
                 (id) =>
-                    id !== null &&
+                    id !==
+                        null &&
                     id !==
                         undefined
             );
 
-    if (allSelected.value) {
+    if (
+        allSelected.value
+    ) {
         selectedRows.value =
             selectedRows.value.filter(
                 (id) =>
@@ -1715,7 +1587,9 @@ function toggleRow(row) {
     ) {
         selectedRows.value =
             selectedRows.value.filter(
-                (selectedId) =>
+                (
+                    selectedId
+                ) =>
                     selectedId !==
                     id
             );
@@ -1753,7 +1627,8 @@ watch(
         if (
             props.mode ===
                 "server" &&
-            page !== undefined &&
+            page !==
+                undefined &&
             page !== null
         ) {
             currentPage.value =
@@ -1777,40 +1652,13 @@ watch(
             perPage !== null
         ) {
             currentPageSize.value =
-                Number(
-                    perPage
-                );
+                Number(perPage);
         }
     },
     {
         immediate: true,
     }
 );
-
-/*
-|--------------------------------------------------------------------------
-| Column helpers
-|--------------------------------------------------------------------------
-*/
-
-function isColumnSortable(
-    column
-) {
-    return (
-        props.sortable &&
-        column.sortable !==
-            false
-    );
-}
-
-function columnLabel(
-    column
-) {
-    return (
-        column.label ||
-        column.key
-    );
-}
 
 /*
 |--------------------------------------------------------------------------
@@ -1841,12 +1689,11 @@ function formatDate(
         return new Intl.DateTimeFormat(
             column.locale ||
                 undefined,
-            column.dateOptions ||
-                {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                }
+            column.dateOptions || {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+            }
         ).format(date);
     } catch {
         return value;
@@ -1904,7 +1751,9 @@ function formatNumber(
             undefined,
         column.numberOptions ||
             {}
-    ).format(Number(value));
+    ).format(
+        Number(value)
+    );
 }
 
 function booleanValue(
@@ -1984,19 +1833,33 @@ function getBadgeClass(
 
 /*
 |--------------------------------------------------------------------------
-| Column visibility
+| Columns
 |--------------------------------------------------------------------------
 */
 
-function toggleColumn(
-    key
-) {
-    columnVisibility.value[
-        key
-    ] =
+function toggleColumn(key) {
+    columnVisibility.value[key] =
         !columnVisibility.value[
             key
         ];
+}
+
+function columnLabel(
+    column
+) {
+    return (
+        column.label ||
+        column.key
+    );
+}
+
+function isColumnSortable(
+    column
+) {
+    return (
+        props.sortable &&
+        column.sortable !== false
+    );
 }
 
 /*
@@ -2006,238 +1869,429 @@ function toggleColumn(
 */
 
 /*
+ * Current page
+ * Selected
+ * All filtered
+ */
+const exportRows = ref([]);
+
+const exportScopeOptions = [
+    {
+        value: "current",
+        label: "Current Page",
+    },
+    {
+        value: "selected",
+        label: "Selected",
+    },
+    {
+        value: "filtered",
+        label: "All Filtered",
+    },
+];
+
+/*
 |--------------------------------------------------------------------------
-| Export rows
+| Export columns
 |--------------------------------------------------------------------------
 */
 
-const exportRows = computed(
-    () => {
-        if (
-            exportScope.value ===
-            "selected"
-        ) {
+function getExportColumns() {
+    return visibleColumns.value.filter(
+        (column) =>
+            column.exportable !==
+            false
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Convert rows to export data
+|--------------------------------------------------------------------------
+*/
+
+function getExportData(data) {
+    const columns =
+        getExportColumns();
+
+    return data.map((row) => {
+        const result = {};
+
+        columns.forEach(
+            (column) => {
+                let value =
+                    getValue(
+                        row,
+                        column.key
+                    );
+
+                if (
+                    value ===
+                        null ||
+                    value ===
+                        undefined
+                ) {
+                    value = "";
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Format exported values
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    column.type ===
+                    "boolean"
+                ) {
+                    value =
+                        booleanValue(
+                            value
+                        )
+                            ? "Yes"
+                            : "No";
+                }
+
+                if (
+                    column.type ===
+                    "date"
+                ) {
+                    value =
+                        formatDate(
+                            value,
+                            column
+                        );
+                }
+
+                if (
+                    column.type ===
+                    "datetime"
+                ) {
+                    value =
+                        formatDateTime(
+                            value
+                        );
+                }
+
+                result[
+                    column.label ||
+                        column.key
+                ] = value;
+            }
+        );
+
+        return result;
+    });
+}
+
+/*
+|--------------------------------------------------------------------------
+| Fetch server export data
+|--------------------------------------------------------------------------
+|
+| IMPORTANT:
+|
+| This uses the SAME route.
+|
+| Example:
+|
+| /branches?datatable_export=1
+|
+| No additional export route is required.
+|
+*/
+
+async function fetchServerExportRows(
+    scope
+) {
+    if (!props.route) {
+        throw new Error(
+            "DataTable: route is required for server export."
+        );
+    }
+
+    let params = {};
+
+    /*
+    |--------------------------------------------------------------------------
+    | All filtered
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        scope ===
+        "filtered"
+    ) {
+        params =
+            buildServerParams({
+                datatable_export: 1,
+                export_scope:
+                    "filtered",
+            });
+
+        /*
+         * Tell Laravel not to paginate.
+         */
+        params.page = 1;
+
+        params.per_page =
+            -1;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Selected
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        scope ===
+        "selected"
+    ) {
+        params =
+            buildServerParams({
+                datatable_export: 1,
+                export_scope:
+                    "selected",
+            });
+
+        params.page = 1;
+
+        params.per_page =
+            -1;
+
+        /*
+         * Send selected IDs.
+         */
+
+        selectedRows.value.forEach(
+            (id, index) => {
+                params[
+                    `selected_ids[${index}]`
+                ] = id;
+            }
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Build URL
+    |--------------------------------------------------------------------------
+    */
+
+    const query =
+        new URLSearchParams();
+
+    Object.entries(params).forEach(
+        ([key, value]) => {
             if (
-                !selectedRows.value
-                    .length
+                value ===
+                    undefined ||
+                value === null
             ) {
-                return [];
+                return;
             }
 
+            query.append(
+                key,
+                String(value)
+            );
+        }
+    );
+
+    const url =
+        `${props.route}?${query.toString()}`;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Fetch
+    |--------------------------------------------------------------------------
+    */
+
+    const response =
+        await fetch(url, {
+            method: "GET",
+
+            headers: {
+                Accept:
+                    "application/json",
+
+                "X-Requested-With":
+                    "XMLHttpRequest",
+            },
+
+            credentials:
+                "same-origin",
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Content type
+    |--------------------------------------------------------------------------
+    */
+
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+    /*
+    |--------------------------------------------------------------------------
+    | Error handling
+    |--------------------------------------------------------------------------
+    */
+
+    if (!response.ok) {
+        const text =
+            await response.text();
+
+        throw new Error(
+            `Export request failed (${response.status}). ${text.slice(
+                0,
+                300
+            )}`
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | HTML response
+    |--------------------------------------------------------------------------
+    |
+    | This is the exact reason for:
+    |
+    | Unexpected token '<'
+    |
+    */
+
+    if (
+        !contentType.includes(
+            "application/json"
+        )
+    ) {
+        const text =
+            await response.text();
+
+        if (
+            text.trim().startsWith(
+                "<"
+            )
+        ) {
+            throw new Error(
+                "The server returned an HTML/Inertia page instead of JSON. Add datatable_export handling to the existing controller route."
+            );
+        }
+
+        throw new Error(
+            `Expected JSON but received ${contentType || "unknown content type"}.`
+        );
+    }
+
+    const result =
+        await response.json();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Normalize response
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        Array.isArray(result)
+    ) {
+        return result;
+    }
+
+    if (
+        Array.isArray(
+            result.data
+        )
+    ) {
+        return result.data;
+    }
+
+    if (
+        Array.isArray(
+            result.rows
+        )
+    ) {
+        return result.rows;
+    }
+
+    throw new Error(
+        "Export response does not contain a valid data array."
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Get export rows
+|--------------------------------------------------------------------------
+*/
+
+async function getExportRows(
+    scope
+) {
+    /*
+    |--------------------------------------------------------------------------
+    | Current page
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        scope ===
+        "current"
+    ) {
+        return displayRows.value;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Client mode
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        props.mode ===
+        "client"
+    ) {
+        if (
+            scope ===
+            "selected"
+        ) {
             const selectedSet =
                 new Set(
                     selectedRows.value
                 );
 
-            /*
-             * Client mode:
-             * search all available rows.
-             *
-             * Server mode:
-             * only selected rows currently
-             * loaded in the browser.
-             */
-            const source =
-                props.mode ===
-                "client"
-                    ? rows.value
-                    : rows.value;
-
-            return source.filter(
+            return processedClientRows.value.filter(
                 (row) =>
                     selectedSet.has(
                         row?.[
-                            props.rowKey
+                            props
+                                .rowKey
                         ]
                     )
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Current page
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            exportScope.value ===
-            "current"
-        ) {
-            return displayRows.value;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Filtered
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            props.mode ===
-            "client"
-        ) {
-            return processedClientRows.value;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Server mode
-        |--------------------------------------------------------------------------
-        |
-        | Server mode only has the current
-        | page in browser memory.
-        |
-        */
-
-        return rows.value;
-    }
-);
-
-/*
-|--------------------------------------------------------------------------
-| Export value formatting
-|--------------------------------------------------------------------------
-*/
-
-function getExportValue(
-    row,
-    column
-) {
-    let value = getValue(
-        row,
-        column.key
-    );
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return "";
+        return processedClientRows.value;
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Custom export formatter
+    | Server mode
     |--------------------------------------------------------------------------
     */
 
-    if (
-        typeof column.exportValue ===
-        "function"
-    ) {
-        return column.exportValue(
-            value,
-            row,
-            column
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Boolean
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-        column.type ===
-        "boolean"
-    ) {
-        return booleanValue(
-            value
-        )
-            ? "Yes"
-            : "No";
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Date
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-        column.type === "date"
-    ) {
-        return formatDate(
-            value,
-            column
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Datetime
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-        column.type ===
-        "datetime"
-    ) {
-        return formatDateTime(
-            value
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Array/Object
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-        typeof value ===
-        "object"
-    ) {
-        try {
-            return JSON.stringify(
-                value
-            );
-        } catch {
-            return String(value);
-        }
-    }
-
-    return value;
-}
-
-/*
-|--------------------------------------------------------------------------
-| Prepare export data
-|--------------------------------------------------------------------------
-*/
-
-function getExportData(
-    data
-) {
-    const columns =
-        exportColumns.value;
-
-    return data.map(
-        (row) => {
-            const result = {};
-
-            columns.forEach(
-                (column) => {
-                    result[
-                        column.label ||
-                            column.key
-                    ] =
-                        getExportValue(
-                            row,
-                            column
-                        );
-                }
-            );
-
-            return result;
-        }
+    return await fetchServerExportRows(
+        scope
     );
 }
 
 /*
 |--------------------------------------------------------------------------
-| Export
+| Run export
 |--------------------------------------------------------------------------
 */
 
@@ -2254,7 +2308,7 @@ async function runExport(
 
     /*
     |--------------------------------------------------------------------------
-    | Selected validation
+    | Validate selected
     |--------------------------------------------------------------------------
     */
 
@@ -2268,46 +2322,77 @@ async function runExport(
             "export-error",
             {
                 type,
+                scope:
+                    exportScope.value,
                 reason:
                     "no-selection",
             }
         );
-
-        exportMenuOpen.value =
-            false;
-
-        return;
-    }
-
-    const data =
-        exportRows.value;
-
-    if (!data.length) {
-        emit(
-            "export-error",
-            {
-                type,
-                reason:
-                    "no-data",
-            }
-        );
-
-        exportMenuOpen.value =
-            false;
 
         return;
     }
 
     exporting.value = true;
 
-    emit("export", {
-        type,
-        scope:
-            exportScope.value,
-        rows: data,
-    });
-
     try {
+        /*
+        |--------------------------------------------------------------------------
+        | Fetch
+        |--------------------------------------------------------------------------
+        */
+
+        const data =
+            await getExportRows(
+                exportScope.value
+            );
+
+        exportRows.value =
+            data;
+
+        /*
+        |--------------------------------------------------------------------------
+        | No data
+        |--------------------------------------------------------------------------
+        */
+
+        if (!data.length) {
+            emit(
+                "export-error",
+                {
+                    type,
+                    scope:
+                        exportScope.value,
+                    reason:
+                        "no-data",
+                }
+            );
+
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Event
+        |--------------------------------------------------------------------------
+        */
+
+        emit("export", {
+            type,
+
+            scope:
+                exportScope.value,
+
+            rows: data,
+
+            count: data.length,
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Export
+        |--------------------------------------------------------------------------
+        */
+
         switch (type) {
             case "csv":
                 exportCSV(data);
@@ -2332,12 +2417,20 @@ async function runExport(
                 break;
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Success
+        |--------------------------------------------------------------------------
+        */
+
         emit(
             "export-success",
             {
                 type,
+
                 scope:
                     exportScope.value,
+
                 count: data.length,
             }
         );
@@ -2351,8 +2444,10 @@ async function runExport(
             "export-error",
             {
                 type,
+
                 scope:
                     exportScope.value,
+
                 error,
             }
         );
@@ -2371,61 +2466,7 @@ async function runExport(
 |--------------------------------------------------------------------------
 */
 
-function exportCSV(data) {
-    const rows =
-        getExportData(data);
-
-    if (!rows.length) {
-        return;
-    }
-
-    const headers =
-        Object.keys(
-            rows[0]
-        );
-
-    const csv = [
-        headers
-            .map(csvEscape)
-            .join(","),
-        ...rows.map(
-            (row) =>
-                headers
-                    .map(
-                        (header) =>
-                            csvEscape(
-                                row[
-                                    header
-                                ]
-                            )
-                    )
-                    .join(",")
-        ),
-    ].join("\n");
-
-    /*
-    |--------------------------------------------------------------------------
-    | UTF-8 BOM
-    |--------------------------------------------------------------------------
-    |
-    | Helps Excel correctly detect UTF-8
-    | including Nepali characters.
-    |
-    */
-
-    const content =
-        "\uFEFF" + csv;
-
-    downloadFile(
-        content,
-        `${props.exportFilename}.csv`,
-        "text/csv;charset=utf-8;"
-    );
-}
-
-function csvEscape(
-    value
-) {
+function csvEscape(value) {
     const string =
         String(value ?? "");
 
@@ -2444,6 +2485,55 @@ function csvEscape(
     return string;
 }
 
+function exportCSV(data) {
+    const exportData =
+        getExportData(data);
+
+    if (!exportData.length) {
+        return;
+    }
+
+    const headers =
+        Object.keys(
+            exportData[0]
+        );
+
+    const csv = [
+        headers
+            .map(csvEscape)
+            .join(","),
+
+        ...exportData.map(
+            (row) =>
+                headers
+                    .map(
+                        (header) =>
+                            csvEscape(
+                                row[
+                                    header
+                                ]
+                            )
+                    )
+                    .join(",")
+        ),
+    ].join("\r\n");
+
+    /*
+    |--------------------------------------------------------------------------
+    | UTF-8 BOM
+    |--------------------------------------------------------------------------
+    |
+    | Makes Nepali/Unicode work correctly in Excel.
+    |
+    */
+
+    downloadFile(
+        "\uFEFF" + csv,
+        `${props.exportFilename}.csv`,
+        "text/csv;charset=utf-8;"
+    );
+}
+
 /*
 |--------------------------------------------------------------------------
 | JSON
@@ -2454,15 +2544,12 @@ function exportJSON(data) {
     const exportData =
         getExportData(data);
 
-    const json =
+    downloadFile(
         JSON.stringify(
             exportData,
             null,
             2
-        );
-
-    downloadFile(
-        json,
+        ),
         `${props.exportFilename}.json`,
         "application/json;charset=utf-8;"
     );
@@ -2477,16 +2564,6 @@ function exportJSON(data) {
 async function exportExcel(
     data
 ) {
-    /*
-    |--------------------------------------------------------------------------
-    | Dynamic import
-    |--------------------------------------------------------------------------
-    |
-    | XLSX is loaded only when the user
-    | actually chooses Excel.
-    |
-    */
-
     const XLSX =
         await import("xlsx");
 
@@ -2496,44 +2573,6 @@ async function exportExcel(
     const worksheet =
         XLSX.utils.json_to_sheet(
             exportData
-        );
-
-    /*
-    |--------------------------------------------------------------------------
-    | Auto width
-    |--------------------------------------------------------------------------
-    */
-
-    const headers =
-        Object.keys(
-            exportData[0] || {}
-        );
-
-    worksheet["!cols"] =
-        headers.map(
-            (header) => {
-                const maxLength =
-                    Math.max(
-                        header.length,
-                        ...exportData.map(
-                            (row) =>
-                                String(
-                                    row[
-                                        header
-                                    ] ??
-                                        ""
-                                ).length
-                        )
-                    );
-
-                return {
-                    wch: Math.min(
-                        maxLength +
-                            2,
-                        50
-                    ),
-                };
-            }
         );
 
     const workbook =
@@ -2557,9 +2596,7 @@ async function exportExcel(
 |--------------------------------------------------------------------------
 */
 
-async function copyData(
-    data
-) {
+async function copyData(data) {
     const exportData =
         getExportData(data);
 
@@ -2580,23 +2617,16 @@ async function copyData(
                 headers
                     .map(
                         (header) =>
-                            String(
-                                row[
-                                    header
-                                ] ??
-                                    ""
-                            ).replace(
-                                /\t/g,
-                                " "
-                            )
+                            row[
+                                header
+                            ] ?? ""
                     )
                     .join("\t")
         ),
     ].join("\n");
 
     if (
-        navigator.clipboard &&
-        window.isSecureContext
+        navigator.clipboard
     ) {
         await navigator.clipboard.writeText(
             text
@@ -2634,9 +2664,7 @@ async function copyData(
         "copy"
     );
 
-    document.body.removeChild(
-        textarea
-    );
+    textarea.remove();
 }
 
 /*
@@ -2654,49 +2682,36 @@ function printData(data) {
     }
 
     const columns =
-        exportColumns.value;
-
-    const title =
-        escapeHTML(
-            props.exportFilename
-        );
+        getExportColumns();
 
     const html = `
         <!DOCTYPE html>
-
         <html>
         <head>
             <meta charset="UTF-8">
 
-            <title>${title}</title>
+            <title>
+                ${escapeHTML(
+                    props.exportFilename
+                )}
+            </title>
 
             <style>
-
-                * {
-                    box-sizing: border-box;
-                }
-
                 body {
                     font-family:
                         Arial,
-                        "Noto Sans",
                         sans-serif;
 
                     padding: 30px;
-
-                    color: #1e293b;
                 }
 
                 h2 {
-                    margin:
-                        0 0 20px;
-
-                    font-size: 20px;
+                    margin-bottom:
+                        20px;
                 }
 
                 table {
                     width: 100%;
-
                     border-collapse:
                         collapse;
                 }
@@ -2706,67 +2721,38 @@ function printData(data) {
                     border:
                         1px solid #ddd;
 
-                    padding: 8px;
+                    padding:
+                        8px;
 
                     text-align:
                         left;
-
-                    font-size:
-                        12px;
                 }
 
                 th {
                     background:
                         #f8fafc;
-
-                    font-weight:
-                        600;
-                }
-
-                tr:nth-child(
-                    even
-                ) {
-                    background:
-                        #fafafa;
                 }
 
                 @media print {
-
                     body {
-                        padding: 10px;
-                    }
-
-                    table {
-                        page-break-inside:
-                            auto;
-                    }
-
-                    tr {
-                        page-break-inside:
-                            avoid;
-                        page-break-after:
-                            auto;
-                    }
-
-                    thead {
-                        display:
-                            table-header-group;
+                        padding: 0;
                     }
                 }
-
             </style>
         </head>
 
         <body>
 
-            <h2>${title}</h2>
+            <h2>
+                ${escapeHTML(
+                    props.exportFilename
+                )}
+            </h2>
 
             <table>
 
                 <thead>
-
                     <tr>
-
                         ${columns
                             .map(
                                 (
@@ -2777,12 +2763,8 @@ function printData(data) {
                                             column.key
                                     )}</th>`
                             )
-                            .join(
-                                ""
-                            )}
-
+                            .join("")}
                     </tr>
-
                 </thead>
 
                 <tbody>
@@ -2793,39 +2775,37 @@ function printData(data) {
                                 row
                             ) => `
                                 <tr>
-
                                     ${columns
                                         .map(
                                             (
                                                 column
-                                            ) => `
-                                                <td>
-                                                    ${escapeHTML(
-                                                        row[
-                                                            column.label ||
-                                                                column.key
-                                                        ]
-                                                    )}
-                                                </td>
-                                            `
-                                        )
-                                        .join(
-                                            ""
-                                        )}
+                                            ) => {
+                                                const key =
+                                                    column.label ||
+                                                    column.key;
 
+                                                return `
+                                                    <td>
+                                                        ${escapeHTML(
+                                                            row[
+                                                                key
+                                                            ]
+                                                        )}
+                                                    </td>
+                                                `;
+                                            }
+                                        )
+                                        .join("")}
                                 </tr>
                             `
                         )
-                        .join(
-                            ""
-                        )}
+                        .join("")}
 
                 </tbody>
 
             </table>
 
         </body>
-
         </html>
     `;
 
@@ -2838,11 +2818,9 @@ function printData(data) {
 
     if (!printWindow) {
         throw new Error(
-            "Unable to open print window. Please allow popups."
+            "Popup blocked. Please allow popups for printing."
         );
     }
-
-    printWindow.document.open();
 
     printWindow.document.write(
         html
@@ -2863,9 +2841,7 @@ function printData(data) {
 |--------------------------------------------------------------------------
 */
 
-function escapeHTML(
-    value
-) {
+function escapeHTML(value) {
     return String(
         value ?? ""
     )
@@ -2931,9 +2907,7 @@ function downloadFile(
 
     link.click();
 
-    document.body.removeChild(
-        link
-    );
+    link.remove();
 
     setTimeout(() => {
         URL.revokeObjectURL(
@@ -2944,60 +2918,13 @@ function downloadFile(
 
 /*
 |--------------------------------------------------------------------------
-| Export menu
-|--------------------------------------------------------------------------
-*/
-
-function toggleExportMenu() {
-    exportMenuOpen.value =
-        !exportMenuOpen.value;
-
-    if (
-        exportMenuOpen.value
-    ) {
-        showColumnModal.value =
-            false;
-    }
-}
-
-/*
-|--------------------------------------------------------------------------
-| Click outside
-|--------------------------------------------------------------------------
-*/
-
-function handleDocumentClick(
-    event
-) {
-    const target =
-        event.target;
-
-    if (
-        !target.closest(
-            "[data-export-menu]"
-        )
-    ) {
-        exportMenuOpen.value =
-            false;
-    }
-
-    if (
-        !target.closest(
-            "[data-column-menu]"
-        )
-    ) {
-        showColumnModal.value =
-            false;
-    }
-}
-
-/*
-|--------------------------------------------------------------------------
 | Escape
 |--------------------------------------------------------------------------
 */
 
-function handleEscape(event) {
+function handleEscape(
+    event
+) {
     if (
         event.key ===
         "Escape"
@@ -3013,46 +2940,22 @@ function handleEscape(event) {
     }
 }
 
-if (
-    typeof window !==
-    "undefined"
-) {
+onMounted(() => {
     window.addEventListener(
         "keydown",
         handleEscape
     );
-
-    document.addEventListener(
-        "click",
-        handleDocumentClick
-    );
-}
-
-/*
-|--------------------------------------------------------------------------
-| Cleanup
-|--------------------------------------------------------------------------
-*/
+});
 
 onBeforeUnmount(() => {
     clearTimeout(
         searchTimer
     );
 
-    if (
-        typeof window !==
-        "undefined"
-    ) {
-        window.removeEventListener(
-            "keydown",
-            handleEscape
-        );
-
-        document.removeEventListener(
-            "click",
-            handleDocumentClick
-        );
-    }
+    window.removeEventListener(
+        "keydown",
+        handleEscape
+    );
 });
 
 /*
@@ -3066,7 +2969,7 @@ defineExpose({
     clearFilters,
     clearSelection,
     loadServerData,
-    exportData: runExport,
+    runExport,
 });
 </script>
 
@@ -3077,6 +2980,7 @@ defineExpose({
             '--dt-primary': primaryColor,
         }"
     >
+
         <!-- ===================================================== -->
         <!-- TOOLBAR -->
         <!-- ===================================================== -->
@@ -3084,11 +2988,13 @@ defineExpose({
         <div
             class="flex min-h-[68px] flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3"
         >
+
             <!-- LEFT -->
 
             <div
                 class="flex min-w-0 flex-1 flex-wrap items-center gap-2"
             >
+
                 <!-- SEARCH -->
 
                 <div
@@ -3116,27 +3022,19 @@ defineExpose({
                     <input
                         v-model="search"
                         type="search"
-                        :placeholder="searchPlaceholder"
+                        :placeholder="
+                            searchPlaceholder
+                        "
                         class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-9 text-sm text-slate-700 outline-none transition focus:border-[var(--dt-primary)] focus:bg-white focus:ring-1 focus:ring-[var(--dt-primary)]"
                     />
 
                     <button
                         v-if="search"
                         type="button"
-                        class="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                        class="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 hover:bg-slate-100"
                         @click="clearSearch"
                     >
-                        <svg
-                            class="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                d="M6 6l12 12M18 6 6 18"
-                            />
-                        </svg>
+                        ×
                     </button>
                 </div>
 
@@ -3148,20 +3046,10 @@ defineExpose({
                         filterDefinitions.length
                     "
                     type="button"
-                    class="relative inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                    class="relative inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
                     @click="openFilters"
                 >
-                    <svg
-                        class="h-4 w-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
-                        <path
-                            d="M4 6h16M7 12h10m-7 6h4"
-                        />
-                    </svg>
+                    <span>☷</span>
 
                     Filters
 
@@ -3175,79 +3063,85 @@ defineExpose({
                                 primaryColor,
                         }"
                     >
-                        {{ activeFilterCount }}
+                        {{
+                            activeFilterCount
+                        }}
                     </span>
                 </button>
 
                 <!-- CLEAR -->
 
                 <button
-                    v-if="activeFilterCount"
+                    v-if="
+                        activeFilterCount
+                    "
                     type="button"
-                    class="inline-flex h-10 items-center gap-1 rounded-lg bg-red-50 px-3 text-sm font-medium text-red-600 hover:bg-red-100"
+                    class="inline-flex h-10 items-center rounded-lg bg-red-50 px-3 text-sm font-medium text-red-600 hover:bg-red-100"
                     @click="clearFilters"
                 >
                     Clear
                 </button>
 
-                <!-- EXPORT -->
+                <!-- CUSTOM TOOLBAR -->
+
+                <slot
+                    name="toolbar"
+                    :selected="
+                        selectedRows
+                    "
+                />
+            </div>
+
+            <!-- RIGHT -->
+
+            <div
+                class="flex shrink-0 flex-wrap items-center gap-2"
+            >
+
+                <!-- SELECTION -->
 
                 <div
                     v-if="
-                        exportable &&
-                        exportOptions.length
+                        selectable &&
+                        selectedRows.length
                     "
+                    class="text-sm text-slate-500"
+                >
+                    {{
+                        selectedRows.length
+                    }}
+                    selected
+                </div>
+
+                <!-- EXPORT -->
+
+                <div
+                    v-if="exportable"
                     class="relative"
-                    data-export-menu
                 >
                     <button
                         type="button"
-                        :disabled="exporting"
-                        class="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-                        @click.stop="
-                            toggleExportMenu
+                        class="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                        :disabled="
+                            exporting
+                        "
+                        @click="
+                            exportMenuOpen =
+                                !exportMenuOpen
                         "
                     >
-                        <!-- Download icon -->
+                        <span
+                            v-if="
+                                exporting
+                            "
+                            class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
+                        />
 
-                        <svg
-                            v-if="!exporting"
-                            class="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"
-                            />
-                        </svg>
-
-                        <!-- Loading -->
-
-                        <svg
+                        <span
                             v-else
-                            class="h-4 w-4 animate-spin"
-                            viewBox="0 0 24 24"
-                            fill="none"
                         >
-                            <circle
-                                cx="12"
-                                cy="12"
-                                r="9"
-                                class="opacity-25"
-                                stroke="currentColor"
-                                stroke-width="3"
-                            />
-
-                            <path
-                                d="M21 12a9 9 0 0 0-9-9"
-                                stroke="currentColor"
-                                stroke-width="3"
-                            />
-                        </svg>
+                            ↓
+                        </span>
 
                         {{
                             exporting
@@ -3255,20 +3149,13 @@ defineExpose({
                                 : "Export"
                         }}
 
-                        <svg
-                            v-if="!exporting"
-                            class="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
+                        <span
+                            v-if="
+                                !exporting
+                            "
                         >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="m6 9 6 6 6-6"
-                            />
-                        </svg>
+                            ▾
+                        </span>
                     </button>
 
                     <!-- EXPORT MENU -->
@@ -3277,82 +3164,40 @@ defineExpose({
                         v-if="
                             exportMenuOpen
                         "
-                        class="absolute left-0 z-[100] mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-2xl"
-                        @click.stop
+                        class="absolute right-0 z-[100] mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-2xl"
                     >
+
                         <!-- SCOPE -->
 
                         <div
-                            v-if="
-                                showExportScope
-                            "
-                            class="border-b border-slate-100 px-2 pb-2 pt-1"
+                            class="mb-2 border-b border-slate-100 pb-2"
                         >
                             <p
-                                class="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
+                                class="px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
                             >
-                                Export records
+                                Export scope
                             </p>
 
                             <label
-                                class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 hover:bg-slate-50"
-                            >
-                                <input
-                                    v-model="
-                                        exportScope
-                                    "
-                                    type="radio"
-                                    value="filtered"
-                                    :style="{
-                                        accentColor:
-                                            primaryColor,
-                                    }"
-                                />
-
-                                <span
-                                    class="text-sm text-slate-700"
-                                >
-                                    All filtered
-                                </span>
-                            </label>
-
-                            <label
-                                class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 hover:bg-slate-50"
-                            >
-                                <input
-                                    v-model="
-                                        exportScope
-                                    "
-                                    type="radio"
-                                    value="current"
-                                    :style="{
-                                        accentColor:
-                                            primaryColor,
-                                    }"
-                                />
-
-                                <span
-                                    class="text-sm text-slate-700"
-                                >
-                                    Current page
-                                </span>
-                            </label>
-
-                            <label
-                                class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 hover:bg-slate-50"
-                                :class="
-                                    selectedRows.length
-                                        ? ''
-                                        : 'opacity-50'
+                                v-for="
+                                    option in exportScopeOptions
                                 "
+                                :key="
+                                    option.value
+                                "
+                                class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-sm text-slate-700 hover:bg-slate-50"
                             >
                                 <input
                                     v-model="
                                         exportScope
                                     "
                                     type="radio"
-                                    value="selected"
+                                    :value="
+                                        option.value
+                                    "
                                     :disabled="
+                                        option.value ===
+                                            'selected' &&
                                         !selectedRows.length
                                     "
                                     :style="{
@@ -3361,25 +3206,33 @@ defineExpose({
                                     }"
                                 />
 
+                                <span>
+                                    {{
+                                        option.label
+                                    }}
+                                </span>
+
                                 <span
-                                    class="text-sm text-slate-700"
+                                    v-if="
+                                        option.value ===
+                                        'selected'
+                                    "
+                                    class="ml-auto text-xs text-slate-400"
                                 >
-                                    Selected
-                                    <span
-                                        v-if="
-                                            selectedRows.length
-                                        "
-                                        class="text-xs text-slate-400"
-                                    >
-                                        ({{
-                                            selectedRows.length
-                                        }})
-                                    </span>
+                                    {{
+                                        selectedRows.length
+                                    }}
                                 </span>
                             </label>
                         </div>
 
-                        <!-- CSV -->
+                        <!-- FORMATS -->
+
+                        <p
+                            class="px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
+                        >
+                            Format
+                        </p>
 
                         <button
                             v-if="
@@ -3388,33 +3241,15 @@ defineExpose({
                                 )
                             "
                             type="button"
-                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
                             @click="
-                                runExport('csv')
+                                runExport(
+                                    'csv'
+                                )
                             "
                         >
-                            <span
-                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600"
-                            >
-                                CSV
-                            </span>
-
-                            <span>
-                                <span
-                                    class="block font-medium"
-                                >
-                                    Export CSV
-                                </span>
-
-                                <span
-                                    class="block text-[11px] text-slate-400"
-                                >
-                                    Comma separated
-                                </span>
-                            </span>
+                            CSV
                         </button>
-
-                        <!-- EXCEL -->
 
                         <button
                             v-if="
@@ -3423,35 +3258,15 @@ defineExpose({
                                 )
                             "
                             type="button"
-                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
                             @click="
                                 runExport(
                                     'excel'
                                 )
                             "
                         >
-                            <span
-                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-50 text-green-600"
-                            >
-                                XLS
-                            </span>
-
-                            <span>
-                                <span
-                                    class="block font-medium"
-                                >
-                                    Export Excel
-                                </span>
-
-                                <span
-                                    class="block text-[11px] text-slate-400"
-                                >
-                                    Excel workbook
-                                </span>
-                            </span>
+                            Excel
                         </button>
-
-                        <!-- JSON -->
 
                         <button
                             v-if="
@@ -3460,39 +3275,15 @@ defineExpose({
                                 )
                             "
                             type="button"
-                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
                             @click="
                                 runExport(
                                     'json'
                                 )
                             "
                         >
-                            <span
-                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600"
-                            >
-                                JSON
-                            </span>
-
-                            <span>
-                                <span
-                                    class="block font-medium"
-                                >
-                                    Export JSON
-                                </span>
-
-                                <span
-                                    class="block text-[11px] text-slate-400"
-                                >
-                                    Raw data
-                                </span>
-                            </span>
+                            JSON
                         </button>
-
-                        <div
-                            class="my-1 border-t border-slate-100"
-                        />
-
-                        <!-- COPY -->
 
                         <button
                             v-if="
@@ -3501,38 +3292,16 @@ defineExpose({
                                 )
                             "
                             type="button"
-                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
                             @click="
                                 runExport(
                                     'copy'
                                 )
                             "
                         >
-                            <svg
-                                class="h-4 w-4 text-slate-400"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <rect
-                                    x="9"
-                                    y="9"
-                                    width="12"
-                                    height="12"
-                                    rx="2"
-                                />
-
-                                <path
-                                    d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-                                />
-                            </svg>
-
                             Copy
                         </button>
 
-                        <!-- PRINT -->
-
                         <button
                             v-if="
                                 exportOptions.includes(
@@ -3540,137 +3309,16 @@ defineExpose({
                                 )
                             "
                             type="button"
-                            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                            class="flex w-full items-center rounded-lg px-2 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
                             @click="
                                 runExport(
                                     'print'
                                 )
                             "
                         >
-                            <svg
-                                class="h-4 w-4 text-slate-400"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    d="M6 9V2h12v7"
-                                />
-
-                                <path
-                                    d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
-                                />
-
-                                <path
-                                    d="M6 14h12v8H6z"
-                                />
-                            </svg>
-
                             Print
                         </button>
                     </div>
-                </div>
-
-                <!-- CUSTOM TOOLBAR -->
-
-                <slot
-                    name="toolbar"
-                    :selected="selectedRows"
-                />
-            </div>
-
-            <!-- RIGHT -->
-
-            <div
-                class="flex shrink-0 items-center gap-2"
-            >
-                <!-- SELECTION -->
-
-                <div
-                    v-if="
-                        selectable &&
-                        selectedRows.length
-                    "
-                    class="hidden text-sm text-slate-500 md:block"
-                >
-                    {{
-                        selectedRows.length
-                    }}
-                    selected
-                </div>
-
-                <!-- VIEW SWITCHER -->
-
-                <div
-                    v-if="
-                        showViewSwitcher
-                    "
-                    class="hidden rounded-lg border border-slate-200 bg-slate-50 p-1 sm:flex"
-                >
-                    <button
-                        type="button"
-                        class="rounded-md p-1.5 transition"
-                        :class="
-                            viewMode ===
-                            'table'
-                                ? 'bg-white text-slate-800 shadow-sm'
-                                : 'text-slate-400 hover:text-slate-700'
-                        "
-                        title="Table view"
-                        @click="
-                            viewMode =
-                                'table'
-                        "
-                    >
-                        <svg
-                            class="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <rect
-                                x="3"
-                                y="4"
-                                width="18"
-                                height="16"
-                                rx="2"
-                            />
-
-                            <path
-                                d="M3 10h18M9 4v16"
-                            />
-                        </svg>
-                    </button>
-
-                    <button
-                        type="button"
-                        class="rounded-md p-1.5 transition"
-                        :class="
-                            viewMode ===
-                            'compact'
-                                ? 'bg-white text-slate-800 shadow-sm'
-                                : 'text-slate-400 hover:text-slate-700'
-                        "
-                        title="Compact view"
-                        @click="
-                            viewMode =
-                                'compact'
-                        "
-                    >
-                        <svg
-                            class="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                d="M4 6h16M4 12h16M4 18h16"
-                            />
-                        </svg>
-                    </button>
                 </div>
 
                 <!-- COLUMN MANAGER -->
@@ -3680,64 +3328,23 @@ defineExpose({
                         showColumnManager
                     "
                     class="relative"
-                    data-column-menu
                 >
                     <button
                         type="button"
-                        class="inline-flex h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 shadow-sm hover:bg-slate-50"
-                        @click.stop="
+                        class="inline-flex h-10 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 shadow-sm hover:bg-slate-50"
+                        @click="
                             showColumnModal =
                                 !showColumnModal
                         "
                     >
-                        <svg
-                            class="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                d="M4 5h16M4 12h16M4 19h16"
-                            />
-
-                            <circle
-                                cx="8"
-                                cy="5"
-                                r="2"
-                                fill="currentColor"
-                            />
-
-                            <circle
-                                cx="15"
-                                cy="12"
-                                r="2"
-                                fill="currentColor"
-                            />
-
-                            <circle
-                                cx="10"
-                                cy="19"
-                                r="2"
-                                fill="currentColor"
-                            />
-                        </svg>
-
-                        <span
-                            class="ml-2 hidden md:inline"
-                        >
-                            Columns
-                        </span>
+                        Columns
                     </button>
-
-                    <!-- COLUMN DROPDOWN -->
 
                     <div
                         v-if="
                             showColumnModal
                         "
-                        class="absolute right-0 z-40 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-3 shadow-xl"
-                        @click.stop
+                        class="absolute right-0 z-50 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-3 shadow-xl"
                     >
                         <div
                             class="mb-2 flex items-center justify-between"
@@ -3750,7 +3357,7 @@ defineExpose({
 
                             <button
                                 type="button"
-                                class="text-xs text-slate-400 hover:text-slate-700"
+                                class="text-xs text-slate-400"
                                 @click="
                                     initializeColumns
                                 "
@@ -3763,7 +3370,9 @@ defineExpose({
                             class="max-h-64 space-y-1 overflow-y-auto"
                         >
                             <label
-                                v-for="column in tableColumns"
+                                v-for="
+                                    column in tableColumns
+                                "
                                 :key="
                                     column.key
                                 "
@@ -3776,7 +3385,6 @@ defineExpose({
                                             column.key
                                         ]
                                     "
-                                    class="rounded border-slate-300"
                                     :style="{
                                         accentColor:
                                             primaryColor,
@@ -3802,11 +3410,13 @@ defineExpose({
                     </div>
                 </div>
 
-                <!-- CUSTOM RIGHT -->
+                <!-- CUSTOM -->
 
                 <slot
                     name="toolbar-right"
-                    :selected="selectedRows"
+                    :selected="
+                        selectedRows
+                    "
                 />
             </div>
         </div>
@@ -3820,20 +3430,13 @@ defineExpose({
         >
             <table
                 class="w-full min-w-[760px] text-left text-sm"
-                :class="
-                    viewMode ===
-                    'compact'
-                        ? 'table-compact'
-                        : ''
-                "
             >
-                <!-- HEADER -->
-
                 <thead
                     :style="{
                         backgroundColor:
                             headerBgColor,
-                        color: headerTextColor,
+                        color:
+                            headerTextColor,
                     }"
                 >
                     <tr
@@ -3842,9 +3445,7 @@ defineExpose({
                         <!-- SELECT -->
 
                         <th
-                            v-if="
-                                selectable
-                            "
+                            v-if="selectable"
                             class="w-12 px-4 py-3"
                         >
                             <input
@@ -3855,7 +3456,6 @@ defineExpose({
                                 :indeterminate="
                                     someSelected
                                 "
-                                class="rounded border-slate-300"
                                 :style="{
                                     accentColor:
                                         primaryColor,
@@ -3869,7 +3469,9 @@ defineExpose({
                         <!-- COLUMNS -->
 
                         <th
-                            v-for="column in visibleColumns"
+                            v-for="
+                                column in visibleColumns
+                            "
                             :key="
                                 column.key
                             "
@@ -3887,15 +3489,11 @@ defineExpose({
                             <div
                                 class="flex items-center gap-1"
                             >
-                                <span>
-                                    {{
-                                        columnLabel(
-                                            column
-                                        )
-                                    }}
-                                </span>
-
-                                <!-- SORT -->
+                                {{
+                                    columnLabel(
+                                        column
+                                    )
+                                }}
 
                                 <span
                                     v-if="
@@ -3903,60 +3501,16 @@ defineExpose({
                                             column
                                         )
                                     "
-                                    class="flex flex-col"
                                 >
-                                    <svg
-                                        v-if="
-                                            sortBy !==
-                                            column.key
-                                        "
-                                        class="h-3 w-3 text-slate-300"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="m8 9 4-4 4 4M8 15l4 4 4-4"
-                                        />
-                                    </svg>
-
-                                    <svg
-                                        v-else-if="
-                                            sortDirection ===
-                                            'asc'
-                                        "
-                                        class="h-3 w-3"
-                                        :style="{
-                                            color:
-                                                primaryColor,
-                                        }"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="m6 15 6-6 6 6"
-                                        />
-                                    </svg>
-
-                                    <svg
-                                        v-else
-                                        class="h-3 w-3"
-                                        :style="{
-                                            color:
-                                                primaryColor,
-                                        }"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="m6 9 6 6 6-6"
-                                        />
-                                    </svg>
+                                    {{
+                                        sortBy ===
+                                        column.key
+                                            ? sortDirection ===
+                                              "asc"
+                                                ? "↑"
+                                                : "↓"
+                                            : "↕"
+                                    }}
                                 </span>
                             </div>
                         </th>
@@ -3967,21 +3521,22 @@ defineExpose({
                             v-if="
                                 $slots.actions
                             "
-                            class="whitespace-nowrap px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide"
+                            class="px-4 py-3 text-right text-xs uppercase"
                         >
                             Actions
                         </th>
                     </tr>
                 </thead>
 
-                <!-- BODY -->
-
                 <tbody
                     class="divide-y divide-slate-100"
                 >
+
                     <!-- LOADING -->
 
-                    <tr v-if="loading">
+                    <tr
+                        v-if="loading"
+                    >
                         <td
                             :colspan="
                                 visibleColumns.length +
@@ -3995,17 +3550,11 @@ defineExpose({
                             class="px-4 py-14 text-center"
                         >
                             <div
-                                class="flex flex-col items-center justify-center gap-3"
+                                class="flex justify-center"
                             >
                                 <div
                                     class="h-7 w-7 animate-spin rounded-full border-2 border-slate-200 border-t-[var(--dt-primary)]"
                                 />
-
-                                <span
-                                    class="text-sm text-slate-400"
-                                >
-                                    Loading...
-                                </span>
                             </div>
                         </td>
                     </tr>
@@ -4027,71 +3576,25 @@ defineExpose({
                                     ? 1
                                     : 0)
                             "
-                            class="px-4 py-14 text-center"
+                            class="px-4 py-14 text-center text-sm text-slate-500"
                         >
-                            <div
-                                class="flex flex-col items-center justify-center"
-                            >
-                                <div
-                                    class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100"
-                                >
-                                    <svg
-                                        class="h-6 w-6 text-slate-400"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="1.8"
-                                    >
-                                        <circle
-                                            cx="11"
-                                            cy="11"
-                                            r="7"
-                                        />
-
-                                        <path
-                                            d="m20 20-4-4"
-                                        />
-                                    </svg>
-                                </div>
-
-                                <p
-                                    class="text-sm font-medium text-slate-600"
-                                >
-                                    {{
-                                        emptyText
-                                    }}
-                                </p>
-
-                                <button
-                                    v-if="
-                                        search ||
-                                        activeFilterCount
-                                    "
-                                    type="button"
-                                    class="mt-3 text-xs font-medium"
-                                    :style="{
-                                        color:
-                                            primaryColor,
-                                    }"
-                                    @click="
-                                        clearSearch();
-                                        clearFilters();
-                                    "
-                                >
-                                    Clear search &
-                                    filters
-                                </button>
-                            </div>
+                            {{
+                                emptyText
+                            }}
                         </td>
                     </tr>
 
-                    <!-- ROWS -->
+                    <!-- ROW -->
 
                     <tr
-                        v-for="row in displayRows"
+                        v-for="
+                            row in displayRows
+                        "
                         v-else
                         :key="
-                            row[rowKey]
+                            row[
+                                rowKey
+                            ]
                         "
                         class="group transition hover:bg-slate-50"
                         @click="
@@ -4101,6 +3604,7 @@ defineExpose({
                             )
                         "
                     >
+
                         <!-- SELECT -->
 
                         <td
@@ -4119,7 +3623,6 @@ defineExpose({
                                         ]
                                     )
                                 "
-                                class="rounded border-slate-300"
                                 :style="{
                                     accentColor:
                                         primaryColor,
@@ -4135,19 +3638,16 @@ defineExpose({
                         <!-- CELLS -->
 
                         <td
-                            v-for="column in visibleColumns"
+                            v-for="
+                                column in visibleColumns
+                            "
                             :key="
                                 column.key
                             "
                             class="px-4 py-3 text-slate-600"
-                            :class="
-                                viewMode ===
-                                'compact'
-                                    ? 'py-2'
-                                    : ''
-                            "
                         >
-                            <!-- CUSTOM SLOT -->
+
+                            <!-- SLOT -->
 
                             <slot
                                 v-if="
@@ -4156,7 +3656,9 @@ defineExpose({
                                     ]
                                 "
                                 :name="`cell-${column.key}`"
-                                :row="row"
+                                :row="
+                                    row
+                                "
                                 :value="
                                     getValue(
                                         row,
@@ -4168,164 +3670,153 @@ defineExpose({
                                 "
                             />
 
-                            <!-- DEFAULT -->
+                            <!-- TEXT -->
 
-                            <template v-else>
-                                <!-- TEXT -->
+                            <span
+                                v-else-if="
+                                    !column.type ||
+                                    column.type ===
+                                        'text'
+                                "
+                                :class="
+                                    column.class
+                                "
+                            >
+                                {{
+                                    getValue(
+                                        row,
+                                        column.key
+                                    ) ??
+                                    "—"
+                                }}
+                            </span>
 
+                            <!-- NUMBER -->
+
+                            <span
+                                v-else-if="
+                                    column.type ===
+                                    'number'
+                                "
+                            >
+                                {{
+                                    formatNumber(
+                                        getValue(
+                                            row,
+                                            column.key
+                                        ),
+                                        column
+                                    )
+                                }}
+                            </span>
+
+                            <!-- DATE -->
+
+                            <span
+                                v-else-if="
+                                    column.type ===
+                                    'date'
+                                "
+                            >
+                                {{
+                                    formatDate(
+                                        getValue(
+                                            row,
+                                            column.key
+                                        ),
+                                        column
+                                    )
+                                }}
+                            </span>
+
+                            <!-- DATETIME -->
+
+                            <span
+                                v-else-if="
+                                    column.type ===
+                                    'datetime'
+                                "
+                            >
+                                {{
+                                    formatDateTime(
+                                        getValue(
+                                            row,
+                                            column.key
+                                        )
+                                    )
+                                }}
+                            </span>
+
+                            <!-- BOOLEAN -->
+
+                            <span
+                                v-else-if="
+                                    column.type ===
+                                    'boolean'
+                                "
+                            >
                                 <span
                                     v-if="
-                                        !column.type ||
-                                        column.type ===
-                                            'text'
-                                    "
-                                    :class="
-                                        column.class
-                                    "
-                                >
-                                    {{
-                                        getValue(
-                                            row,
-                                            column.key
-                                        ) ??
-                                        "—"
-                                    }}
-                                </span>
-
-                                <!-- NUMBER -->
-
-                                <span
-                                    v-else-if="
-                                        column.type ===
-                                        'number'
-                                    "
-                                    class="tabular-nums"
-                                >
-                                    {{
-                                        formatNumber(
-                                            getValue(
-                                                row,
-                                                column.key
-                                            ),
-                                            column
-                                        )
-                                    }}
-                                </span>
-
-                                <!-- DATE -->
-
-                                <span
-                                    v-else-if="
-                                        column.type ===
-                                        'date'
-                                    "
-                                >
-                                    {{
-                                        formatDate(
-                                            getValue(
-                                                row,
-                                                column.key
-                                            ),
-                                            column
-                                        )
-                                    }}
-                                </span>
-
-                                <!-- DATETIME -->
-
-                                <span
-                                    v-else-if="
-                                        column.type ===
-                                        'datetime'
-                                    "
-                                >
-                                    {{
-                                        formatDateTime(
+                                        booleanValue(
                                             getValue(
                                                 row,
                                                 column.key
                                             )
                                         )
-                                    }}
+                                    "
+                                    class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700"
+                                >
+                                    Yes
                                 </span>
 
-                                <!-- BOOLEAN -->
-
                                 <span
-                                    v-else-if="
-                                        column.type ===
-                                        'boolean'
-                                    "
+                                    v-else
+                                    class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-500"
                                 >
-                                    <span
-                                        v-if="
-                                            booleanValue(
-                                                getValue(
-                                                    row,
-                                                    column.key
-                                                )
-                                            )
-                                        "
-                                        class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700"
-                                    >
-                                        <span
-                                            class="h-1.5 w-1.5 rounded-full bg-emerald-500"
-                                        />
-
-                                        Yes
-                                    </span>
-
-                                    <span
-                                        v-else
-                                        class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500"
-                                    >
-                                        <span
-                                            class="h-1.5 w-1.5 rounded-full bg-slate-400"
-                                        />
-
-                                        No
-                                    </span>
+                                    No
                                 </span>
+                            </span>
 
-                                <!-- BADGE -->
+                            <!-- BADGE -->
 
-                                <span
-                                    v-else-if="
-                                        column.type ===
-                                        'badge'
-                                    "
-                                    class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
-                                    :class="
-                                        getBadgeClass(
-                                            getValue(
-                                                row,
-                                                column.key
-                                            ),
-                                            column
-                                        )
-                                    "
-                                >
-                                    {{
+                            <span
+                                v-else-if="
+                                    column.type ===
+                                    'badge'
+                                "
+                                class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
+                                :class="
+                                    getBadgeClass(
                                         getValue(
                                             row,
                                             column.key
-                                        ) ??
-                                        "—"
-                                    }}
-                                </span>
+                                        ),
+                                        column
+                                    )
+                                "
+                            >
+                                {{
+                                    getValue(
+                                        row,
+                                        column.key
+                                    ) ??
+                                    "—"
+                                }}
+                            </span>
 
-                                <!-- DEFAULT -->
+                            <!-- DEFAULT -->
 
-                                <span v-else>
-                                    {{
-                                        getValue(
-                                            row,
-                                            column.key
-                                        ) ??
-                                        "—"
-                                    }}
-                                </span>
-                            </template>
+                            <span
+                                v-else
+                            >
+                                {{
+                                    getValue(
+                                        row,
+                                        column.key
+                                    ) ??
+                                    "—"
+                                }}
+                            </span>
                         </td>
 
                         <!-- ACTIONS -->
@@ -4362,19 +3853,25 @@ defineExpose({
                 <span
                     class="font-medium text-slate-700"
                 >
-                    {{ showingFrom }}
+                    {{
+                        showingFrom
+                    }}
                 </span>
                 -
                 <span
                     class="font-medium text-slate-700"
                 >
-                    {{ showingTo }}
+                    {{
+                        showingTo
+                    }}
                 </span>
                 of
                 <span
                     class="font-medium text-slate-700"
                 >
-                    {{ total }}
+                    {{
+                        total
+                    }}
                 </span>
                 records
             </div>
@@ -4382,13 +3879,11 @@ defineExpose({
             <div
                 class="flex flex-wrap items-center gap-2"
             >
-                <!-- PAGE SIZE -->
-
                 <select
                     :value="
                         currentPageSize
                     "
-                    class="h-9 rounded-lg border border-slate-200 bg-white px-2 text-xs text-slate-600 outline-none focus:border-[var(--dt-primary)]"
+                    class="h-9 rounded-lg border border-slate-200 bg-white px-2 text-xs"
                     @change="
                         changePageSize(
                             $event.target
@@ -4397,7 +3892,9 @@ defineExpose({
                     "
                 >
                     <option
-                        v-for="size in pageSizeOptions"
+                        v-for="
+                            size in pageSizeOptions
+                        "
                         :key="size"
                         :value="size"
                     >
@@ -4405,27 +3902,25 @@ defineExpose({
                     </option>
                 </select>
 
-                <!-- FIRST -->
-
                 <button
                     type="button"
-                    class="hidden h-9 rounded-lg border border-slate-200 px-2 text-xs text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:block"
+                    class="h-9 rounded-lg border px-3 text-xs disabled:opacity-40"
                     :disabled="
                         currentPage <=
                         1
                     "
                     @click="
-                        changePage(1)
+                        changePage(
+                            1
+                        )
                     "
                 >
                     First
                 </button>
 
-                <!-- PREVIOUS -->
-
                 <button
                     type="button"
-                    class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    class="h-9 w-9 rounded-lg border"
                     :disabled="
                         currentPage <=
                         1
@@ -4440,20 +3935,23 @@ defineExpose({
                     ‹
                 </button>
 
-                <!-- PAGES -->
-
                 <template
-                    v-for="(
-                        page, index
-                    ) in paginationPages"
-                    :key="`${page}-${index}`"
+                    v-for="
+                        (
+                            page,
+                            index
+                        ) in paginationPages
+                    "
+                    :key="
+                        `${page}-${index}`
+                    "
                 >
                     <span
                         v-if="
                             page ===
                             '...'
                         "
-                        class="px-1 text-slate-400"
+                        class="px-1"
                     >
                         …
                     </span>
@@ -4461,12 +3959,12 @@ defineExpose({
                     <button
                         v-else
                         type="button"
-                        class="flex h-9 min-w-9 items-center justify-center rounded-lg px-2 text-xs font-medium transition"
+                        class="flex h-9 min-w-9 items-center justify-center rounded-lg px-2 text-xs"
                         :class="
                             currentPage ===
                             page
-                                ? 'text-white shadow-sm'
-                                : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                                ? 'text-white'
+                                : 'border text-slate-600'
                         "
                         :style="
                             currentPage ===
@@ -4483,15 +3981,15 @@ defineExpose({
                             )
                         "
                     >
-                        {{ page }}
+                        {{
+                            page
+                        }}
                     </button>
                 </template>
 
-                <!-- NEXT -->
-
                 <button
                     type="button"
-                    class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    class="h-9 w-9 rounded-lg border"
                     :disabled="
                         currentPage >=
                         totalPages
@@ -4506,11 +4004,9 @@ defineExpose({
                     ›
                 </button>
 
-                <!-- LAST -->
-
                 <button
                     type="button"
-                    class="hidden h-9 rounded-lg border border-slate-200 px-2 text-xs text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:block"
+                    class="h-9 rounded-lg border px-3 text-xs disabled:opacity-40"
                     :disabled="
                         currentPage >=
                         totalPages
@@ -4537,8 +4033,6 @@ defineExpose({
                 "
                 class="fixed inset-0 z-[999] flex items-center justify-center p-4"
             >
-                <!-- OVERLAY -->
-
                 <div
                     class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
                     @click="
@@ -4547,51 +4041,38 @@ defineExpose({
                     "
                 />
 
-                <!-- MODAL -->
-
                 <div
                     class="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
                 >
                     <!-- HEADER -->
 
                     <div
-                        class="flex items-center justify-between border-b border-slate-200 px-5 py-4"
+                        class="flex items-center justify-between border-b px-5 py-4"
                     >
                         <div>
                             <h3
-                                class="text-base font-semibold text-slate-800"
+                                class="font-semibold text-slate-800"
                             >
                                 Filter Records
                             </h3>
 
                             <p
-                                class="mt-0.5 text-xs text-slate-400"
+                                class="text-xs text-slate-400"
                             >
-                                Refine your results
-                                using the filters
-                                below.
+                                Refine your
+                                results.
                             </p>
                         </div>
 
                         <button
                             type="button"
-                            class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                            class="text-xl text-slate-400"
                             @click="
                                 showFilterModal =
                                     false
                             "
                         >
-                            <svg
-                                class="h-5 w-5"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    d="M6 6l12 12M18 6 6 18"
-                                />
-                            </svg>
+                            ×
                         </button>
                     </div>
 
@@ -4604,7 +4085,9 @@ defineExpose({
                             class="grid grid-cols-1 gap-5 sm:grid-cols-2"
                         >
                             <div
-                                v-for="filter in filterDefinitions"
+                                v-for="
+                                    filter in filterDefinitions
+                                "
                                 :key="
                                     filter.key
                                 "
@@ -4638,18 +4121,12 @@ defineExpose({
                                         ] ??
                                         ''
                                     "
-                                    :placeholder="
-                                        filter.placeholder ||
-                                        `Enter ${
-                                            filter.label ||
-                                            filter.key
-                                        }`
-                                    "
-                                    class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-[var(--dt-primary)] focus:ring-1 focus:ring-[var(--dt-primary)]"
+                                    class="h-10 w-full rounded-lg border px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
                                     @input="
                                         updatePendingFilter(
                                             filter.key,
-                                            $event.target
+                                            $event
+                                                .target
                                                 .value
                                         )
                                     "
@@ -4668,28 +4145,27 @@ defineExpose({
                                         ] ??
                                         ''
                                     "
-                                    class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
+                                    class="h-10 w-full rounded-lg border px-3 text-sm outline-none"
                                     @change="
                                         updatePendingFilter(
                                             filter.key,
-                                            $event.target
+                                            $event
+                                                .target
                                                 .value
                                         )
                                     "
                                 >
-                                    <option value="">
-                                        {{
-                                            filter.placeholder ||
-                                            `All ${
-                                                filter.label ||
-                                                filter.key
-                                            }`
-                                        }}
+                                    <option
+                                        value=""
+                                    >
+                                        All
                                     </option>
 
                                     <option
-                                        v-for="option in filter.options ||
-                                        []"
+                                        v-for="
+                                            option in filter.options ||
+                                            []
+                                        "
                                         :key="
                                             option.value
                                         "
@@ -4716,24 +4192,31 @@ defineExpose({
                                         ] ??
                                         ''
                                     "
-                                    class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
+                                    class="h-10 w-full rounded-lg border px-3 text-sm outline-none"
                                     @change="
                                         updatePendingFilter(
                                             filter.key,
-                                            $event.target
+                                            $event
+                                                .target
                                                 .value
                                         )
                                     "
                                 >
-                                    <option value="">
+                                    <option
+                                        value=""
+                                    >
                                         All
                                     </option>
 
-                                    <option value="1">
+                                    <option
+                                        value="1"
+                                    >
                                         Yes
                                     </option>
 
-                                    <option value="0">
+                                    <option
+                                        value="0"
+                                    >
                                         No
                                     </option>
                                 </select>
@@ -4756,13 +4239,14 @@ defineExpose({
                                             ]?.min ??
                                             ''
                                         "
-                                        class="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
+                                        class="h-10 rounded-lg border px-3 text-sm"
                                         @input="
                                             updatePendingFilter(
                                                 filter.key,
                                                 {
                                                     ...(pendingFilters[
-                                                        filter.key
+                                                        filter
+                                                            .key
                                                     ] ||
                                                         {}),
                                                     min: $event
@@ -4782,13 +4266,14 @@ defineExpose({
                                             ]?.max ??
                                             ''
                                         "
-                                        class="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
+                                        class="h-10 rounded-lg border px-3 text-sm"
                                         @input="
                                             updatePendingFilter(
                                                 filter.key,
                                                 {
                                                     ...(pendingFilters[
-                                                        filter.key
+                                                        filter
+                                                            .key
                                                     ] ||
                                                         {}),
                                                     max: $event
@@ -4817,13 +4302,14 @@ defineExpose({
                                             ]?.from ??
                                             ''
                                         "
-                                        class="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
+                                        class="h-10 rounded-lg border px-3 text-sm"
                                         @change="
                                             updatePendingFilter(
                                                 filter.key,
                                                 {
                                                     ...(pendingFilters[
-                                                        filter.key
+                                                        filter
+                                                            .key
                                                     ] ||
                                                         {}),
                                                     from: $event
@@ -4842,13 +4328,14 @@ defineExpose({
                                             ]?.to ??
                                             ''
                                         "
-                                        class="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
+                                        class="h-10 rounded-lg border px-3 text-sm"
                                         @change="
                                             updatePendingFilter(
                                                 filter.key,
                                                 {
                                                     ...(pendingFilters[
-                                                        filter.key
+                                                        filter
+                                                            .key
                                                     ] ||
                                                         {}),
                                                     to: $event
@@ -4860,7 +4347,7 @@ defineExpose({
                                     />
                                 </div>
 
-                                <!-- MULTI SELECT -->
+                                <!-- MULTISELECT -->
 
                                 <select
                                     v-else-if="
@@ -4868,7 +4355,7 @@ defineExpose({
                                         'multiselect'
                                     "
                                     multiple
-                                    class="min-h-24 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[var(--dt-primary)]"
+                                    class="min-h-24 w-full rounded-lg border px-3 py-2 text-sm"
                                     :value="
                                         pendingFilters[
                                             filter.key
@@ -4892,8 +4379,10 @@ defineExpose({
                                     "
                                 >
                                     <option
-                                        v-for="option in filter.options ||
-                                        []"
+                                        v-for="
+                                            option in filter.options ||
+                                            []
+                                        "
                                         :key="
                                             option.value
                                         "
@@ -4921,7 +4410,9 @@ defineExpose({
                                         ]
                                     "
                                     :update="
-                                        (value) =>
+                                        (
+                                            value
+                                        ) =>
                                             updatePendingFilter(
                                                 filter.key,
                                                 value
@@ -4935,11 +4426,11 @@ defineExpose({
                     <!-- FOOTER -->
 
                     <div
-                        class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-5 py-4"
+                        class="flex items-center justify-between border-t bg-slate-50 px-5 py-4"
                     >
                         <button
                             type="button"
-                            class="text-sm font-medium text-red-500 hover:text-red-600"
+                            class="text-sm text-red-500"
                             @click="
                                 clearFilters
                             "
@@ -4952,7 +4443,7 @@ defineExpose({
                         >
                             <button
                                 type="button"
-                                class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+                                class="rounded-lg border bg-white px-4 py-2 text-sm"
                                 @click="
                                     showFilterModal =
                                         false
@@ -4963,7 +4454,7 @@ defineExpose({
 
                             <button
                                 type="button"
-                                class="rounded-lg px-4 py-2 text-sm font-medium text-white shadow-sm"
+                                class="rounded-lg px-4 py-2 text-sm font-medium text-white"
                                 :style="{
                                     backgroundColor:
                                         primaryColor,
@@ -4983,12 +4474,6 @@ defineExpose({
 </template>
 
 <style scoped>
-.table-compact th,
-.table-compact td {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-}
-
 input[type="search"]::-webkit-search-cancel-button {
     display: none;
 }
