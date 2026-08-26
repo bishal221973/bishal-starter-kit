@@ -19,12 +19,7 @@ const columns = [
         searchable: true,
         sortable: true,
     },
-    {
-        key: "email",
-        label: "Email",
-        type: "text",
-        searchable: true,
-    },
+   
     {
         key: "status",
         label: "Status",
@@ -114,5 +109,21 @@ const filters = [
 
         primary-color="#3D98AB"
         header-bg-color="#F8FAFC"
-    />
+    >
+     <template #cell-name="{ row }">
+        <div class="space-y-1">
+            <div>
+                <div class="font-medium text-slate-700">
+                    {{ row.name }}
+                </div>
+            </div>
+
+            <div>
+                <div class="text-sm text-slate-500">
+                    {{ row.email }}
+                </div>
+            </div>
+        </div>
+    </template>
+    </DataTable>
 </template>
