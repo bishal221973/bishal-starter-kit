@@ -1904,25 +1904,30 @@ function getExportColumns() {
             return;
         }
 
-        // Stack column
-        if (column.type === "stack" && Array.isArray(column.items)) {
+        // Main column
+        columns.push({
+            key: column.key,
+            label: column.exportLabel || column.label || column.key,
+        });
+
+        // Additional export fields
+        if (Array.isArray(column.items)) {
             column.items.forEach((item) => {
-                if (item.exportable === false) {
+                if (!item || !item.key || item.exportable === false) {
+                    return;
+                }
+
+                // Don't duplicate the main column
+                if (item.key === column.key) {
                     return;
                 }
 
                 columns.push({
                     key: item.key,
                     label: item.exportLabel || item.label || item.key,
-                    sourceColumn: column,
-                    type: "stack-item",
                 });
             });
-
-            return;
         }
-
-        columns.push(column);
     });
 
     return columns;
