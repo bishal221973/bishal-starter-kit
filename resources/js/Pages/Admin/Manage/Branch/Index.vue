@@ -1,137 +1,116 @@
 <script setup>
-// import DataTable from "@/Components/Table.vue";
 import DataTable from "@/Components/Datatable/Table.vue";
-import AppLayout from "@/Layouts/AppLayout.vue";
-import { Link,router, useForm } from "@inertiajs/vue3";
-const props = defineProps({
-  branches: {
-    type: Object,
-    default: () => ({
-      data: [],
-    }),
-  },
-});
-
+const props=defineProps({
+  branches:Object
+})
 const columns = [
-  {
-    key: "name",
-    label: "Name",
-    sortable: true,
-    searchable: true,
-  },
+    {
+        key: "id",
+        label: "ID",
+        type: "number",
+        sortable: true,
+    },
 
-  {
-    key: "email",
-    label: "Email",
-    sortable: true,
-    searchable: true,
-  },
+    {
+        key: "name",
+        label: "Name",
+        type: "text",
+        searchable: true,
+        sortable: true,
+    },
 
-  {
-    key: "phone",
-    label: "Phone",
-    sortable: true,
-    searchable: true,
-  },
+    {
+        key: "email",
+        label: "Email",
+        type: "text",
+        searchable: true,
+    },
 
-  {
-    key: "is_active",
-    label: "Status",
-    sortable: true,
+    {
+        key: "status",
+        label: "Status",
+        type: "badge",
+        sortable: true,
+    },
 
-    filterable: true,
-
-    filterType: "select",
-
-    filterOptions: [
-      {
+    {
+        key: "active",
         label: "Active",
-        value: "1",
-      },
-      {
-        label: "Inactive",
-        value: "0",
-      },
-    ],
-  },
+        type: "boolean",
+    },
 
-  {
-    key: "created_at",
-    label: "Created",
-    sortable: true,
-  },
+    {
+        key: "created_at",
+        label: "Created",
+        type: "date",
+        sortable: true,
+    },
 ];
 
-const deleteOrganization = (org) => {
-    if (!confirm(`Are you sure you want to delete "${org.name}"?`)) {
-        return;
-    }
-
-    useForm({}).delete(
-        route("branches.destroy", org.slug),
-        {
-            preserveScroll: true,
-            onSuccess: () => {
-                // optional toast
+const filters = [
+    {
+        key: "status",
+        label: "Status",
+        type: "select",
+        options: [
+            {
+                label: "Active",
+                value: "1",
             },
-        }
-    );
-};
+            {
+                label: "Inactive",
+                value: "0",
+            },
+            {
+                label: "Pending",
+                value: "pending",
+            },
+        ],
+    },
+
+    {
+        key: "active",
+        label: "Active",
+        type: "boolean",
+    },
+
+    {
+        key: "name",
+        label: "Name",
+        type: "text",
+    },
+
+    {
+        key: "created_at",
+        label: "Created Date",
+        type: "date-range",
+        fullWidth: true,
+    },
+
+    {
+        key: "id",
+        label: "ID Range",
+        type: "number-range",
+    },
+];
 </script>
 
 <template>
-  <AppLayout>
+  <!-- {{ branches }} -->
     <DataTable
-      mode="server"
-      :data="branches"
-      :columns="columns"
-      :route="route('branches.index')"
-      :searchable="true"
-      :sortable="true"
-      :filterable="true"
-      :pagination="true"
-      :page-size="10"
-      :selectable="true"
-      primaryColor="var(--primary)"
-      headerBgColor="#ecf6f8"
-      headerTextColor="#000"
-    >
-    <template #toolbar-right>
-        <Link :href="route('branches.create')" class="bg-primary px-5 text-sm py-2 rounded-md text-white">
-            <i class="fa fa-plus mr-2"></i>Add Branch
-        </Link>
-    </template>
-      <!-- Custom cell -->
-      <template #cell-name="{ row }">
-        {{ row?.name }} <br>
-        {{ row?.slug }}
-      </template>
-
-      <template #cell-is_active="{ value }">
-        <span
-          class="rounded-full px-2.5 py-1 text-xs font-medium"
-          :class="value == 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
-        >
-          {{ value == 1 ? "Active" : "Inactive" }}
-        </span>
-      </template>
-
-      <!-- Actions -->
-      <template #actions="{ row }">
-        <div class="flex justify-end gap-2">
-          <Link :href="route('branches.edit',row)"
-            type="button"
-            class="text-xs font-medium text-primary hover:underline"
-            @click="console.log(row)"
-          >
-            Edit
-          </Link>
-
-          <button  @click="deleteOrganization(row)" type="button" class="text-xs font-medium text-red-600 hover:underline">
-            Delete
-          </button>
-        </div>
-      </template>
-    </DataTable>
-  </AppLayout>
+    mode="server"
+    :data="branches"
+    :columns="columns"
+    :filters="filters"
+    :route="route('branches.index')"
+    :searchable="true"
+    :filterable="true"
+    :sortable="true"
+    :pagination="true"
+    :selectable="true"
+    :page-size="10"
+    :page-size-options="[10, 25, 50, 100]"
+    primary-color="#3D98AB"
+    header-bg-color="#F8FAFC"
+/>
 </template>
