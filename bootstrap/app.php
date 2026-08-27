@@ -9,6 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Birta\Licence\Middleware\CheckLicence;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -25,12 +26,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append([
             BlockIp::class,
             SetApplicationConfig::class
-            ]);
+        ]);
 
         $middleware->alias([
             'password.expired' => CheckPasswordExpiration::class,
             'conditional.verified' => EnsureEmailIsVerified::class,
             'has.organization' => EnsureUserHasOrganization::class,
+            'licence' => CheckLicence::class,
         ]);
 
         //

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "15a1fcafd72d1a27fb3636c7723374a2",
+    "content-hash": "f6adf6b44648ed87953dc9a0e2458871",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -211,6 +211,39 @@
                 "source": "https://github.com/Bacon/BaconQrCode/tree/v3.1.1"
             },
             "time": "2026-04-05T21:06:35+00:00"
+        },
+        {
+            "name": "birta/birta-licence",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "./birta-licence",
+                "reference": "40097b838fb9e983454a93006662f383896afc43"
+            },
+            "require": {
+                "laravel/framework": "^13.0",
+                "php": "^8.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Birta\\Licence\\LicenceServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Birta\\Licence\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Reusable Licence management package for Laravel 13.",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "birta/birta-table",
@@ -10402,6 +10435,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "birta/birta-licence": 20,
         "birta/birta-table": 20
     },
     "prefer-stable": true,

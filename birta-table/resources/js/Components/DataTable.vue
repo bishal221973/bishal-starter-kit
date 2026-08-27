@@ -6,6 +6,8 @@ import { useTableTheme } from "../composables/useTableTheme";
 
 const theme1 = useTableTheme();
 
+//  composer require birta/birta-table:@dev
+//  php artisan vendor:publish --tag=birta-table-config
 /*
 |--------------------------------------------------------------------------
 | Props

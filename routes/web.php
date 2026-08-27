@@ -29,10 +29,11 @@ Route::resource('organizations', OrganizationController::class)->middleware(['au
 Route::middleware(['has.organization'])->group(function () {
 
 
-
+    
     Route::middleware([
         'auth:sanctum',
         'password.expired',
+        'licence',
         'conditional.verified',
         config('jetstream.auth_session'),
         'verified',
