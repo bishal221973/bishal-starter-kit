@@ -5,8 +5,9 @@ import { createApp, h, watchEffect } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-// import { useZoom } from "@/composables/useZoom";
-
+// import DataTable from 'birta/birta-table';
+// import DataTable from '../../vendor/birta/birta-table/resources/js/BirtaTable.vue';
+import DataTable from "../../vendor/birta/birta-table/resources/js/Components/DataTable.vue"
 import { useTheme } from '@/composables/useTheme'
 const { theme } = useTheme()
 
@@ -152,6 +153,7 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .component('DataTable', DataTable)
             .mount(el);
             // useZoom();
     },

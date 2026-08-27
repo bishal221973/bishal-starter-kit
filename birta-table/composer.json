@@ -1,0 +1,24 @@
+{
+    "name": "birta/birta-table",
+    "description": "Reusable DataTable component for Laravel, Vue 3 and Inertia.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "laravel/framework": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "BirtaTable\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BirtaTable\\TableServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

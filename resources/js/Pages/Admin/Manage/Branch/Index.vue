@@ -1,5 +1,5 @@
 <script setup>
-import DataTable from "@/Components/Datatable/Table.vue";
+// import DataTable from "@/Components/Datatable/Table.vue";
 
 defineProps({
   branches: Object,
@@ -535,9 +535,8 @@ const tableTheme1 = {
     pagination
     selectable
     :page-size="10"
-    :page-size-options="[10, 25, 50, 100]"
-    :theme="tableTheme"
   >
+    <!-- :theme="tableTheme" -->
     <template #cell-name="{ row }">
       <div class="space-y-1">
         <div>
