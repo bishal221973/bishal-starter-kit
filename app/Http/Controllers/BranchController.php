@@ -249,15 +249,15 @@ public function index(Request $request)
         |--------------------------------------------------------------------------
         */
 
-        // $branches = $query
-        //     ->paginate(
-        //         $request->integer(
-        //             'per_page',
-        //             10
-        //         )
-        //     )
-        //     ->withQueryString();
-        $branches=$query->get();
+        $branches = $query
+            ->paginate(
+                $request->integer(
+                    'per_page',
+                    10
+                )
+            )
+            ->withQueryString();
+        // $branches=$query->get();
 
         /*
         |--------------------------------------------------------------------------

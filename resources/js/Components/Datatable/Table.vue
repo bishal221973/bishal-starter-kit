@@ -221,6 +221,8 @@ const emit = defineEmits([
   "export",
   "export-success",
   "export-error",
+  "filter-open",
+  "filter-close",
 ]);
 
 const dtTheme = computed(() => {
@@ -1026,9 +1028,7 @@ function openFilters() {
       if (Array.isArray(value)) {
         copy[filter.key] = [...value];
       } else if (typeof value === "object" && value !== null) {
-        copy[filter.key] = {
-          ...value,
-        };
+        copy[filter.key] = { ...value };
       } else {
         copy[filter.key] = value;
       }
@@ -1040,6 +1040,16 @@ function openFilters() {
   pendingFilters.value = copy;
 
   showFilterModal.value = true;
+
+  emit("filter-open", {
+    filters: copy,
+  });
+}
+
+function closeFilters() {
+  showFilterModal.value = false;
+
+  emit("filter-close");
 }
 
 function updatePendingFilter(key, value) {
@@ -2165,6 +2175,16 @@ defineExpose({
   clearSelection,
   loadServerData,
   runExport,
+
+  openFilters,
+  closeFilters,
+  applyFilters,
+  updatePendingFilter,
+
+  filterDefinitions,
+  pendingFilters,
+  activeFilterCount,
+  showFilterModal,
 });
 </script>
 
@@ -2236,6 +2256,7 @@ defineExpose({
           @click="openFilters"
         >
           <i class="fa fa-filter text-[12px]"></i>
+
           Filters
 
           <span v-if="activeFilterCount" :class="dtTheme.filter.badge">
@@ -2427,7 +2448,7 @@ defineExpose({
             @click="showColumnModal = !showColumnModal"
             class="items-center"
           >
-          <i class="fa fa-columns relative mt-[2px]"></i>
+            <i class="fa fa-columns relative mt-[2px]"></i>
             Columns
           </button>
 
@@ -2794,235 +2815,17 @@ defineExpose({
     <!-- FILTER MODAL -->
     <!-- ===================================================== -->
 
-    <Teleport to="body">
-      <div
-        v-if="showFilterModal"
-        class="fixed inset-0 z-[999] flex items-center justify-center"
-      >
-        <div
-          class="absolute inset-0"
-          :class="dtTheme.filter.modalOverlay"
-          @click="showFilterModal = false"
-        />
-
-        <div
-          class="relative z-10 flex h-[100vh] w-full max-w-2xl flex-col overflow-hidden"
-          :class="dtTheme.filter.modal"
-        >
-          <!-- HEADER -->
-
-          <div :class="dtTheme.filter.header">
-            <div>
-              <h3 class="font-semibold text-slate-800">Filter Records</h3>
-
-              <p class="text-xs text-slate-400">Refine your results.</p>
-            </div>
-
-            <button
-              type="button"
-              class="text-xl text-slate-400"
-              @click="showFilterModal = false"
-            >
-              ×
-            </button>
-          </div>
-
-          <!-- BODY -->
-
-          <div class="overflow-y-auto" :class="dtTheme.filter.body">
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div
-                v-for="filter in filterDefinitions"
-                :key="filter.key"
-                class="space-y-2"
-                :class="filter.fullWidth ? 'sm:col-span-2' : ''"
-              >
-                <label class="block text-sm font-medium text-slate-700">
-                  {{ filter.label || filter.key }}
-                </label>
-
-                <!-- TEXT -->
-
-                <input
-                  v-if="filter.type === 'text'"
-                  type="text"
-                  :value="pendingFilters[filter.key] ?? ''"
-                  class="h-10 w-full rounded-lg border px-3 text-sm outline-none focus:border-[var(--dt-primary)]"
-                  @input="updatePendingFilter(filter.key, $event.target.value)"
-                  :class="dtTheme.filter.input"
-                />
-
-                <!-- SELECT -->
-
-                <select
-                  v-else-if="filter.type === 'select'"
-                  :value="pendingFilters[filter.key] ?? ''"
-                  class="h-10 w-full rounded-lg border px-3 text-sm outline-none"
-                  @change="updatePendingFilter(filter.key, $event.target.value)"
-                  :class="dtTheme.filter.select"
-                >
-                  <option value="">All</option>
-
-                  <option
-                    v-for="option in filter.options || []"
-                    :key="option.value"
-                    :value="option.value"
-                  >
-                    {{ option.label }}
-                  </option>
-                </select>
-
-                <!-- BOOLEAN -->
-
-                <select
-                  v-else-if="filter.type === 'boolean'"
-                  :value="pendingFilters[filter.key] ?? ''"
-                  class="h-10 w-full rounded-lg border px-3 text-sm outline-none"
-                  @change="updatePendingFilter(filter.key, $event.target.value)"
-                  :class="dtTheme.filter.select"
-                >
-                  <option value="">All</option>
-
-                  <option value="1">Yes</option>
-
-                  <option value="0">No</option>
-                </select>
-
-                <!-- NUMBER RANGE -->
-
-                <div
-                  v-else-if="filter.type === 'number-range'"
-                  class="grid grid-cols-2 gap-2"
-                >
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    :value="pendingFilters[filter.key]?.min ?? ''"
-                    class="h-10 rounded-lg border px-3 text-sm"
-                    @input="
-                      updatePendingFilter(filter.key, {
-                        ...(pendingFilters[filter.key] || {}),
-                        min: $event.target.value,
-                      })
-                    "
-                    :class="dtTheme.filter.input"
-                  />
-
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    :value="pendingFilters[filter.key]?.max ?? ''"
-                    class="h-10 rounded-lg border px-3 text-sm"
-                    @input="
-                      updatePendingFilter(filter.key, {
-                        ...(pendingFilters[filter.key] || {}),
-                        max: $event.target.value,
-                      })
-                    "
-                    :class="dtTheme.filter.input"
-                  />
-                </div>
-
-                <!-- DATE RANGE -->
-
-                <div
-                  v-else-if="filter.type === 'date-range'"
-                  class="grid grid-cols-2 gap-2"
-                >
-                  <input
-                    type="date"
-                    :value="pendingFilters[filter.key]?.from ?? ''"
-                    class="h-10 rounded-lg border px-3 text-sm"
-                    @change="
-                      updatePendingFilter(filter.key, {
-                        ...(pendingFilters[filter.key] || {}),
-                        from: $event.target.value,
-                      })
-                    "
-                    :class="dtTheme.filter.input"
-                  />
-
-                  <input
-                    type="date"
-                    :value="pendingFilters[filter.key]?.to ?? ''"
-                    class="h-10 rounded-lg border px-3 text-sm"
-                    @change="
-                      updatePendingFilter(filter.key, {
-                        ...(pendingFilters[filter.key] || {}),
-                        to: $event.target.value,
-                      })
-                    "
-                    :class="dtTheme.filter.input"
-                  />
-                </div>
-
-                <!-- MULTISELECT -->
-
-                <select
-                  v-else-if="filter.type === 'multiselect'"
-                  multiple
-                  class="min-h-24 w-full rounded-lg border px-3 py-2 text-sm"
-                  :value="pendingFilters[filter.key] || []"
-                  @change="
-                    updatePendingFilter(
-                      filter.key,
-                      Array.from($event.target.selectedOptions).map(
-                        (option) => option.value
-                      )
-                    )
-                  "
-                  :class="dtTheme.filter.select"
-                >
-                  <option
-                    v-for="option in filter.options || []"
-                    :key="option.value"
-                    :value="option.value"
-                  >
-                    {{ option.label }}
-                  </option>
-                </select>
-
-                <!-- CUSTOM -->
-
-                <slot
-                  v-else
-                  name="filter"
-                  :filter="filter"
-                  :value="pendingFilters[filter.key]"
-                  :update="(value) => updatePendingFilter(filter.key, value)"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- FOOTER -->
-
-          <div :class="dtTheme.filter.footer">
-            <button type="button" class="text-sm text-red-500" @click="clearFilters">
-              Clear all
-            </button>
-
-            <div class="flex gap-2">
-              <button
-                type="button"
-                class="rounded-lg border bg-white px-4 py-2 text-sm"
-                @click="showFilterModal = false"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="button"
-                :class="[dtTheme.buttons.base, dtTheme.buttons.primary]"
-                @click="applyFilters"
-              >
-                Apply Filters
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <slot
+      name="filter-modal"
+      :show="showFilterModal"
+      :filters="pendingFilters"
+      :definitions="filterDefinitions"
+      :active-count="activeFilterCount"
+      :update="updatePendingFilter"
+      :apply="applyFilters"
+      :clear="clearFilters"
+      :close="closeFilters"
+    />
   </div>
 </template>
 
