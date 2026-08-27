@@ -2797,7 +2797,7 @@ defineExpose({
     <Teleport to="body">
       <div
         v-if="showFilterModal"
-        class="fixed inset-0 z-[999] flex items-center justify-center p-4"
+        class="fixed inset-0 z-[999] flex items-center justify-center"
       >
         <div
           class="absolute inset-0"
@@ -2806,7 +2806,7 @@ defineExpose({
         />
 
         <div
-          class="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden"
+          class="relative z-10 flex h-[100vh] w-full max-w-2xl flex-col overflow-hidden"
           :class="dtTheme.filter.modal"
         >
           <!-- HEADER -->

@@ -308,7 +308,7 @@ const tableTheme1 = {
 
     modalOverlay: "bg-[#041124]/60 backdrop-blur-sm",
 
-    modal: "rounded-2xl border border-slate-200 bg-white shadow-2xl",
+    modal: "border border-slate-200 bg-white shadow-2xl",
 
     header:
       "flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4",
@@ -523,7 +523,6 @@ const tableTheme1 = {
 
 <template>
   <DataTable
-    mode="server"
     :data="branches"
     :columns="columns"
     :filters="filters"
