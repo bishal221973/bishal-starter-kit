@@ -554,47 +554,94 @@ const tableTheme1 = {
       </div>
     </template>
 
-    <template #filter-modal="{ show, filters, definitions, update, apply, clear, close }">
-      <Teleport to="body">
-        <div v-if="show" class="fixed inset-0 z-[9999] flex items-center justify-end">
-          <!-- overlay -->
+   <template #filter-modal="{ show, filters, definitions, update, apply, clear, close }">
+  <Teleport to="body">
+    <Transition
+      enter-active-class="transition-opacity duration-300 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="show"
+        class="fixed inset-0 z-[9999] flex items-center justify-end"
+      >
+        <!-- Overlay -->
+        <div
+          class="absolute inset-0 bg-black/40"
+          @click="close"
+        />
 
-          <div class="absolute inset-0 bg-black/40" @click="close" />
-
-          <!-- modal -->
-
-          <div class="relative z-10 h-[100vh] w-full max-w-sm gap-5 rounded-l-2xl bg-white shadow-2xl">
-            <div class="flex items-center justify-between border-b p-5">
+        <!-- Slide Panel -->
+        <Transition
+          appear
+          enter-active-class="transform transition-transform duration-300 ease-out"
+          enter-from-class="translate-x-full"
+          enter-to-class="translate-x-0"
+          leave-active-class="transform transition-transform duration-300 ease-in"
+          leave-from-class="translate-x-0"
+          leave-to-class="translate-x-full"
+        >
+          <div
+            v-if="show"
+            class="relative z-10 flex h-screen w-full max-w-sm flex-col bg-white shadow-2xl"
+          >
+            <!-- Header -->
+            <div class="flex shrink-0 items-center justify-between border-b p-5">
               <div>
-                <h3 class="font-semibold text-slate-800">Filter Records</h3>
+                <h3 class="font-semibold text-slate-800">
+                  Filter Records
+                </h3>
 
-                <p class="text-xs text-slate-400">Refine your results.</p>
+                <p class="text-xs text-slate-400">
+                  Refine your results.
+                </p>
               </div>
 
-              <button type="button" class="text-xl text-slate-400" @click="close">
+              <button
+                type="button"
+                class="flex h-8 w-8 items-center justify-center rounded-lg
+                       text-xl text-slate-400 transition
+                       hover:bg-slate-100 hover:text-slate-700"
+                @click="close"
+              >
                 ×
               </button>
             </div>
 
-            <div class="p-5">
-              <div class="grid grid-cols-1">
-                <div v-for="filter in definitions" :key="filter.key" class="space-y-2">
+            <!-- Body -->
+            <div class="min-h-0 flex-1 overflow-y-auto p-5">
+              <div class="grid grid-cols-1 gap-5">
+
+                <div
+                  v-for="filter in definitions"
+                  :key="filter.key"
+                  class="space-y-2"
+                >
                   <label class="block text-sm font-medium text-slate-700">
                     {{ filter.label || filter.key }}
                   </label>
 
+                  <!-- TEXT -->
                   <input
                     v-if="filter.type === 'text'"
                     type="text"
                     :value="filters[filter.key] ?? ''"
-                    class="h-10 w-full rounded-lg border px-3 border-gray-300"
+                    class="h-10 w-full rounded-lg border border-gray-300 px-3
+                           outline-none transition
+                           focus:border-[#628891] focus:ring-2 focus:ring-[#628891]/10"
                     @input="update(filter.key, $event.target.value)"
                   />
 
+                  <!-- SELECT -->
                   <select
                     v-else-if="filter.type === 'select'"
                     :value="filters[filter.key] ?? ''"
-                    class="h-10 w-full rounded-lg border px-3 border-gray-300"
+                    class="h-10 w-full rounded-lg border border-gray-300 px-3
+                           outline-none transition
+                           focus:border-[#628891] focus:ring-2 focus:ring-[#628891]/10"
                     @change="update(filter.key, $event.target.value)"
                   >
                     <option value="">All</option>
@@ -608,19 +655,21 @@ const tableTheme1 = {
                     </option>
                   </select>
 
+                  <!-- BOOLEAN -->
                   <select
                     v-else-if="filter.type === 'boolean'"
                     :value="filters[filter.key] ?? ''"
-                    class="h-10 w-full rounded-lg border px-3 border-gray-300"
+                    class="h-10 w-full rounded-lg border border-gray-300 px-3
+                           outline-none transition
+                           focus:border-[#628891] focus:ring-2 focus:ring-[#628891]/10"
                     @change="update(filter.key, $event.target.value)"
                   >
                     <option value="">All</option>
-
                     <option value="1">Yes</option>
-
                     <option value="0">No</option>
                   </select>
 
+                  <!-- NUMBER RANGE -->
                   <div
                     v-else-if="filter.type === 'number-range'"
                     class="grid grid-cols-2 gap-2"
@@ -629,7 +678,9 @@ const tableTheme1 = {
                       type="number"
                       placeholder="Min"
                       :value="filters[filter.key]?.min ?? ''"
-                      class="h-10 rounded-lg border px-3 border-gray-300"
+                      class="h-10 rounded-lg border border-gray-300 px-3
+                             outline-none transition
+                             focus:border-[#628891] focus:ring-2 focus:ring-[#628891]/10"
                       @input="
                         update(filter.key, {
                           ...(filters[filter.key] || {}),
@@ -642,7 +693,9 @@ const tableTheme1 = {
                       type="number"
                       placeholder="Max"
                       :value="filters[filter.key]?.max ?? ''"
-                      class="h-10 rounded-lg border px-3 border-gray-300"
+                      class="h-10 rounded-lg border border-gray-300 px-3
+                             outline-none transition
+                             focus:border-[#628891] focus:ring-2 focus:ring-[#628891]/10"
                       @input="
                         update(filter.key, {
                           ...(filters[filter.key] || {}),
@@ -652,6 +705,7 @@ const tableTheme1 = {
                     />
                   </div>
 
+                  <!-- DATE RANGE -->
                   <div
                     v-else-if="filter.type === 'date-range'"
                     class="grid grid-cols-2 gap-2"
@@ -659,7 +713,9 @@ const tableTheme1 = {
                     <input
                       type="date"
                       :value="filters[filter.key]?.from ?? ''"
-                      class="h-10 rounded-lg border px-3 border-gray-300"
+                      class="h-10 rounded-lg border border-gray-300 px-3
+                             outline-none transition
+                             focus:border-[#628891] focus:ring-2 focus:ring-[#628891]/10"
                       @change="
                         update(filter.key, {
                           ...(filters[filter.key] || {}),
@@ -671,7 +727,9 @@ const tableTheme1 = {
                     <input
                       type="date"
                       :value="filters[filter.key]?.to ?? ''"
-                      class="h-10 rounded-lg border px-3 border-gray-300"
+                      class="h-10 rounded-lg border border-gray-300 px-3
+                             outline-none transition
+                             focus:border-[#628891] focus:ring-2 focus:ring-[#628891]/10"
                       @change="
                         update(filter.key, {
                           ...(filters[filter.key] || {}),
@@ -680,23 +738,40 @@ const tableTheme1 = {
                       "
                     />
                   </div>
+
                 </div>
               </div>
             </div>
 
-            <div class="flex justify-between border-t p-5">
-              <button type="button" class="text-sm text-red-500" @click="clear">
+            <!-- Footer -->
+            <div
+              class="flex shrink-0 items-center justify-between border-t bg-white p-5"
+            >
+              <button
+                type="button"
+                class="text-sm font-medium text-red-500 transition
+                       hover:text-red-600"
+                @click="clear"
+              >
                 Clear all
               </button>
 
               <div class="flex gap-2">
-                <button type="button" class="rounded-lg border px-4 py-2" @click="close">
+                <button
+                  type="button"
+                  class="rounded-lg border border-slate-200 bg-white
+                         px-4 py-2 text-sm font-medium text-slate-700
+                         transition hover:bg-slate-50"
+                  @click="close"
+                >
                   Cancel
                 </button>
 
                 <button
                   type="button"
-                  class="rounded-lg bg-[#628891] px-4 py-2 text-sm font-medium text-white"
+                  class="rounded-lg bg-[#628891] px-4 py-2
+                         text-sm font-medium text-white
+                         transition hover:bg-[#527882]"
                   @click="apply"
                 >
                   Apply Filters
@@ -704,9 +779,11 @@ const tableTheme1 = {
               </div>
             </div>
           </div>
-        </div>
-      </Teleport>
-    </template>
+        </Transition>
+      </div>
+    </Transition>
+  </Teleport>
+</template>
   </DataTable>
 </template>
 
