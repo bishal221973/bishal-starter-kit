@@ -28,12 +28,12 @@ Route::get('/', function () {
 Route::resource('organizations', OrganizationController::class)->middleware(['auth:sanctum', 'password.expired', 'conditional.verified']);
 Route::middleware(['has.organization'])->group(function () {
 
-
+// 'licence',
     
     Route::middleware([
         'auth:sanctum',
         'password.expired',
-        'licence',
+        
         'conditional.verified',
         config('jetstream.auth_session'),
         'verified',

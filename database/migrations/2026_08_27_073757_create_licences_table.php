@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('licences', function (Blueprint $table) {
+        Schema::create('licencess', function (Blueprint $table) {
             $table->id();
 
             $table->unsignedBigInteger('branch_id')

@@ -21,15 +21,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $timezone = Configuration::value('timezone');
+        // $timezone = Configuration::value('timezone');
 
-        if (
-            $timezone &&
-            in_array($timezone, timezone_identifiers_list(), true)
-        ) {
-            Config::set('app.timezone', $timezone);
+        // if (
+        //     $timezone &&
+        //     in_array($timezone, timezone_identifiers_list(), true)
+        // ) {
+        //     Config::set('app.timezone', $timezone);
 
-            date_default_timezone_set($timezone);
-        }
+        //     date_default_timezone_set($timezone);
+        // }
     }
 }
